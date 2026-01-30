@@ -578,7 +578,7 @@ RSGWM2<-function(target.gene.name,
 .find_shared_scion_matrixes = function(randomGroupCode,
                                        scion_matrix_one,
                                        scion_matrix_two){
-  pheno = MotrpacHumanPreSuspensionAnalysis::pheno[["data"]] %>%
+  pheno = MotrpacHumanPreSuspensionData::pheno[["data"]] %>%
     dplyr::filter(visitcode == "ADU_BAS") %>%
     dplyr::filter(randomGroupCode == !!randomGroupCode)
 

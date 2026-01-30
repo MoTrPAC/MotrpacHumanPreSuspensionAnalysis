@@ -8,179 +8,49 @@
 
 # Installation
 
+More vignettes are currently being developed, as well as a pkgdown
+website to get users more familiar with the data.
+
 ``` r
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
+devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
+                         build_vignettes = TRUE)
 ```
+
+We recommend building the vignettes when installing.
+
+(use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")`)
 
 ## Package Use and Structure
 
 This package is the public release version of the results from the
 Molecular Transducers of Physical Activity Consortium. The primary aim
-of the package is to facilitate broad access to consortium-level
-findings by distributing summary statistics across all reported
-analyses, enabling reproducible downstream interpretation.
+of the package is to facilitate enabling reproducible downstream
+interpretation and access to analysis results.
 
 To protect participant privacy and comply with data-use governance
-policies, individual-level (subject-level) molecular data are not
-included in this package and are available only through formal data
-access requests to the MoTrPAC consortium. Clinical endpoints, including
-select clinical analyte panels, are available for all subjects.
+policies, individual-level (subject-level) molecular or phenotypic data
+are not included in this package and are available only through formal
+data access requests to the MoTrPAC consortium. This package will
+instead include the n, mean, and SD for feature in each exercise group
+and tissue as well as the differential analysis/hypothesis testing
+summary statistics. It will further include various metadata about the
+feature to gene mapping or sample outliers.
 
-### Clinical and phenotypic data
+## Getting help
 
-Clinical and phenotypic should be reference directly as data objects.
-The `pheno` object is the main source for all of the phenotypic data,
-and contains most experimental design parameters.
-
-The package has data objects that come as a list with 2 items:
-
-- `data` the raw data
-- `dict` the dictionary for the data
-
-``` r
-
-library(MotrpacHumanPreSuspensionData)
-
-pheno_data = load_pheno(load_acute_only = TRUE)
-```
-
-You can also directly call the `pheno` data object instead of using
-`load_pheno` but beware that this will also load in the participants
-that completed their chronic training, which are excluded from the vast
-majority of our analysis.
-
-Don’t waste time guessing what 1’s and 2’s mean. Attach your dictionary
-to your data:
-
-``` r
-
-pheno_formatted <- attach_dictionary(pheno_data)
-
-pheno_formatted[1:5, c("study", "sex_psca")]
-#>                       study sex_psca
-#> 11001010209 Adult Sedentary   Female
-#> 11001010210 Adult Sedentary   Female
-#> 11001010212 Adult Sedentary   Female
-#> 11001010213 Adult Sedentary   Female
-#> 11001010214 Adult Sedentary   Female
-```
-
-There are many different data items, if you directly look through each
-of the data files, this can get very confusing.
-
-``` r
-grep("^cln", data(package = "MotrpacHumanPreSuspensionData")$results[, "Item"],
-     value = TRUE)
-#>  [1] "cln_chemistry_t02_plasma_lab_ck_results"               
-#>  [2] "cln_chemistry_t02_plasma_lab_conv_results"             
-#>  [3] "cln_chemistry_t02_plasma_lab_crt_results"              
-#>  [4] "cln_chemistry_t02_plasma_lab_glc_results"              
-#>  [5] "cln_chemistry_t02_plasma_lab_ins_results"              
-#>  [6] "cln_curated_accel_derived_variables_baseline"          
-#>  [7] "cln_curated_acute_bout"                                
-#>  [8] "cln_curated_biospec"                                   
-#>  [9] "cln_curated_screening"                                 
-#> [10] "cln_raw_1rm_assess_test"                               
-#> [11] "cln_raw_24_hr_food_record"                             
-#> [12] "cln_raw_activity_monitor_record"                       
-#> [13] "cln_raw_acute_endurance_ex_test"                       
-#> [14] "cln_raw_acute_resistance_ex_test"                      
-#> [15] "cln_raw_adi_collect_tp1_pre_ex"                        
-#> [16] "cln_raw_adi_collect_tp2_24_hr_post_ex"                 
-#> [17] "cln_raw_adi_collect_tp2_45_min_post_ex"                
-#> [18] "cln_raw_adi_collect_tp2_4_hr_post_ex"                  
-#> [19] "cln_raw_adverse_event_log"                             
-#> [20] "cln_raw_analyticdatasets_biospecview"                  
-#> [21] "cln_raw_analyticdatasets_key"                          
-#> [22] "cln_raw_analyticdatasets_sas_participantstatusadult_pc"
-#> [23] "cln_raw_analyticdatasets_sas_weeklevel_ee_pc"          
-#> [24] "cln_raw_analyticdatasets_sas_weeklevel_re"             
-#> [25] "cln_raw_biospec_collect_participant_assess"            
-#> [26] "cln_raw_biospec_collect_participant_assess_24_hr"      
-#> [27] "cln_raw_bld_pressure_heart_rate"                       
-#> [28] "cln_raw_bld_spec_collect_tp1_pre_ex"                   
-#> [29] "cln_raw_bld_spec_collect_tp2_20_min_ex"                
-#> [30] "cln_raw_bld_spec_collect_tp3_40_min_ex"                
-#> [31] "cln_raw_bld_spec_collect_tp4_10_min_post_ex"           
-#> [32] "cln_raw_bld_spec_collect_tp5_30_min_post_ex"           
-#> [33] "cln_raw_bld_spec_collect_tp6_3_5_hr_post_ex"           
-#> [34] "cln_raw_bld_spec_collect_tp7_24_hr_post_ex"            
-#> [35] "cln_raw_cardiopulmonary_ex_test"                       
-#> [36] "cln_raw_ces_d"                                         
-#> [37] "cln_raw_control_adherence_call"                        
-#> [38] "cln_raw_control_monitoring_visit"                      
-#> [39] "cln_raw_control_rest_record"                           
-#> [40] "cln_raw_demographics"                                  
-#> [41] "cln_raw_dhq_iii"                                       
-#> [42] "cln_raw_dhq_iii_r"                                     
-#> [43] "cln_raw_dxa"                                           
-#> [44] "cln_raw_dxa_analysis"                                  
-#> [45] "cln_raw_dxa_scan_results_ge"                           
-#> [46] "cln_raw_dxa_scan_results_hologic"                      
-#> [47] "cln_raw_dxa_scan_worksheet"                            
-#> [48] "cln_raw_endurance_ex_tracking_log"                     
-#> [49] "cln_raw_endurance_familiarization_session1"            
-#> [50] "cln_raw_endurance_familiarization_session2"            
-#> [51] "cln_raw_event_ascertainment"                           
-#> [52] "cln_raw_grip_strength"                                 
-#> [53] "cln_raw_height_weight_waist_circumference"             
-#> [54] "cln_raw_intervention_monitoring_visit"                 
-#> [55] "cln_raw_isometric_knee_extension"                      
-#> [56] "cln_raw_local_lab_collect"                             
-#> [57] "cln_raw_local_lab_results"                             
-#> [58] "cln_raw_medical_history"                               
-#> [59] "cln_raw_medication_inventory"                          
-#> [60] "cln_raw_missed_ex_session"                             
-#> [61] "cln_raw_mus_spec_collect_tp1_pre_ex"                   
-#> [62] "cln_raw_mus_spec_collect_tp2_15_min_post_ex"           
-#> [63] "cln_raw_mus_spec_collect_tp3_3_5_hr_post_ex"           
-#> [64] "cln_raw_mus_spec_collect_tp4_24_hr_post_ex"            
-#> [65] "cln_raw_participant_consent_status_log"                
-#> [66] "cln_raw_participating_relatives"                       
-#> [67] "cln_raw_pre_activity_medical_clearance"                
-#> [68] "cln_raw_pre_screening_assess"                          
-#> [69] "cln_raw_promis"                                        
-#> [70] "cln_raw_randomization_enrollment_clearance"            
-#> [71] "cln_raw_resistance_ex_tracking_log"                    
-#> [72] "cln_raw_resistance_familiarization_session_1"          
-#> [73] "cln_raw_resistance_familiarization_session_2"          
-#> [74] "cln_raw_resistance_familiarization_session_3"          
-#> [75] "cln_raw_resting_ecg"                                   
-#> [76] "cln_raw_siteequipmentlog"
-```
-
-Even though you can directly call a data item, if you ever forget what
-data items are available or want to know general categories of items,
-use the load_clinical_data function.
-
-``` r
-clin_data = load_clinical_data()
-names(clin_data)
-#> [1] "curated"   "raw"       "chemistry"
-names(clin_data$chemistry)
-#> [1] "cln_chemistry_t02_plasma_lab_ck_results"  
-#> [2] "cln_chemistry_t02_plasma_lab_conv_results"
-#> [3] "cln_chemistry_t02_plasma_lab_crt_results" 
-#> [4] "cln_chemistry_t02_plasma_lab_glc_results" 
-#> [5] "cln_chemistry_t02_plasma_lab_ins_results"
-```
-
-The clinical files are separated into three different categories:
-
-the curated files - representing the “main” datasets with the most
-important and commonly used datasets
-
-the raw files - representing the bulk of the data, most of these files
-hold extremely detailed logistics of everything that went through
-processing, storing, shipping, etc.
-
-the chemistry files - representing clinical measurements for more
-commonly measured chemical analytes. Includes glucose, insulin, creatine
-kinase, etc etc.
+For questions, bug reporting, and data requests for this package, please
+<a
+href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/issues"
+target="_blank">submit a new issue</a> and include as many details as
+possible.
 
 ### Omic modeling summary statistics (Differential Analysis)
 
 See more documentation via `?load_differential_analysis`
+
+Note that the public release of epigenetic files is still a WIP, so the
+`epigen` parameter can’t be toggled on unless you are a member of the
+consortium with access to the private google cloud buckets.
 
 ``` r
 differential_analysis = load_differential_analysis(
@@ -250,10 +120,94 @@ single_matrix %>% dplyr::pull(contrast_category) %>% unique()
 #> Levels: EE-CON RE-CON EE-EE RE-RE EE-RE CON-CON
 ```
 
-### Other items
+The splicing data was processed in a separate analysis effort, but
+significant results (FDR \< 0.05) are available in this R package as
+well. The full set is available on the motrpac data hub, but is not
+included here because of file size limitations. See “Exercise modulation
+of the alternative splicing landscape in human tissues” for more
+information.
 
-Here’s a list of other items that come up relatively often. The
-documentation of these is still a work in progress.
+``` r
+names(SPLICING_DA)
+#> [1] "adipose" "blood"   "muscle"
+head(SPLICING_DA$adipose$`AS-rMATS`, 3)
+#>                                           feature  Estimate Std. Error      df
+#>                                            <char>     <num>      <num>   <num>
+#> 1:     SE:9:36376127-36390467:36390616-36424613:-  1.766129  0.3706165 69.0000
+#> 2: SE:8:105634357-105788718:105788924-105798724:+ -1.632226  0.3146590 69.0000
+#> 3:         SE:7:7567484-7567607:7567688-7572436:+ -6.588839  0.1474998 24.9892
+#>       t value     Pr(>|t|) log2_FoldChange   diff_psi  tissue randomGroupCode
+#>         <num>        <num>           <num>      <num>  <char>          <char>
+#> 1:   4.765382 1.009691e-05      0.29934027  0.1482379 adipose        ADUEndur
+#> 2:  -5.187284 2.035829e-06     -0.08428790 -0.0567500 adipose        ADUEndur
+#> 3: -44.670163 2.319668e-25     -0.05350315 -0.0243000 adipose        ADUEndur
+#>    timepoint_baseline  timepoint_select AS_type      p_value  adj_p_value
+#>                <char>            <char>  <char>        <num>        <num>
+#> 1:       pre_exercise post_15_30_45_min      SE 1.009691e-05 2.341846e-02
+#> 2:       pre_exercise post_15_30_45_min      SE 2.035829e-06 5.437266e-03
+#> 3:       pre_exercise post_15_30_45_min      SE 2.319668e-25 6.814876e-21
+#>            gene_id    assay                                           contrast
+#>             <char>   <char>                                             <char>
+#> 1: ENSG00000137075 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise
+#> 2: ENSG00000169946 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise
+#> 3: ENSG00000164654 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise
+```
+
+### Omic modeling summary statistics (Normalized Expression)
+
+See more documentation via `?load_summary_stats`
+
+``` r
+summary_stats = load_summary_stats(
+  selected_omes = "all",
+  selected_tissues = "all",
+  single_matrix = FALSE,
+  verbose = TRUE
+)
+names(summary_stats)
+#> [1] "adipose" "blood"   "muscle"
+names(summary_stats[["blood"]])
+#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"      
+#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"  
+#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"    
+#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"           
+#> [13] "transcript-rna-seq"
+```
+
+By default, load_summary_stats() loads group- and timepoint-level
+summary statistics for normalized expression data in a nested list
+structure, organized identically to the differential-analysis datasets.
+The top level corresponds to tissues, and the second level corresponds
+to molecular assays or platforms.
+
+You may subset the data using selected_tissues and selected_omes.
+Available options can be queried via `tissue_available_list()` and
+`ome_available_list()`. If an invalid tissue or assay is supplied,
+informative warnings or errors are raised to guide correction.
+
+If a stacked representation is preferred, set `single_matrix = TRUE`.
+This unlists the nested structure and returns a single `data.frame` with
+all selected tissues and assays.
+
+``` r
+single_matrix = load_summary_stats(single_matrix = TRUE)
+colnames(single_matrix)
+#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
+#> [5] "Mean"            "SD"              "tissue"          "assay"
+```
+
+Although summary statistics are provided for all normalized expression
+features, only features with paired sample size n \>= 3 were eligible
+for hypothesis testing in downstream differential analyses. As a result,
+some features—particularly those affected by missingness in certain
+assays—may appear in the summary-statistics tables but lack
+corresponding differential-analysis p-values.
+
+For metabolomics assays, summary statistics are computed after filtering
+redundant metabolites. Details of this filtering procedure are described
+in the Methods section of the manuscript.
+
+## Other items
 
 ### Enrichment Results
 
@@ -309,11 +263,42 @@ head(HUMAN_FEATURE_TO_GENE)
 The feature-to-gene map links each feature tested in differential
 analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as
 the gene identifier source. Proteomics feature IDs (UniProt IDs) were
-mapped to gene symbols and Entrez IDs using UniProt’s mapping
-files.Epigenomics features were mapped to the nearest gene using the
+mapped to gene symbols and Entrez IDs using UniProt’s mapping files.
+Epigenomics features were mapped to the nearest gene using the
 ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release
 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were
 assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18).
 This file links all of the features included in any ome/tissue in our
 analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
 RNAseq) may link up in terms of ome names.
+
+## Acknowledgements
+
+MoTrPAC is supported by the National Institutes of Health (NIH) Common
+Fund through cooperative agreements managed by the National Institute of
+Diabetes and Digestive and Kidney Diseases (NIDDK), National Institute
+of Arthritis and Musculoskeletal Diseases (NIAMS), and National
+Institute on Aging (NIA).
+
+Specifically, the MoTrPAC Study is supported by NIH grants U24OD026629
+(Bioinformatics Center), U24DK112349, U24DK112342, U24DK112340,
+U24DK112341, U24DK112326, U24DK112331, U24DK112348 (Chemical Analysis
+Sites), U01AR071133, U01AR071130, U01AR071124, U01AR071128, U01AR071150,
+U01AR071160, U01AR071158 (Clinical Centers), U24AR071113 (Consortium
+Coordinating Center), U01AG055133, U01AG055137 and U01AG055135
+(PASS/Animal Sites).
+
+## Data Use Agreement
+
+Recipients and their Agents agree that in publications using **any**
+data from MoTrPAC public-use data sets they will acknowledge MoTrPAC as
+the source of data, including the version number of the data sets used,
+e.g.:
+
+- Data used in the preparation of this article were obtained from the
+  Molecular Transducers of Physical Activity Consortium (MoTrPAC)
+  database, which is available for public access at
+  [motrpac-data.org](motrpac-data.org).
+- Data used in the preparation of this article were obtained from the
+  Molecular Transducers of Physical Activity Consortium (MoTrPAC)
+  Pre-CovidSuspension Data release version 1.3.0.

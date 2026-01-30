@@ -8,7 +8,6 @@ plot_single_feature(
   feature,
   selected_tissues = "all",
   selected_omes = "all",
-  da_object = NULL,
   p_level = 0.05,
   output_file = NULL,
   scale_factor = 1,
