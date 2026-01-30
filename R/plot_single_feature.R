@@ -53,7 +53,6 @@
 plot_single_feature = function(feature,
                                selected_tissues = "all",
                                selected_omes = "all",
-                               da_object = NULL,
                                p_level = 0.05,
                                output_file = NULL,
                                scale_factor = 1,
@@ -109,21 +108,21 @@ plot_single_feature = function(feature,
   }
 
   # Load differential analysis object if not provided
-  if(is.null(da_object)){
-    da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
-      selected_omes = selected_omes,
-      selected_tissues = selected_tissues,
-      gsutil = gsutil,
-      repo_local_dir = repo_local_dir,
-      single_matrix = TRUE,
-      epigen = epigen
-    )
-    if(verbose){
-      message("DA object not provided, so loaded automatically using requested settings.
+
+  da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
+    selected_omes = selected_omes,
+    selected_tissues = selected_tissues,
+    gsutil = gsutil,
+    repo_local_dir = repo_local_dir,
+    single_matrix = TRUE,
+    epigen = epigen
+  )
+  if(verbose){
+    message("DA is loaded automatically using requested settings.
               If any metab platform was requested, the metab features will default to
               any metabolomics platform measured.")
-    }
   }
+
 
   # Subset to relevant feature-specific data
   feature_specific_da = da_object %>%

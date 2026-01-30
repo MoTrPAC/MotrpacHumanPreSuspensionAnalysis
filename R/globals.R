@@ -122,6 +122,8 @@ utils::globalVariables(
     "SD",
     "Count",
     "Mean",
-    "SE"
+    "SE",
+    "qt",
+    "CI_95"
   )
 )

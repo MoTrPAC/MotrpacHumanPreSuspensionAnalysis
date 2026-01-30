@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+library(MotrpacHumanPreSuspensionAnalysis)
 ```
 
 # MotrpacHumanPreSuspensionAnalysis
@@ -20,68 +21,36 @@ knitr::opts_chunk$set(
 
 # Installation
 
-Building vignettes is recommended for users less familiar with the data
+More vignettes are currently being developed, as well as a pkgdown website to get users more familiar with the data. 
+
 ```{r, eval = FALSE}
 devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
                          build_vignettes = TRUE)
 ```
 
+We recommend building the vignettes when installing. 
+
+(use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")`)
+
+
 ## Package Use and Structure
 
 This package is the public release version of the results from the Molecular Transducers of Physical Activity Consortium. The primary aim of the package is to facilitate enabling reproducible downstream interpretation and access to analysis results. 
 
-To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular data are not included in this package and are available only through formal data access requests to the MoTrPAC consortium. Clinical endpoints, including select clinical analyte panels, are available for all subjects.
+To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular or phenotypic data are not included in this package and are available only through formal data access requests to the MoTrPAC consortium. This package will instead include the n, mean, and SD for feature in each exercise group and tissue as well as the differential analysis/hypothesis testing summary statistics. It will further include various metadata about the feature to gene mapping or sample outliers.
 
-### Clinical and phenotypic data
+## Getting help
 
-Clinical and phenotypic can be referenced directly as data objects. The `pheno` object is the main source for all of the phenotypic data, and contains most experimental design parameters. 
-
-The package has data objects that come as a list with 2 items:
-
--   `data` the raw data
--   `dict` the dictionary for the data
-
-```{r example-format-1}
-
-library(MotrpacHumanPreSuspensionData)
-
-pheno_data = load_pheno(load_acute_only = TRUE)
-
-```
-
-You can also directly call the `pheno` data object instead of using `load_pheno` but beware that this will also load in the participants that completed their chronic training, which are excluded from the vast majority of our analysis. By default, the `load_pheno` function's `load_acute_only` parameter trims those samples.
-
-Don't waste time guessing what 1's and 2's mean. Attach your dictionary to your data:
-
-```{r}
-
-pheno_formatted <- attach_dictionary(pheno_data)
-
-pheno_formatted[1:5, c("study", "sex_psca")]
-
-```
-
-There are many different data items, if you directly look through each of the data files, this can get very confusing.
-```{r clinical data}
-grep("^cln", data(package = "MotrpacHumanPreSuspensionAnalysis")$results[, "Item"],
-     value = TRUE)[1:10]
-```
-
-
-Even though you can directly call a data item, if you ever forget what data items are available or want to know general categories of items, use the load_clinical_data function. 
-```{r}
-clin_data = load_clinical_data()
-names(clin_data)
-names(clin_data$chemistry)
-```
-
-The clinical files are separated into three different categories: (1) the curated files - representing the "main" datasets with the most important and commonly used datasets (2) the raw files - representing the bulk of the data, most of these files hold extremely detailed logistics of everything that went through processing, storing, shipping, etc. (3) the chemistry files - representing clinical measurements for more commonly measured chemical analytes. Includes glucose, insulin, creatine kinase, etc etc. 
+For questions, bug reporting, and data requests for this package, please 
+[submit a new issue](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/issues){target="_blank"} 
+and include as many details as possible. 
 
 
 ###  Omic modeling summary statistics (Differential Analysis)
 
 See more documentation via `?load_differential_analysis`
 
+Note that the public release of epigenetic files is still a WIP, so the `epigen` parameter can't be toggled on unless you are a member of the consortium with access to the private google cloud buckets. 
 
 ```{r differential analysis}
 differential_analysis = load_differential_analysis(
@@ -117,7 +86,46 @@ The majority of the analysis is done via exercise groups relative to the control
 single_matrix %>% dplyr::pull(contrast_category) %>% unique()
 ```
 
-### Other items
+The splicing data was processed in a separate analysis effort, but significant results (FDR < 0.05) are available in this R package as well. The full set is available on the motrpac data hub, but is not included here because of file size limitations. See "Exercise modulation of the alternative splicing landscape in human tissues" for more information. 
+
+```{r}
+names(SPLICING_DA)
+head(SPLICING_DA$adipose$`AS-rMATS`, 3)
+```
+
+
+### Omic modeling summary statistics (Normalized Expression)
+
+See more documentation via `?load_summary_stats`
+
+```{r summary stats}
+summary_stats = load_summary_stats(
+  selected_omes = "all",
+  selected_tissues = "all",
+  single_matrix = FALSE,
+  verbose = TRUE
+)
+names(summary_stats)
+names(summary_stats[["blood"]])
+```
+
+By default, load_summary_stats() loads group- and timepoint-level summary statistics for normalized expression data in a nested list structure, organized identically to the differential-analysis datasets. The top level corresponds to tissues, and the second level corresponds to molecular assays or platforms.
+
+You may subset the data using selected_tissues and selected_omes. Available options can be queried via `tissue_available_list()` and `ome_available_list()`. If an invalid tissue or assay is supplied, informative warnings or errors are raised to guide correction.
+
+If a stacked representation is preferred, set `single_matrix = TRUE`. This unlists the nested structure and returns a single `data.frame` with all selected tissues and assays.
+
+```{r}
+single_matrix = load_summary_stats(single_matrix = TRUE)
+colnames(single_matrix)
+```
+
+Although summary statistics are provided for all normalized expression features, only features with paired sample size n >= 3 were eligible for hypothesis testing in downstream differential analyses. As a result, some features—particularly those affected by missingness in certain assays—may appear in the summary-statistics tables but lack corresponding differential-analysis p-values.
+
+For metabolomics assays, summary statistics are computed after filtering redundant metabolites. Details of this filtering procedure are described in the Methods section of the manuscript. 
+
+
+## Other items
 
 
 ### Enrichment Results
@@ -136,4 +144,18 @@ head(HUMAN_FEATURE_TO_GENE)
 
 The feature-to-gene map links each feature tested in differential analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as the gene identifier source. Proteomics feature IDs (UniProt IDs) were mapped to gene symbols and Entrez IDs using UniProt’s mapping files. Epigenomics features were mapped to the nearest gene using the ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18). This file links all of the features included in any ome/tissue in our analysis. Use this to see how some levels of omic analysis (e.g. ATAC, RNAseq) may link up in terms of ome names. 
 
+
+## Acknowledgements 
+
+MoTrPAC is supported by the National Institutes of Health (NIH) Common
+Fund through cooperative agreements managed by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), National Institute of Arthritis and Musculoskeletal Diseases (NIAMS), and National Institute on Aging (NIA). 
+
+Specifically, the MoTrPAC Study is supported by NIH grants U24OD026629 (Bioinformatics Center), U24DK112349, U24DK112342, U24DK112340, U24DK112341, U24DK112326, U24DK112331, U24DK112348 (Chemical Analysis Sites), U01AR071133, U01AR071130, U01AR071124, U01AR071128, U01AR071150, U01AR071160, U01AR071158 (Clinical Centers), U24AR071113 (Consortium Coordinating Center), U01AG055133, U01AG055137 and U01AG055135 (PASS/Animal Sites).
+
+## Data Use Agreement 
+
+Recipients and their Agents agree that in publications using **any** data from MoTrPAC public-use data sets they will acknowledge MoTrPAC as the source of data, including the version number of the data sets used, e.g.:
+
+* Data used in the preparation of this article were obtained from the Molecular Transducers of Physical Activity Consortium (MoTrPAC) database, which is available for public access at [motrpac-data.org](motrpac-data.org). 
+* Data used in the preparation of this article were obtained from the Molecular Transducers of Physical Activity Consortium (MoTrPAC) Pre-CovidSuspension Data release version 1.3.0.
 
