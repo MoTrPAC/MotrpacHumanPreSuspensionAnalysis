@@ -1,0 +1,10 @@
+*.Rproj.user
+inst/doc
+sandbox
+*.Rhistory
+*.Ruserdata
+*.DS_Store
+.Rproj.user
+loading_different_items*
+.DS_Store
+data-raw/human-precovid*

@@ -1,0 +1,11 @@
+#' @title Metabolite Coefficients of Variation
+#'
+#' @description Metabolite coefficients of variation. Each coefficient of variation per platform was measured on reference standards that were processed through each platform. For more information, see the QC Notebook in the precovid-analyses repository
+#'
+#' @usage METABOLOMICS_CVS
+#'
+#' @format A \code{data.frame} object with description of tissue, platform, and
+#' whether or not a given platform is lowest CV.
+#'
+#' @keywords datasets
+"METABOLOMICS_CVS"

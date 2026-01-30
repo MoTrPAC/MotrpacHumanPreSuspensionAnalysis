@@ -1,0 +1,71 @@
+Package: MotrpacHumanPreSuspensionAnalysis
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R: c(
+    person(given = "Christopher", family = "Jin", 
+           email = "cajin@stanford.edu", 
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-7340-5023")),
+    person(given = "Tyler", family = "Sagendorf", 
+           email = "tyler.sagendorf@pnnl.gov", 
+           role = c("aut"),
+           comment = c(ORCID = "0000-0003-1552-4870")),
+    person(given = "Courtney", family = "Simmons", 
+           email = "cgsimmon@wakehealth.edu", 
+           role = c("aut"),
+           comment = c(ORCID = "0000-0002-3613-2377")),
+    person(given = "Catherine", family = "Gervais", 
+           email = "cgervais@wakehealth.edu", 
+           role = c("aut"),
+           comment = c(ORCID = "0009-0005-9947-4963")),
+    person(given = "Byron", family = "Jaeger", 
+           email = "bjaeger@wakehealth.edu", 
+           role = c("aut"),
+           comment = c(ORCID = "0000-0001-7399-2299")),
+    person(given = "Natalie", family = "Clark",
+          email = "nclark@broadinstitute.org",
+          role = c("aut"),
+          comment = c(ORCID = "0000-0003-0988-321X")),
+    person(given = "Daniel", family = "Katz",
+          email = "dankatz@stanford.edu",
+          role = c("aut"),
+          comment = c(ORCID = "0000-0001-7237-8502"))
+ )
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: 
+    R (>= 3.5)
+LazyData: true
+Imports: 
+    data.table (>= 1.15.0),
+    dplyr,
+    magrittr,
+    MotrpacBicQC (>= 0.9.5),
+    roxygen2,
+    stats,
+    tibble,
+    utils,
+    tidyr,
+    ggplot2,
+    ggpubr,
+    ComplexHeatmap,
+    latex2exp,
+    Biobase,
+    forcats,
+    scales,
+    stringr,
+    Mfuzz
+Suggests: 
+    here,
+    knitr,
+    rmarkdown,
+    readr,
+    table.glue,
+    testthat (>= 3.0.0),
+    TMSig (>= 1.0.0),
+    variancePartition,
+    MotrpacHumanPreSuspensionData
+VignetteBuilder: knitr

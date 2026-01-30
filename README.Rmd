@@ -1,0 +1,139 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# MotrpacHumanPreSuspensionAnalysis
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+# Installation
+
+Building vignettes is recommended for users less familiar with the data
+```{r, eval = FALSE}
+devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
+                         build_vignettes = TRUE)
+```
+
+## Package Use and Structure
+
+This package is the public release version of the results from the Molecular Transducers of Physical Activity Consortium. The primary aim of the package is to facilitate enabling reproducible downstream interpretation and access to analysis results. 
+
+To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular data are not included in this package and are available only through formal data access requests to the MoTrPAC consortium. Clinical endpoints, including select clinical analyte panels, are available for all subjects.
+
+### Clinical and phenotypic data
+
+Clinical and phenotypic can be referenced directly as data objects. The `pheno` object is the main source for all of the phenotypic data, and contains most experimental design parameters. 
+
+The package has data objects that come as a list with 2 items:
+
+-   `data` the raw data
+-   `dict` the dictionary for the data
+
+```{r example-format-1}
+
+library(MotrpacHumanPreSuspensionData)
+
+pheno_data = load_pheno(load_acute_only = TRUE)
+
+```
+
+You can also directly call the `pheno` data object instead of using `load_pheno` but beware that this will also load in the participants that completed their chronic training, which are excluded from the vast majority of our analysis. By default, the `load_pheno` function's `load_acute_only` parameter trims those samples.
+
+Don't waste time guessing what 1's and 2's mean. Attach your dictionary to your data:
+
+```{r}
+
+pheno_formatted <- attach_dictionary(pheno_data)
+
+pheno_formatted[1:5, c("study", "sex_psca")]
+
+```
+
+There are many different data items, if you directly look through each of the data files, this can get very confusing.
+```{r clinical data}
+grep("^cln", data(package = "MotrpacHumanPreSuspensionAnalysis")$results[, "Item"],
+     value = TRUE)[1:10]
+```
+
+
+Even though you can directly call a data item, if you ever forget what data items are available or want to know general categories of items, use the load_clinical_data function. 
+```{r}
+clin_data = load_clinical_data()
+names(clin_data)
+names(clin_data$chemistry)
+```
+
+The clinical files are separated into three different categories: (1) the curated files - representing the "main" datasets with the most important and commonly used datasets (2) the raw files - representing the bulk of the data, most of these files hold extremely detailed logistics of everything that went through processing, storing, shipping, etc. (3) the chemistry files - representing clinical measurements for more commonly measured chemical analytes. Includes glucose, insulin, creatine kinase, etc etc. 
+
+
+###  Omic modeling summary statistics (Differential Analysis)
+
+See more documentation via `?load_differential_analysis`
+
+
+```{r differential analysis}
+differential_analysis = load_differential_analysis(
+  repo_local_dir = NULL,
+  selected_omes = "all",
+  selected_tissues = "all",
+  single_matrix = FALSE,
+  epigen = FALSE,
+  gsutil = "gsutil",
+  combine_with_featgene = FALSE,
+  verbose = TRUE
+)
+names(differential_analysis)
+names(differential_analysis[["blood"]])
+```
+
+By default,`load_differential_analysis` loads in the dataset in a nested list in exactly the same way as the QC/expression datasets. Choose whichever tissues or omes you'd like via `selected_omes` or `selected_tissues`. You can find available tissues via `tissue_available_list()` or `ome_available_list()`. Or if you enter in a wrong mistaken tissue/ome, a warning or error will help.
+
+
+If you would instead like to stack the matrixes more easily, use the `single_matrix` function, which basically unlists the list and sticks everything into a data.frame object.
+
+```{r}
+single_matrix = load_differential_analysis(single_matrix = TRUE)
+colnames(single_matrix)
+```
+For a quick explanation of each of the columns, you can find this via `?load_differential_analysis`
+
+Importantly, this loads the differential analysis for each of comparisons mentioned in the methods, including the comparison between the endurance or resistance group relative to time, fasting, biopsy, etc. matched controls, comparison between the endurance and resistance groups directly, and finally comparisons within group without a matched control. 
+
+The majority of the analysis is done via exercise groups relative to the controls (e.g. EE-CON, RE-CON) Make sure you filter to whichever category you prefer before continuing with analysis. 
+
+```{r}
+single_matrix %>% dplyr::pull(contrast_category) %>% unique()
+```
+
+### Other items
+
+
+### Enrichment Results
+```{r}
+colnames(CAMERA_RESULTS)
+```
+Quick summary: CAMERA-PR is a method of enrichment that incorporates all features to generate a comparison of the test statistics between in-pathway vs out-of-pathway test statistics to see if the statistics within pathway are significant.
+
+This file structure is more or less just an enrichment level match for the comparisons described in the single-matrix differential analysis results, where all tissues and assays are included in all the analysis.
+
+
+### Feature to gene file: 
+```{r}
+head(HUMAN_FEATURE_TO_GENE)
+```
+
+The feature-to-gene map links each feature tested in differential analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as the gene identifier source. Proteomics feature IDs (UniProt IDs) were mapped to gene symbols and Entrez IDs using UniProt’s mapping files. Epigenomics features were mapped to the nearest gene using the ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18). This file links all of the features included in any ome/tissue in our analysis. Use this to see how some levels of omic analysis (e.g. ATAC, RNAseq) may link up in terms of ome names. 
+
+

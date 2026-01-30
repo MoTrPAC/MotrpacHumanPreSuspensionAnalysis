@@ -1,0 +1,52 @@
+
+# Modification of roxygen2:::block_set_env
+.custom_block_set_env <- function(block, env) {
+  block <- roxygen2:::block_evaluate(block, env)
+  block <- roxygen2:::block_find_object(block, env)
+
+  val <- block[["object"]][["value"]]
+
+  if (any(class(val) == "motrdat")) {
+    block[["object"]][["value"]][["data"]] <- data.frame()
+  } else if (is.data.frame(val)) {
+    block[["object"]][["value"]] <- data.frame()
+  }
+
+  return(block)
+}
+
+# Identical to roxygen2:::block_set_env
+.block_set_env <- function(block, env) {
+  block <- roxygen2:::block_evaluate(block, env)
+  block <- roxygen2:::block_find_object(block, env)
+
+  return(block)
+}
+
+# https://r-pkgs.org/code.html#sec-code-onLoad-onAttach
+.onLoad <- function(libname, pkgname) {
+  loadNamespace("roxygen2")
+
+  # Hack so that devtools::document() doesn't take hours
+  environment(.custom_block_set_env) <- asNamespace("roxygen2")
+
+  suppressWarnings({
+    utils::assignInNamespace(x = "block_set_env",
+                             value = .custom_block_set_env,
+                             ns = "roxygen2")
+  })
+
+  invisible()
+}
+
+.onUnload <- function(libname, pkgname) {
+  environment(.block_set_env) <- asNamespace("roxygen2")
+
+  suppressWarnings({
+    utils::assignInNamespace(x = "block_set_env",
+                             value = .block_set_env,
+                             ns = "roxygen2")
+  })
+
+  invisible()
+}
