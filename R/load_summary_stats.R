@@ -78,14 +78,15 @@ load_summary_stats = function(selected_tissues = "all",
 
   if(any(grepl("metab", selected_omes))){
     selected_omes = selected_omes[-grep("metab", selected_omes)]
-    selected_omes = c(selected_omes, "metab")
+    selected_omes = c(selected_omes, metab_only_list())
+    if(verbose) message("By default, if any metab platform is loaded, all of them are loaded")
   }
 
   selected_omes <- match.arg(
     arg = selected_omes,
     choices = c(
-      "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
-      "epigen-atac-seq", "epigen-methylcap-seq"
+      "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
+      "epigen-atac-seq", metab_only_list()
     ),
     several.ok = TRUE
   )
