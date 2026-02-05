@@ -48,18 +48,16 @@ possible.
 
 See more documentation via `?load_differential_analysis`
 
-Note that the public release of epigenetic files is still a WIP, so the
-`epigen` parameter can’t be toggled on unless you are a member of the
-consortium with access to the private google cloud buckets.
+Note that the public release of epigenetic files is through AWS CDN, and
+the file sizes are quite a bit larger than the other omes, so setting
+`epigen = TRUE` can be very slow!
 
 ``` r
 differential_analysis = load_differential_analysis(
-  repo_local_dir = NULL,
   selected_omes = "all",
   selected_tissues = "all",
   single_matrix = FALSE,
   epigen = FALSE,
-  gsutil = "gsutil",
   combine_with_featgene = FALSE,
   verbose = TRUE
 )
@@ -74,11 +72,11 @@ names(differential_analysis[["blood"]])
 ```
 
 By default,`load_differential_analysis` loads in the dataset in a nested
-list in exactly the same way as the QC/expression datasets. Choose
-whichever tissues or omes you’d like via `selected_omes` or
-`selected_tissues`. You can find available tissues via
-`tissue_available_list()` or `ome_available_list()`. Or if you enter in
-a wrong mistaken tissue/ome, a warning or error will help.
+list first by tissue, then by ome. Choose whichever tissues or omes
+you’d like via `selected_omes` or `selected_tissues`. You can find
+available tissues via `tissue_available_list()` or
+`ome_available_list()`. Or if you enter in a wrong mistaken tissue/ome,
+a warning or error will help.
 
 If you would instead like to stack the matrixes more easily, use the
 `single_matrix` function, which basically unlists the list and sticks
@@ -111,8 +109,20 @@ groups directly, and finally comparisons within group without a matched
 control.
 
 The majority of the analysis is done via exercise groups relative to the
-controls (e.g. EE-CON, RE-CON) Make sure you filter to whichever
+controls (“exercise_with_controls”). Make sure you filter to whichever
 category you prefer before continuing with analysis.
+
+``` r
+single_matrix %>% dplyr::pull(contrast_type) %>% unique()
+#> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist       
+#> [4] baseline               control_only          
+#> 5 Levels: exercise_with_controls exercise_no_controls ... control_only
+```
+
+If you’d like to display things in terms of the specific groups being
+compared instead, you can use the ‘contrast_category’ column. (EE-CON,
+RE-CON would be subsets of the ‘exercise_with_controls’ category from
+above, for example.)
 
 ``` r
 single_matrix %>% dplyr::pull(contrast_category) %>% unique()
@@ -153,7 +163,7 @@ head(SPLICING_DA$adipose$`AS-rMATS`, 3)
 #> 3: ENSG00000164654 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise
 ```
 
-### Omic modeling summary statistics (Normalized Expression)
+### Omic modeling summary statistics
 
 See more documentation via `?load_summary_stats`
 
@@ -188,6 +198,9 @@ informative warnings or errors are raised to guide correction.
 If a stacked representation is preferred, set `single_matrix = TRUE`.
 This unlists the nested structure and returns a single `data.frame` with
 all selected tissues and assays.
+
+Again - note that the sample level data is available for researchers
+upon request via the Motrpac Consortium.
 
 ``` r
 single_matrix = load_summary_stats(single_matrix = TRUE)
