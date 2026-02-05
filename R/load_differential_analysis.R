@@ -1,21 +1,12 @@
 #' @title Load Differential Analysis Results
 #'
-#' @param repo_local_dir character; path to the local directory. If this
-#'   directory does not contain a data/tmp/ subdirectory, one will be created
-#'   and files will be downloaded from the appropriate GCP Bucket; otherwise,
-#'   files will be read from the directory (or downloaded, if any are missing).
-#'   Only used if \code{epigen} is not \code{FALSE}.
 #' @param selected_omes character; one of \code{\link{ome_available_list}}.
 #' @param selected_tissues character; one of
 #'   \code{\link{tissue_available_list}}.
 #' @param single_matrix logical; if \code{TRUE}, returns a single
 #'   \code{data.frame} containing all results. Otherwise, returns a list of
 #'   \code{data.frame} objects (default).
-#' @param epigen logical; a toggle of TRUE/FALSE if epigenetics data is desired.
-#' Requires gsutil access and a local directory location for files to be downloaded
-#' @param gsutil character; path to the gsutil executable. Defaults to "gsutil",
-#'   which assumes the path to the gsutil executable has been added to the PATH
-#'   variable. Only used when \code{epigen} is \code{TRUE}.
+#' @param epigen logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.
 #' @param combine_with_featgene logical; whether to include columns from
 #'   \code{HUMAN_FEATURE_TO_GENE} in the output.
 #' @param verbose logical; whether or not to display messages for some warnings.
@@ -88,8 +79,6 @@ load_differential_analysis <- function(selected_omes = "all",
                                        selected_tissues = "all",
                                        single_matrix = FALSE,
                                        epigen = FALSE,
-                                       gsutil = "gsutil",
-                                       repo_local_dir = NULL,
                                        combine_with_featgene = FALSE,
                                        verbose = TRUE) {
   selected_tissues <- match.arg(
@@ -129,6 +118,9 @@ load_differential_analysis <- function(selected_omes = "all",
     selected_omes_epigen <- selected_omes[selected_omes %in%
                                             c("epigen-atac-seq",
                                               "epigen-methylcap-seq")]
+    if(verbose){
+      message("You've elected to load in the epigenetic data too. These file sizes are significantly larger and will require loading in data from AWS. This loading can be quite slow.")
+    }
   }
 
   if(verbose & "metab" %in% selected_omes){
@@ -169,17 +161,11 @@ load_differential_analysis <- function(selected_omes = "all",
   }
 
   if (epigen) {
-    epi_list <- .load_differential_analysis(
-      repo_local_dir = repo_local_dir,
-      selected_tissues = selected_tissues,
-      selected_omes = selected_omes_epigen,
-      epigen = TRUE,
-      gsutil = gsutil
-    )
+    epi_list <- load_DA_from_AWS(selected_tissues = selected_tissues,
+                                 selected_omes = selected_omes_epigen)
 
     epi_list <- unlist(epi_list, recursive = FALSE)
     epi_list <- .process_raw_DA(epi_list)
-
     out <- c(out, epi_list)
   }
 
@@ -245,7 +231,7 @@ load_differential_analysis <- function(selected_omes = "all",
 #' @importFrom dplyr %>% left_join select arrange mutate across any_of relocate
 #'   everything
 #'
-#' @author Tyler Sagendorf
+#' @author Tyler Sagendorf Christopher Jin
 #'
 #' @importFrom data.table as.data.table := setcolorder setorderv setkeyv copy
 #'   setDT
@@ -317,8 +303,9 @@ load_differential_analysis <- function(selected_omes = "all",
 }
 
 
+
 #' @title Download Differential Analysis Results from Google Cloud Bucket
-#'
+#' @description currently not being used. Was previously used for internal consortium members. Not being fully removed because the saving of data objects is still implemented using this function
 #' @param repo_local_dir character; path to the local directory. If this
 #'   directory does not contain a data/tmp/ subdirectory, one will be created
 #'   and files will be downloaded from the appropriate GCP Bucket; otherwise,

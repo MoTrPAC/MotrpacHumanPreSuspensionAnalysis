@@ -13,7 +13,6 @@
 #' @param color_time_labels toggle TRUE/FALSE allows color tiles corresponding to time point colors to be used instead of x-axis
 #' @param include_legend toggle TRUE/FALSE to include a legend
 #' @param legend_position if include_legend == TRUE, position can be selected
-#' @param repo_local_dir character; a local path to save differential analysis files to, relevant only if epigen is TRUE
 #' @param verbose logical; toggle to include verbose information
 #' @param epigen logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object.
 #'
@@ -59,8 +58,6 @@ plot_single_feature = function(feature,
                                color_time_labels = FALSE,
                                include_legend = TRUE,
                                legend_position = "right",
-                               gsutil = "gsutil",
-                               repo_local_dir = NULL,
                                verbose = TRUE,
                                epigen = FALSE){
 
@@ -112,8 +109,6 @@ plot_single_feature = function(feature,
   da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
     selected_omes = selected_omes,
     selected_tissues = selected_tissues,
-    gsutil = gsutil,
-    repo_local_dir = repo_local_dir,
     single_matrix = TRUE,
     epigen = epigen
   )

@@ -9,8 +9,6 @@ load_differential_analysis(
   selected_tissues = "all",
   single_matrix = FALSE,
   epigen = FALSE,
-  gsutil = "gsutil",
-  repo_local_dir = NULL,
   combine_with_featgene = FALSE,
   verbose = TRUE
 )
@@ -25,18 +23,7 @@ load_differential_analysis(
 \code{data.frame} containing all results. Otherwise, returns a list of
 \code{data.frame} objects (default).}
 
-\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired.
-Requires gsutil access and a local directory location for files to be downloaded}
-
-\item{gsutil}{character; path to the gsutil executable. Defaults to "gsutil",
-which assumes the path to the gsutil executable has been added to the PATH
-variable. Only used when \code{epigen} is \code{TRUE}.}
-
-\item{repo_local_dir}{character; path to the local directory. If this
-directory does not contain a data/tmp/ subdirectory, one will be created
-and files will be downloaded from the appropriate GCP Bucket; otherwise,
-files will be read from the directory (or downloaded, if any are missing).
-Only used if \code{epigen} is not \code{FALSE}.}
+\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.}
 
 \item{combine_with_featgene}{logical; whether to include columns from
 \code{HUMAN_FEATURE_TO_GENE} in the output.}
