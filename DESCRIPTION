@@ -1,6 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9001
+Title: Summary statistics and modeling results from the Motrpac Pre-COVID Suspension phase.
+Version: 0.0.0.9002
+Date: Feb 4th, 2026
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -67,5 +68,5 @@ Suggests:
     testthat (>= 3.0.0),
     TMSig (>= 1.0.0),
     variancePartition,
-    MotrpacHumanPreSuspensionData
+    MotrpacHumanPreSuspensionData(>= 0.0.1.100)
 VignetteBuilder: knitr

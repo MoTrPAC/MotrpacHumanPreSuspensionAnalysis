@@ -14,8 +14,6 @@ plot_single_feature(
   color_time_labels = FALSE,
   include_legend = TRUE,
   legend_position = "right",
-  gsutil = "gsutil",
-  repo_local_dir = NULL,
   verbose = TRUE,
   epigen = FALSE
 )
@@ -38,8 +36,6 @@ plot_single_feature(
 \item{include_legend}{toggle TRUE/FALSE to include a legend}
 
 \item{legend_position}{if include_legend == TRUE, position can be selected}
-
-\item{repo_local_dir}{character; a local path to save differential analysis files to, relevant only if epigen is TRUE}
 
 \item{verbose}{logical; toggle to include verbose information}
 
