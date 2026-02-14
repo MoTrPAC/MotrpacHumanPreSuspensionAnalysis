@@ -1,2 +1,12 @@
 *.html
 *.R
+
+*.Rproj.user
+*.Rhistory
+*.Ruserdata
+*.Rproj
+*.code-workspace
+
+# Mac OS X
+*.DS_Store
+.Rproj.user
