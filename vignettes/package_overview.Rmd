@@ -456,8 +456,8 @@ plot_enrich_heatmap(
 # Filter to specific pathways
 plot_enrich_heatmap(
   x = CAMERA_RESULTS,
-  set_ids = c("00123", "00456"),
-  selected_tissues = c("muscle", "adipose"),
+  set_ids = c("00269", "00930"),
+  selected_tissues = c("adipose", "blood"),
   selected_ome = "transcript-rna-seq",
   filename = "selected_pathways.pdf"
 )
