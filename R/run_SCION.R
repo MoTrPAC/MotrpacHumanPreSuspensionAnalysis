@@ -320,7 +320,7 @@ scion_data_processing <- function(randomGroupCode,
                                   target.mat,
                                   permute=NULL,
                                   dim="row"){
-  if(class(reg.mat) == "character" | class(target.mat) == "character")
+  if(is.character(reg.mat) | is.character(target.mat))
     stop("It looks like your input is a character. Use .load_scion_matrixes to specify your input more specifically")
 
   find_shared_participants = .find_shared_scion_matrixes(randomGroupCode, reg.mat, target.mat)
@@ -401,7 +401,7 @@ RS.Get.Weight.Matrix<- function(target.matrix,
   colnames(weight.matrix) <- input.names
 
   # set mtry
-  if (class(K) == "numeric") {
+  if (is.numeric(K)) {
     mtry <- K
   } else if (K == "sqrt") {
     mtry <- round(sqrt(num.inputs))
