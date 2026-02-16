@@ -71,6 +71,7 @@ Suggests:
     testthat (>= 3.0.0),
     variancePartition,
     MotrpacHumanPreSuspensionData (>= 0.0.1.100)
+Config/testthat/edition: 3
 VignetteBuilder: knitr
 Remotes:
     MoTrPAC/MotrpacBicQC,
