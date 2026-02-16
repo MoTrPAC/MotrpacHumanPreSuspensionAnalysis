@@ -181,10 +181,28 @@ DA_primary <- DA[DA$contrast_type == "exercise_with_controls", ]
 feature IDs to gene symbols, Entrez IDs, Ensembl IDs, UniProt IDs, RefMet
 names, KEGG IDs, and flanking sequences (for phosphoproteomics).
 
-```{r}
+```{r, eval = FALSE}
 str(HUMAN_FEATURE_TO_GENE[1:5, ])
 ```
+which should print:
 
+```
+Classes ‘data.table’ and 'data.frame':	5 obs. of  11 variables:
+ $ assay               : Factor w/ 7 levels "epigen-atac-seq",..: 1 1 1 1 1
+ $ feature_id          : Factor w/ 1958568 levels "(E,E)-Trichostachine",..: 793 794 795 796 797
+ $ entrez_gene         : Factor w/ 23406 levels "1","10","100",..: 8521 8521 4916 8521 8521
+ $ gene_symbol         : Factor w/ 32911 levels "5_8S_rRNA","5S_rRNA",..: 27108 27108 22521 27108 27108
+ $ ensembl_gene        : Factor w/ 50007 levels "ENSG00000000003",..: 4704 4704 10604 4704 4704
+ $ custom_annotation   : Factor w/ 10 levels "3' UTR","5' UTR",..: 6 5 6 6 6
+ $ relationship_to_gene: num  0 0 0 0 0
+ $ uniprot             : Factor w/ 10736 levels "A0A075B6H7","A0A075B6H8",..: NA NA NA NA NA
+ $ refmet_name         : Factor w/ 1513 levels "(E,E)-Trichostachine",..: NA NA NA NA NA
+ $ kegg_id             : Factor w/ 392 levels "C00002","C00003",..: NA NA NA NA NA
+ $ flanking_sequence   : Factor w/ 30682 levels "------MsDEEVEQV",..: NA NA NA NA NA
+ - attr(*, ".internal.selfref")=<externalptr> 
+ - attr(*, "sorted")= chr [1:2] "assay" "feature_id"
+ ```
+ 
 ## 2.5 Metabolomics CVs
 
 `METABOLOMICS_CVS` contains coefficients of variation for metabolomics
