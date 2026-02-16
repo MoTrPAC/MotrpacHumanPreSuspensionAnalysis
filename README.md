@@ -4,21 +4,66 @@
 # MotrpacHumanPreSuspensionAnalysis
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 # Installation
 
-More vignettes are currently being developed, as well as a pkgdown
-website to get users more familiar with the data.
+## Important: Bioconductor Dependencies
+
+This package relies on several Bioconductor packages
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). To ensure smooth
+installation and avoid version mismatches or slow source builds, set the
+correct Bioconductor version before installing:
 
 ``` r
+# Install/update BiocManager if needed
+if (!require("BiocManager", quietly = TRUE)) {
+  install.packages("BiocManager")
+}
+
+# Use version 3.20 for R 4.4.x (recommended)
+BiocManager::install(version = "3.20")
+
+# Now install the package
 devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
                          build_vignettes = TRUE)
 ```
 
-We recommend building the vignettes when installing.
+### One-liner for most users
 
-(use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")`)
+``` r
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.20")
+devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
+                         build_vignettes = TRUE)
+```
+
+## Troubleshooting
+
+- **macOS (especially Apple Silicon):** If you see compilation errors or
+  missing tools, install Xcode Command Line Tools first:
+
+  ``` bash
+  xcode-select --install
+  ```
+
+- **Bioconductor errors** (e.g. old version 3.18 warnings or failed
+  binaries): Re-run `BiocManager::install(version = "3.20")` before the
+  GitHub install.
+
+- **R \>= 4.4 is required.** The TMSig package (used for gene set
+  enrichment analysis and visualization) requires R 4.4 or later.
+
+After installation, load the package:
+
+``` r
+library(MotrpacHumanPreSuspensionAnalysis)
+```
+
+We recommend building the vignettes when installing (use
+`vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
+them).
 
 ## Package Use and Structure
 
@@ -284,6 +329,41 @@ assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18).
 This file links all of the features included in any ome/tissue in our
 analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
 RNAseq) may link up in terms of ome names.
+
+## For Developers
+
+### Testing installation with Docker
+
+A `Dockerfile` is included to verify that the package and all its
+dependencies install correctly in a clean Linux environment. This is
+useful for catching missing system libraries or silent dependency
+failures before release.
+
+``` bash
+# Build the image (installs all Imports, Suggests, and Remotes)
+docker build -t motrpac-presuspension-test .
+
+# Run the container to confirm the package loads
+docker run --rm motrpac-presuspension-test
+```
+
+To render vignettes inside the container:
+
+``` bash
+docker run --rm -v "$(pwd)/vignette_output:/output" motrpac-presuspension-test R -e "
+  rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');
+  rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output');
+  rmarkdown::render('vignettes/internal_users.Rmd', output_dir='/output')
+"
+```
+
+### Running tests
+
+The package uses `testthat` (edition 3). To run the test suite locally:
+
+``` r
+devtools::test()
+```
 
 ## Acknowledgements
 
