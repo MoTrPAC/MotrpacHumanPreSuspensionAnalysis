@@ -51,7 +51,7 @@ plot_cmeans <- function(FCM,
                         dpi = 250,
                         modality = c("both", "Endur", "Resist"))
 {
-  if (class(FCM) != "fclust") {
+  if (!inherits(FCM, "fclust")) {
     stop("`FCM` must be an object of class 'fclust'. See documentation ",
          "for details.")
   }
