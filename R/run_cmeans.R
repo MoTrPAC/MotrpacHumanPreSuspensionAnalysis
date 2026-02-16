@@ -24,7 +24,7 @@
 #'
 #' @importFrom data.table rbindlist
 #' @importFrom stats complete.cases
-#' @importFrom Biobase ExpressionSet
+#' @importFrom Biobase ExpressionSet exprs
 #' @importFrom Mfuzz mestimate mfuzz Dmin
 #'
 #' @export run_cmeans
