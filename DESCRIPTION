@@ -1,5 +1,5 @@
 Package: MotrpacHumanPreSuspensionAnalysis
-Title: Summary statistics and modeling results from the Motrpac Pre-COVID Suspension phase.
+Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
 Version: 0.0.0.9002
 Date: Feb 4th, 2026
 Authors@R: c(
@@ -38,14 +38,14 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: 
-    R (>= 3.5)
+    R (>= 4.4)
 LazyData: true
+LazyDataCompression: xz
 Imports: 
     data.table (>= 1.15.0),
     dplyr,
     magrittr,
     MotrpacBicQC (>= 0.9.5),
-    roxygen2,
     stats,
     tibble,
     utils,
@@ -58,15 +58,24 @@ Imports:
     forcats,
     scales,
     stringr,
-    Mfuzz
-Suggests: 
+    Mfuzz,
+    TMSig (>= 1.0.0)
+Suggests:
     here,
     knitr,
+    pheatmap,
     rmarkdown,
     readr,
+    roxygen2,
     table.glue,
     testthat (>= 3.0.0),
-    TMSig (>= 1.0.0),
     variancePartition,
-    MotrpacHumanPreSuspensionData(>= 0.0.1.100)
+    MotrpacHumanPreSuspensionData (>= 0.0.1.100)
 VignetteBuilder: knitr
+Remotes:
+    MoTrPAC/MotrpacBicQC,
+    bioc::ComplexHeatmap,
+    bioc::Biobase,
+    bioc::Mfuzz,
+    bioc::TMSig,
+    bioc::variancePartition
