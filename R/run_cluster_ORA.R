@@ -135,36 +135,36 @@ run_cluster_ORA <- function(FCM,
 
   ## Reformat results ----
   out <- res_list %>%
-    bind_rows(.id = "idcol") %>%
-    mutate(tissue = sub("\\..*", "", idcol),
+    dplyr::bind_rows(.id = "idcol") %>%
+    dplyr::mutate(tissue = sub("\\..*", "", idcol),
            assay = sub(".*\\.", "", idcol),
            idcol = NULL,
            across(.cols = c(tissue, assay),
                   .fns = ~ factor(.x, levels = unique(.x)))) %>%
     # Include collection, database, set_id, and set_short columns
-    left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
+    dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
     droplevels.data.frame() %>%
-    mutate(set_size_DB = lengths(index)[set],
+    dplyr::mutate(set_size_DB = lengths(index)[set],
            size_ratio = round(set_size / set_size_DB, digits = 3L),
            across(.cols = everything(),
                   .fns = ~ structure(.x, names = NULL)),
            across(.cols = c(set_size, set_size_DB),
                   .fns = as.integer)) %>%
     # Convert set columns to factors to reduce the object size
-    mutate(across(.cols = c(set_id, set, set_short),
+    dplyr::mutate(across(.cols = c(set_id, set, set_short),
                   .fns = ~ factor(.x, levels = sort(unique(.x))))) %>%
     # Adjust p-values separately by tissue, ome, collection, and cluster.
-    mutate(.by = c(tissue, assay, collection, cluster),
+    dplyr::mutate(.by = c(tissue, assay, collection, cluster),
            adj_p_value = p.adjust(p_value, method = "BH")) %>%
-    arrange(tissue, assay, cluster, collection, database, p_value) %>%
+    dplyr::arrange(tissue, assay, cluster, collection, database, p_value) %>%
     # Reorder columns
-    select(tissue, assay, cluster,
+    dplyr::select(tissue, assay, cluster,
            collection, database, set_id, set, set_short,
            set_size, set_size_DB, size_ratio,
            set_size_in_cluster, cluster_size, background_size,
            p_value, adj_p_value) %>%
     # Remove columns with all NA values
-    select(where(function(x) !all(is.na(x))))
+    dplyr::select(where(function(x) !all(is.na(x))))
 
   return(out)
 }

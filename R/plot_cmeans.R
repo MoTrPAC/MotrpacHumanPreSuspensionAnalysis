@@ -121,7 +121,7 @@ plot_cmeans <- function(FCM,
                         names_to = "timepoint",
                         names_pattern = "timepoint_(.*)",
                         values_to = "z") %>%
-    mutate(modality = sub("\\..*", "", timepoint),
+    dplyr::mutate(modality = sub("\\..*", "", timepoint),
            timepoint = sub("^[^.]+\\.(.*)$", "\\1", timepoint),
            timepoint = gsub("(?<=\\d)_(?=\\d)", "/", timepoint, perl = TRUE),
            timepoint = gsub("_", " ", timepoint),
@@ -134,15 +134,15 @@ plot_cmeans <- function(FCM,
     tidyr::pivot_longer(cols = -feature,
                         names_to = "cluster",
                         values_to = "membership") %>%
-    filter(membership >= min_membership) %>%
-    inner_join(cluster_assignment, by = c("feature", "cluster")) %>%
-    mutate(cluster = factor(cluster, levels = rownames(centers)))
+    dplyr::filter(membership >= min_membership) %>%
+    dplyr::inner_join(cluster_assignment, by = c("feature", "cluster")) %>%
+    dplyr::mutate(cluster = factor(cluster, levels = rownames(centers)))
 
   df <- inner_join(z_df, cluster_df, by = "feature")  %>%
-    arrange(cluster, membership) %>%
-    mutate(feature = factor(feature, levels = unique(feature))) %>%
+    dplyr::arrange(cluster, membership) %>%
+    dplyr::mutate(feature = factor(feature, levels = unique(feature))) %>%
     droplevels.data.frame() %>%
-    mutate(cluster = factor(cluster, levels = rownames(centers)))
+    dplyr::mutate(cluster = factor(cluster, levels = rownames(centers)))
 
   # Cluster centroids
   center_df <- centers %>%
@@ -152,7 +152,7 @@ plot_cmeans <- function(FCM,
                         names_to = "timepoint",
                         names_pattern = "timepoint_(.*)",
                         values_to = "center") %>%
-    mutate(modality = sub("\\..*", "", timepoint),
+    dplyr::mutate(modality = sub("\\..*", "", timepoint),
            modality = factor(modality, levels = levels(z_df$modality)),
            timepoint = sub("^[^.]+\\.(.*)$", "\\1", timepoint),
            timepoint = gsub("(?<=\\d)_(?=\\d)", "/", timepoint, perl = TRUE),

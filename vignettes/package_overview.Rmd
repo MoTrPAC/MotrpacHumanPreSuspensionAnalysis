@@ -122,8 +122,8 @@ biological question:
 
 - **`exercise_no_controls`** (10 contrasts) — Within-group change from
   baseline for each exercise group (post - pre), without adjusting for
-  control group changes. Useful when control timepoints are unavailable
-  (e.g., during-exercise samples at 20 and 40 min).
+  control group changes. These are purely for comparison to describe the effect
+  of the controls. These are not presented as a main result in the manuscript. 
 
 - **`Endur_vs_Resist`** (4 contrasts) — Direct comparison of endurance vs.
   resistance exercise at each post-exercise timepoint (delta-delta design).

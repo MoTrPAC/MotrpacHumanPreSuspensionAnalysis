@@ -39,7 +39,8 @@ selected summary statistics, with missing columns filled as \code{NA}.
 Loads group- and timepoint-level summary statistics for normalized expression
 data across tissues, molecular assays, and analytical platforms. Summary
 statistics consist of means and standard deviations computed within
-randomization groups and timepoints.
+randomization groups and timepoints. Limited to the initial acute bout, training
+data is excluded here.
 
 These datasets are intended for descriptive and exploratory analyses.
 Sample-level data are not distributed with this package and are available
@@ -50,12 +51,10 @@ redundant metabolites; see the Methods section of the associated
 documentation for details.
 }
 \details{
-Although summary statistics are provided for all normalized expression
-features, only features with paired sample size \code{n >= 3} were eligible
-for hypothesis testing in downstream differential analyses. Consequently,
-some features (e.g., proteomics PH features in adipose tissue with extensive
-missingness) may appear in the summary statistics but lack corresponding
-differential analysis p-values.
+Summary statistics were filtered to only those that qualified for differential analysis.
+This means for proteomics/phosphoproteomics, samples required a paired n>=3 to be included.
+See the methods in the manuscript for more information.
+In epigenetic assays, features were filtered for significant features (FDR<0.05) for file size purposes.
 }
 \examples{
 \dontrun{

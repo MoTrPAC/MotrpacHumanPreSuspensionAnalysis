@@ -55,7 +55,6 @@ Imports:
     ComplexHeatmap,
     latex2exp,
     Biobase,
-    forcats,
     scales,
     stringr,
     Mfuzz,
