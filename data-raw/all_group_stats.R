@@ -6,14 +6,16 @@ library(tidyr)
 library(tibble)
 library(here)
 
-# repo_local_dir = "~/Downloads"
-# qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = "epigen-atac-seq",
-#                                                  epigen = TRUE,
-#                                                  repo_local_dir = repo_local_dir)
-
-qc_data = MotrpacHumanPreSuspensionData::load_qc(epigen = FALSE,
+repo_local_dir = "~/Downloads"
+qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = "epigen-atac-seq",
+                                                 epigen = TRUE,
                                                  repo_local_dir = repo_local_dir)
 
+da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(epigen = TRUE,
+                                                                        single_matrix = TRUE)
+
+# qc_data = MotrpacHumanPreSuspensionData::load_qc(epigen = FALSE,
+#                                                  repo_local_dir = repo_local_dir)
 
 .save_one = function(obj, name) {
   assign(x = name, value = obj)
@@ -64,6 +66,5 @@ for(tissue in names(qc_data)){
     object_name = paste(toupper(tissue), toupper(assay), "SUM_STATS", sep = "_")
     object_name = gsub("-", "_", object_name)
     .save_one(group_stats, name = object_name)
-
   }
 }

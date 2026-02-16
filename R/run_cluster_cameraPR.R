@@ -119,38 +119,38 @@ run_cluster_cameraPR <- function(FCM,
   ## Reformat results ----
   out <- res_list %>%
     bind_rows(.id = "idcol") %>%
-    mutate(tissue = sub("\\..*", "", idcol),
+    dplyr::mutate(tissue = sub("\\..*", "", idcol),
            assay = sub(".*\\.", "", idcol),
            idcol = NULL,
            across(.cols = c(tissue, assay),
                   .fns = ~ factor(.x, levels = unique(.x)))) %>%
-    select(-Direction) %>% # all "Up"
+    dplyr::select(-Direction) %>% # all "Up"
     # Rename columns
-    rename(cluster = Contrast, set = GeneSet, set_size = NGenes,
+    dplyr::rename(cluster = Contrast, set = GeneSet, set_size = NGenes,
            p_value = PValue, adj_p_value = FDR) %>%
     # Include collection, database, set_id, and set_short columns
-    left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
+    dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
     droplevels.data.frame() %>%
-    mutate(set_size_DB = lengths(index)[set],
+    dplyr::mutate(set_size_DB = lengths(index)[set],
            size_ratio = round(set_size / set_size_DB, digits = 3L),
            across(.cols = everything(),
                   .fns = ~ structure(.x, names = NULL)),
            across(.cols = c(set_size, set_size_DB),
                   .fns = as.integer)) %>%
     # Convert set columns to factors to reduce the object size
-    mutate(across(.cols = c(set_id, set, set_short),
+    dplyr::mutate(across(.cols = c(set_id, set, set_short),
                   .fns = ~ factor(.x, levels = sort(unique(.x))))) %>%
     # Adjust p-values separately by tissue, ome, collection, and cluster.
-    mutate(.by = c(tissue, assay, collection, cluster),
+    dplyr::mutate(.by = c(tissue, assay, collection, cluster),
            adj_p_value = p.adjust(p_value, method = "BH")) %>%
-    arrange(tissue, assay, cluster, collection, database, p_value) %>%
+    dplyr::arrange(tissue, assay, cluster, collection, database, p_value) %>%
     # Reorder columns
-    select(tissue, assay, cluster,
+    dplyr::select(tissue, assay, cluster,
            collection, database, set_id, set, set_short,
            set_size, set_size_DB, size_ratio,
            p_value, adj_p_value) %>%
     # Remove columns with all NA values
-    select(where(function(x) !all(is.na(x))))
+    dplyr::select(where(function(x) !all(is.na(x))))
 
   return(out)
 }
@@ -249,43 +249,43 @@ run_cluster_cameraPR <- function(FCM,
   mem_df <- mem %>%
     as.data.frame() %>%
     tibble::rownames_to_column("feature_id") %>%
-    mutate(assay = sub("(^[^ ]+).*", "\\1", feature_id),
+    dplyr::mutate(assay = sub("(^[^ ]+).*", "\\1", feature_id),
            feature_id = sub("[^ ]+ ", "", feature_id)) %>%
-    filter(assay %in% selected_omes)
+    dplyr::filter(assay %in% selected_omes)
 
   if (nrow(mem_df) == 0L)
     return(NULL)
 
   feature_conv <- MotrpacHumanPreSuspensionAnalysis::HUMAN_FEATURE_TO_GENE %>%
-    filter(!grepl("^epi", assay)) %>%
-    select(feature_id, gene_symbol, flanking_sequence) %>%
-    mutate(across(.cols = everything(),
+    dplyr::filter(!grepl("^epi", assay)) %>%
+    dplyr::select(feature_id, gene_symbol, flanking_sequence) %>%
+    dplyr::mutate(across(.cols = everything(),
                   .fns = as.character)) %>%
-    mutate(
+    dplyr::mutate(
       new_id = case_when(
         !is.na(flanking_sequence) ~ flanking_sequence,
         !is.na(gene_symbol) ~ gene_symbol,
         TRUE ~ feature_id # if N/A or if features are RefMet names
       )
     ) %>%
-    mutate(new_id = strsplit(new_id, split = "\\|")) %>%
+    dplyr::mutate(new_id = strsplit(new_id, split = "\\|")) %>%
     tidyr::unnest(cols = new_id) %>%
-    select(feature_id, new_id)
+    dplyr::select(feature_id, new_id)
 
   mem_list <- mem_df %>%
-    left_join(feature_conv, by = "feature_id") %>%
+    dplyr::left_join(feature_conv, by = "feature_id") %>%
     # Some features are not in HUMAN_FEATURE_TO_GENE
-    mutate(new_id = ifelse(is.na(new_id), feature_id, new_id)) %>%
+    dplyr::mutate(new_id = ifelse(is.na(new_id), feature_id, new_id)) %>%
     tidyr::pivot_longer(cols = all_of(colnames(mem)),
                         names_to = "cluster",
                         values_to = "membership") %>%
-    mutate(cluster = factor(cluster, levels = unique(cluster))) %>%
+    dplyr::mutate(cluster = factor(cluster, levels = unique(cluster))) %>%
     # Select highest probability per new_id in each assay/cluster combination
-    arrange(assay, cluster, desc(membership), new_id) %>%
-    filter(.by = c(assay, cluster),
+    dplyr::arrange(assay, cluster, desc(membership), new_id) %>%
+    dplyr::filter(.by = c(assay, cluster),
            !duplicated(new_id)) %>%
     tidyr::nest(.by = assay) %>%
-    mutate(data = lapply(data, function(data_i) {
+    dplyr::mutate(data = lapply(data, function(data_i) {
       data_i %>%
         tidyr::pivot_wider(id_cols = new_id,
                            names_from = cluster,

@@ -74,7 +74,7 @@ plot_cluster_enrichment <- function(x,
          paste(missing_cols, collapse = ", "))
 
   x <- x %>%
-    filter(tissue %in% selected_tissues,
+    dplyr::filter(tissue %in% selected_tissues,
            assay == selected_ome) %>%
     droplevels.data.frame()
 
@@ -82,7 +82,7 @@ plot_cluster_enrichment <- function(x,
     stop("Invalid combination of `selected_tissues` and `selected_ome`.")
 
   x <- x %>%
-    filter(.by = set,
+    dplyr::filter(.by = set,
            any(adj_p_value < padj_cutoff))
 
   if (nrow(x) == 0L)
@@ -94,10 +94,10 @@ plot_cluster_enrichment <- function(x,
   # Keep sets that appear in at least 2 tissues if multiple tissues are selected
   if (length(selected_tissues) > 1L) {
     x <- x %>%
-      filter(.by = set,
+      dplyr::filter(.by = set,
              length(unique(tissue)) > 1L) %>%
-      arrange(tissue, cluster) %>%
-      mutate(cluster = paste(tissue, " ", cluster),
+      dplyr::arrange(tissue, cluster) %>%
+      dplyr::mutate(cluster = paste(tissue, " ", cluster),
              cluster = factor(cluster, levels = unique(cluster)))
   }
 
@@ -109,12 +109,12 @@ plot_cluster_enrichment <- function(x,
     n_top <- max(1L, n_top, na.rm = FALSE)
 
     set_ids <- x %>%
-      filter(adj_p_value < padj_cutoff) %>%
+      dplyr::filter(adj_p_value < padj_cutoff) %>%
       # p_value used for ordering to avoid ties
-      slice_min(p_value,
+      dplyr::slice_min(p_value,
                 by = cluster,
                 n = n_top) %>%
-      pull(set_id) %>%
+      dplyr::pull(set_id) %>%
       unique() %>%
       as.character()
   } else {
@@ -134,7 +134,7 @@ plot_cluster_enrichment <- function(x,
     }
   }
 
-  x <- filter(x, set_id %in% set_ids)
+  x <- dplyr::filter(x, set_id %in% set_ids)
 
   column_labels <- levels(x$cluster)
 

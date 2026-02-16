@@ -93,8 +93,8 @@ plot_feature_heatmap <- function(feature_ids = NULL,
                                       selected_tissues = selected_tissue,
                                       combine_with_featgene = TRUE,
                                       single_matrix = TRUE) %>%
-    filter(contrast_type == !!contrast_type) %>%
-    mutate(across(.cols = any_of(c("feature_id", "gene_symbol",
+    dplyr::filter(contrast_type == !!contrast_type) %>%
+    dplyr::mutate(across(.cols = any_of(c("feature_id", "gene_symbol",
                                    "platform", "flanking_sequence")),
                   .fns = as.character))
 
@@ -105,8 +105,8 @@ plot_feature_heatmap <- function(feature_ids = NULL,
            "from the `SET_TO_ID` object. Make sure to include preceding 0s if there are any")
     }
     pathway <- MotrpacHumanPreSuspensionAnalysis::SET_TO_ID %>%
-      filter(set_id == !!set_id) %>%
-      pull(set)
+      dplyr::filter(set_id == !!set_id) %>%
+      dplyr::pull(set)
 
     if(length(pathway) == 0) stop("`set_id` must be a character string specifying a set ID ",
                                   "from the `SET_TO_ID` object. Make sure to include preceding 0s if there are any")
@@ -126,7 +126,7 @@ plot_feature_heatmap <- function(feature_ids = NULL,
 
   if (is.null(set_id)) {
     # Filter before modifying IDs
-    DA_res <- filter(DA_res, feature_id %in% feature_ids)
+    DA_res <- dplyr::filter(DA_res, feature_id %in% feature_ids)
   }
 
   if (!nrow(DA_res)) {
@@ -137,12 +137,12 @@ plot_feature_heatmap <- function(feature_ids = NULL,
 
   if (selected_ome %in% c("prot-pr", "transcript-rna-seq", "prot-ol")) {
     DA_res <- DA_res %>%
-      mutate(feature_id = ifelse(!is.na(gene_symbol),
+      dplyr::mutate(feature_id = ifelse(!is.na(gene_symbol),
                                  gene_symbol,
                                  feature_id))
   } else if (selected_ome == "prot-ph") {
     DA_res <- DA_res %>%
-      mutate(feature_id = gsub("[sty]", ";", feature_id),
+      dplyr::mutate(feature_id = gsub("[sty]", ";", feature_id),
              feature_id = sub("(.*);$", "\\1", feature_id),
              feature_id = sub(".*_", "", feature_id),
              feature_id = paste(gene_symbol, feature_id))
@@ -159,7 +159,7 @@ plot_feature_heatmap <- function(feature_ids = NULL,
                            several.ok = TRUE)
 
     DA_res <- DA_res %>%
-      filter(platform %in% platforms)
+      dplyr::filter(platform %in% platforms)
 
     if (!nrow(DA_res)) {
       stop("Metabolites in `feature_ids` not found in the provided platforms.")
@@ -168,11 +168,11 @@ plot_feature_heatmap <- function(feature_ids = NULL,
 
   if (!is.null(set_id)) {
     if (selected_ome %in% c("prot-pr", "transcript-rna-seq")) {
-      DA_res <- filter(DA_res, feature_id %in% feature_ids)
+      DA_res <- dplyr::filter(DA_res, feature_id %in% feature_ids)
     } else if (selected_ome == "prot-ph") {
-      DA_res <- filter(DA_res, gene_symbol %in% feature_ids)
+      DA_res <- dplyr::filter(DA_res, gene_symbol %in% feature_ids)
     } else if (selected_ome == "metab") {
-      DA_res <- filter(DA_res, feature_id %in% feature_ids)
+      DA_res <- dplyr::filter(DA_res, feature_id %in% feature_ids)
     }
   }
 
@@ -197,15 +197,15 @@ plot_feature_heatmap <- function(feature_ids = NULL,
   # updated x
   x <- x %>%
     dplyr::mutate(contrast2 = factor(contrast2, levels = contrast2_levels)) %>%
-    arrange(contrast2, abs(z.std), feature_id) %>%
-    filter(.by = contrast2,
+    dplyr::arrange(contrast2, abs(z.std), feature_id) %>%
+    dplyr::filter(.by = contrast2,
            !duplicated(feature_id)) %>%
-    select(feature_id, contrast, contrast2, z.std, adj_p_value,tissue) %>%
+    dplyr::select(feature_id, contrast, contrast2, z.std, adj_p_value,tissue) %>%
     droplevels.data.frame()
 
   # Better contrast labels
   contrast_df <- .add_contrast_labels() %>%
-    filter(contrast %in% levels(x$contrast)) %>%
+    dplyr::filter(contrast %in% levels(x$contrast)) %>%
     droplevels.data.frame()
 
   contrast_colors_vector <- .contrast_colors()
@@ -240,12 +240,12 @@ plot_feature_heatmap <- function(feature_ids = NULL,
 
   ## Create heatmap ----
   column_df <- distinct(x,tissue,contrast) %>%
-    mutate(tissue = factor(tissue, levels = selected_tissue)) %>%
-    arrange(contrast,tissue) %>%
-    left_join(contrast_df,
+    dplyr::mutate(tissue = factor(tissue, levels = selected_tissue)) %>%
+    dplyr::arrange(contrast,tissue) %>%
+    dplyr::left_join(contrast_df,
               by = "contrast") %>%
-    rename(modality = anno_group) %>%
-    mutate(modality = factor(modality,
+    dplyr::rename(modality = anno_group) %>%
+    dplyr::mutate(modality = factor(modality,
                              levels = c("EE", "RE")))
 
   if(full_modality_names == TRUE){
@@ -306,13 +306,13 @@ plot_feature_heatmap <- function(feature_ids = NULL,
   if (length(anno_col) > 0 ) {
     if (!is.null(anno_df[["Tissue"]]) && !is.null(anno_df[["Modality"]])) {
       column_split <- anno_df %>%
-        mutate(column_split = paste(Tissue, Modality),
+        dplyr::mutate(column_split = paste(Tissue, Modality),
                row_order = 1:n()) %>%
-        arrange(Tissue, Modality) %>%
-        mutate(column_split = factor(column_split,
+        dplyr::arrange(Tissue, Modality) %>%
+        dplyr::mutate(column_split = factor(column_split,
                                      levels = unique(column_split))) %>%
-        arrange(row_order) %>%
-        pull(column_split)
+        dplyr::arrange(row_order) %>%
+        dplyr::pull(column_split)
     } else if (!is.null(anno_df[["Tissue"]])) {
       column_split <- anno_df[["Tissue"]]
     } else if (!is.null(anno_df[["Modality"]])) {
@@ -382,7 +382,7 @@ plot_feature_heatmap <- function(feature_ids = NULL,
   # thus, either filter features with missing values, or don't cluster rows
   if (multi_tissue_clust_rows == TRUE){
     x<-x %>%
-      filter(feature_id %in% test_x$feature_id)
+      dplyr::filter(feature_id %in% test_x$feature_id)
     clust_row_info == TRUE
   } else {
     clust_row_info <- ifelse(length(selected_tissue) > 1, FALSE, TRUE)

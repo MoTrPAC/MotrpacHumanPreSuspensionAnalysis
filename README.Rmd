@@ -28,22 +28,6 @@ Mfuzz, Biobase, TMSig). To ensure smooth installation and avoid version mismatch
 set the correct Bioconductor version before installing:
 
 ```{r, eval = FALSE}
-# Install/update BiocManager if needed
-if (!require("BiocManager", quietly = TRUE)) {
-  install.packages("BiocManager")
-}
-
-# Use version 3.20 for R 4.4.x (recommended)
-BiocManager::install(version = "3.20")
-
-# Now install the package
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
-                         build_vignettes = TRUE)
-```
-
-### One-liner for most users
-
-```{r, eval = FALSE}
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(version = "3.20")
 devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
@@ -73,6 +57,8 @@ library(MotrpacHumanPreSuspensionAnalysis)
 We recommend building the vignettes when installing
 (use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse them).
 
+The vignette `package_overview` describes how to use the package functions in detail, but the most common functions for those just looking to view the results are also described here in this README. 
+
 
 ## Package Use and Structure
 
@@ -89,7 +75,7 @@ and include as many details as possible.
 
 ###  Omic modeling summary statistics (Differential Analysis)
 
-See more documentation via `?load_differential_analysis`
+See more documentation via `?load_differential_analysis` or the vignette
 
 Note that the public release of epigenetic files is through AWS CDN, and the file sizes are quite a bit larger than the other omes, so setting `epigen = TRUE` can be very slow!
 
@@ -164,9 +150,11 @@ single_matrix = load_summary_stats(single_matrix = TRUE)
 colnames(single_matrix)
 ```
 
-Although summary statistics are provided for all normalized expression features, only features with paired sample size n >= 3 were eligible for hypothesis testing in downstream differential analyses. As a result, some features—particularly those affected by missingness in certain assays—may appear in the summary-statistics tables but lack corresponding differential-analysis p-values.
+Summary statistics were filtered to only those that qualified for differential analysis. This means for proteomics/phosphoproteomics, samples required a paired n>=3 to be included. See the methods in the manuscript for more information. 
 
 For metabolomics assays, summary statistics are computed after filtering redundant metabolites. Details of this filtering procedure are described in the Methods section of the manuscript. 
+
+For epigenetic assays (ATAC, methyl), only significant features are included to save on file size.
 
 
 ## Other items

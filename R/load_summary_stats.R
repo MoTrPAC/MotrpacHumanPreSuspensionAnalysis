@@ -15,12 +15,10 @@
 #' documentation for details.
 #'
 #' @details
-#' Although summary statistics are provided for all normalized expression
-#' features, only features with paired sample size \code{n >= 3} were eligible
-#' for hypothesis testing in downstream differential analyses. Consequently,
-#' some features (e.g., proteomics PH features in adipose tissue with extensive
-#' missingness) may appear in the summary statistics but lack corresponding
-#' differential analysis p-values.
+#' Summary statistics were filtered to only those that qualified for differential analysis.
+#' This means for proteomics/phosphoproteomics, samples required a paired n>=3 to be included.
+#' See the methods in the manuscript for more information.
+#' In epigenetic assays, features were filtered for significant features for file size purposes.
 #'
 #' @param selected_tissues character; tissues to include. One or more of
 #'   \code{"adipose"}, \code{"blood"}, \code{"muscle"}, or \code{"all"}.
@@ -100,6 +98,10 @@ load_summary_stats = function(selected_tissues = "all",
       "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
       "epigen-atac-seq", metab_only_list()
     )
+  }
+
+  if("prot-ph" %in% selected_omes & verbose){
+    message("Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.")
   }
 
   sum_stat_files <- data(package = "MotrpacHumanPreSuspensionAnalysis")

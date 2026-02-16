@@ -92,7 +92,7 @@ plot_enrich_heatmap <- function(x,
          "respectively.")
 
   x <- x %>%
-    filter(contrast_type == !!contrast_type,
+    dplyr::filter(contrast_type == !!contrast_type,
            assay == selected_ome,
            tissue %in% selected_tissues) %>%
     droplevels.data.frame()
@@ -103,12 +103,12 @@ plot_enrich_heatmap <- function(x,
   # Keep sets that appear in at least 2 tissues if multiple tissues are selected
   if (length(selected_tissues) > 1L) {
     x <- x %>%
-      filter(.by = set,
+      dplyr::filter(.by = set,
              length(unique(tissue)) > 1L)
   }
 
   x <- x %>%
-    filter(.by = set,
+    dplyr::filter(.by = set,
            any(adj_p_value < padj_cutoff))
 
   if (!nrow(x))
@@ -122,12 +122,12 @@ plot_enrich_heatmap <- function(x,
     n_top <- max(1L, n_top, na.rm = FALSE)
 
     set_ids <- x %>%
-      filter(adj_p_value < padj_cutoff) %>%
+      dplyr::filter(adj_p_value < padj_cutoff) %>%
       # p_value used for ordering to avoid ties
-      slice_min(p_value,
+      dplyr::slice_min(p_value,
                 by = c(tissue, contrast),
                 n = n_top) %>%
-      pull(set_id) %>%
+      dplyr::pull(set_id) %>%
       unique() %>%
       as.character()
   } else {
@@ -147,11 +147,11 @@ plot_enrich_heatmap <- function(x,
     }
   }
 
-  x <- filter(x, set_id %in% set_ids)
+  x <- dplyr::filter(x, set_id %in% set_ids)
 
   # Better contrast labels
   contrast_df <- .add_contrast_labels() %>%
-    filter(contrast %in% levels(x$contrast)) %>%
+    dplyr::filter(contrast %in% levels(x$contrast)) %>%
     droplevels.data.frame()
 
   # If FALSE, assume PTM-SEA results
@@ -159,15 +159,15 @@ plot_enrich_heatmap <- function(x,
 
   ## Create heatmap ----
   column_df <- distinct(x, tissue, contrast) %>%
-    mutate(tissue = factor(tissue, levels = selected_tissues)) %>%
-    arrange(contrast, tissue) %>%
-    left_join(contrast_df,
+    dplyr::mutate(tissue = factor(tissue, levels = selected_tissues)) %>%
+    dplyr::arrange(contrast, tissue) %>%
+    dplyr::left_join(contrast_df,
               by = "contrast") %>%
-    rename(modality = anno_group) %>%
-    mutate(modality = factor(modality,
+    dplyr::rename(modality = anno_group) %>%
+    dplyr::mutate(modality = factor(modality,
                              levels = c("EE", "RE")))
 
-  anno_df <- select(column_df,
+  anno_df <- dplyr::select(column_df,
                     Tissue = tissue,
                     Modality = modality,
                     Timepoint = contrast_labels)
@@ -181,7 +181,7 @@ plot_enrich_heatmap <- function(x,
 
   # Contrasts from different tissues must be treated as distinct
   column_df <- column_df %>%
-    mutate(contrast2 = paste(tissue, contrast),
+    dplyr::mutate(contrast2 = paste(tissue, contrast),
            contrast2 = factor(contrast2, levels = unique(contrast2)))
 
   # If there is a single tissue, remove the tissue annotation
@@ -210,13 +210,13 @@ plot_enrich_heatmap <- function(x,
   if (length(anno_col)) {
     if (!is.null(anno_df[["Tissue"]]) && !is.null(anno_df[["Modality"]])) {
       column_split <- anno_df %>%
-        mutate(column_split = paste(Tissue, Modality),
+        dplyr::mutate(column_split = paste(Tissue, Modality),
                row_order = 1:n()) %>%
-        arrange(Tissue, Modality) %>%
-        mutate(column_split = factor(column_split,
+        dplyr::arrange(Tissue, Modality) %>%
+        dplyr::mutate(column_split = factor(column_split,
                                      levels = unique(column_split))) %>%
-        arrange(row_order) %>%
-        pull(column_split)
+        dplyr::arrange(row_order) %>%
+        dplyr::pull(column_split)
     } else if (!is.null(anno_df[["Tissue"]])) {
       column_split <- anno_df[["Tissue"]]
     } else if (!is.null(anno_df[["Modality"]])) {
@@ -292,9 +292,9 @@ plot_enrich_heatmap <- function(x,
     {all(. >= 0.5 * max(.))}
 
   x <- x %>%
-    mutate(contrast2 = paste(tissue, contrast),
+    dplyr::mutate(contrast2 = paste(tissue, contrast),
            contrast2 = factor(contrast2, levels = levels(column_df$contrast2))) %>%
-    mutate(set_short = factor(set_short, levels = sort(unique(set_short))))
+    dplyr::mutate(set_short = factor(set_short, levels = sort(unique(set_short))))
 
   # If there are few terms, add padding to the bottom of the heatmap to avoid
   # increasing overall height of the file
