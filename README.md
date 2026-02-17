@@ -9,12 +9,24 @@
 
 # Installation
 
+## Requirements
+
+**R >= 4.4 is required.** Several dependencies (e.g. TMSig) require
+R 4.4 or later. The package will not install on older R versions.
+
 ## Important: Bioconductor Dependencies
 
 This package relies on several Bioconductor packages
-(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). To ensure smooth
-installation and avoid version mismatches or slow source builds, set the
-correct Bioconductor version before installing:
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct
+Bioconductor version for your R installation before installing. Using
+the wrong Bioconductor version will cause dependency failures.
+
+| R version | Bioconductor version |
+|-----------|---------------------|
+| R 4.4.x   | 3.20                |
+| R 4.5.x   | 3.22                |
+
+**For R 4.4:**
 
 ``` r
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
@@ -22,6 +34,18 @@ BiocManager::install(version = "3.20")
 devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
                          build_vignettes = TRUE)
 ```
+
+**For R 4.5:**
+
+``` r
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.22")
+devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
+                         build_vignettes = TRUE)
+```
+
+You can check your R version with `R.version.string` and your
+Bioconductor version with `BiocManager::version()`.
 
 We recommend building the vignettes when installing (use
 `vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
@@ -40,12 +64,10 @@ looking to view the results are also described here in this README.
   xcode-select --install
   ```
 
-- **Bioconductor errors** (e.g. old version 3.18 warnings or failed
-  binaries): Re-run `BiocManager::install(version = "3.20")` before the
+- **Bioconductor errors** (e.g. version mismatch warnings or failed
+  binaries): Re-run `BiocManager::install(version = "X.YZ")` with the
+  correct version for your R installation (see table above) before the
   GitHub install.
-
-- **R \>= 4.4 is required.** The TMSig package (used for gene set
-  enrichment analysis and visualization) requires R 4.4 or later.
 
 After installation, load the package:
 
@@ -75,7 +97,7 @@ Described here is the first human cohort of MoTrPAC: sedentary adults
 enrolled prior to study suspension during the COVID-19 pandemic (N=175)
 randomized to either endurance or resistance exercise, or non-exercise
 control. **This package and any results are focused on these
-participant’s acute exercise bout.**
+participant's acute exercise bout.**
 
 Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or
 CON groups and also to temporal profiles of biospecimen collection
@@ -130,7 +152,7 @@ names(differential_analysis[["blood"]])
 
 By default,`load_differential_analysis` loads in the dataset in a nested
 list first by tissue, then by ome. Choose whichever tissues or omes
-you’d like via `selected_omes` or `selected_tissues`. You can find
+you'd like via `selected_omes` or `selected_tissues`. You can find
 available tissues via `tissue_available_list()` or
 `ome_available_list()`. Or if you enter in a wrong mistaken tissue/ome,
 a warning or error will help.
@@ -146,12 +168,12 @@ single_matrix = load_differential_analysis(single_matrix = TRUE)
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
 #>             refmet/feature name.
 colnames(single_matrix)
-#>  [1] "tissue"             "assay"              "platform"          
-#>  [4] "full_model"         "contrast"           "contrast_short"    
-#>  [7] "contrast_type"      "contrast_category"  "randomGroupCode"   
-#> [10] "Timepoint"          "feature_id"         "logFC"             
+#>  [1] "tissue"             "assay"              "platform"
+#>  [4] "full_model"         "contrast"           "contrast_short"
+#>  [7] "contrast_type"      "contrast_category"  "randomGroupCode"
+#> [10] "Timepoint"          "feature_id"         "logFC"
 #> [13] "CI.L"               "CI.R"               "degrees_of_freedom"
-#> [16] "logLik"             "t"                  "AveExpr"           
+#> [16] "logLik"             "t"                  "AveExpr"
 #> [19] "z.std"              "p_value"            "adj_p_value"
 ```
 
@@ -166,19 +188,19 @@ groups directly, and finally comparisons within group without a matched
 control.
 
 The majority of the analysis is done via exercise groups relative to the
-controls (“exercise_with_controls”). Make sure you filter to whichever
+controls ("exercise_with_controls"). Make sure you filter to whichever
 category you prefer before continuing with analysis.
 
 ``` r
 single_matrix %>% dplyr::pull(contrast_type) %>% unique()
-#> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist       
-#> [4] baseline               control_only          
+#> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist
+#> [4] baseline               control_only
 #> 5 Levels: exercise_with_controls exercise_no_controls ... control_only
 ```
 
-If you’d like to display things in terms of the specific groups being
-compared instead, you can use the ‘contrast_category’ column. (EE-CON,
-RE-CON would be subsets of the ‘exercise_with_controls’ category from
+If you'd like to display things in terms of the specific groups being
+compared instead, you can use the 'contrast_category' column. (EE-CON,
+RE-CON would be subsets of the 'exercise_with_controls' category from
 above, for example.)
 
 ``` r
@@ -190,8 +212,8 @@ single_matrix %>% dplyr::pull(contrast_category) %>% unique()
 The splicing data was processed in a separate analysis effort, but
 significant results (FDR \< 0.05) are available in this R package as
 well. The full set is available on the motrpac data hub, but is not
-included here because of file size limitations. See “Exercise modulation
-of the alternative splicing landscape in human tissues” for more
+included here because of file size limitations. See "Exercise modulation
+of the alternative splicing landscape in human tissues" for more
 information.
 
 ``` r
@@ -234,10 +256,10 @@ summary_stats = load_summary_stats(
 names(summary_stats)
 #> [1] "adipose" "blood"   "muscle"
 names(summary_stats[["blood"]])
-#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"      
-#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"  
-#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"    
-#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"           
+#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"
+#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"
+#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"
+#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"
 #> [13] "transcript-rna-seq"
 ```
 
@@ -262,7 +284,7 @@ upon request via the Motrpac Consortium.
 ``` r
 single_matrix = load_summary_stats(single_matrix = TRUE)
 colnames(single_matrix)
-#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
+#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"
 #> [5] "Mean"            "SD"              "tissue"          "assay"
 ```
 
@@ -284,10 +306,10 @@ included, due to file size limitations.
 
 ``` r
 colnames(CAMERA_RESULTS)
-#>  [1] "tissue"         "assay"          "contrast_type"  "contrast"      
-#>  [5] "contrast_short" "collection"     "database"       "set_id"        
-#>  [9] "set"            "set_short"      "set_size"       "set_size_DB"   
-#> [13] "size_ratio"     "direction"      "t"              "df"            
+#>  [1] "tissue"         "assay"          "contrast_type"  "contrast"
+#>  [5] "contrast_short" "collection"     "database"       "set_id"
+#>  [9] "set"            "set_short"      "set_size"       "set_size_DB"
+#> [13] "size_ratio"     "direction"      "t"              "df"
 #> [17] "z.std"          "p_value"        "adj_p_value"
 ```
 
@@ -334,13 +356,13 @@ head(HUMAN_FEATURE_TO_GENE)
 The feature-to-gene map links each feature tested in differential
 analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as
 the gene identifier source. Proteomics feature IDs (UniProt IDs) were
-mapped to gene symbols and Entrez IDs using UniProt’s mapping files.
+mapped to gene symbols and Entrez IDs using UniProt's mapping files.
 Epigenomics features were mapped to the nearest gene using the
 ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release
 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were
 assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18).
 This file links all of the features included in any ome/tissue in our
-analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
+analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
 RNAseq) may link up in terms of ome names.
 
 ## For Developers
@@ -363,10 +385,12 @@ docker run --rm motrpac-presuspension-test
 To render vignettes inside the container:
 
 ``` bash
-docker run --rm -v "$(pwd)/vignette_output:/output" motrpac-presuspension-test R -e "
-  rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');
-  rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output');
-  rmarkdown::render('vignettes/internal_users.Rmd', output_dir='/output')
+docker run --rm -v "$(pwd)/vignette_output:/output" motrpac-presuspension-test bash -c "
+  apt-get update && apt-get install -y --no-install-recommends pandoc &&
+  R -e \"
+    rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');
+    rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output')
+  \"
 "
 ```
 
