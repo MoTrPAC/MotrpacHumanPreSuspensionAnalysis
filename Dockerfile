@@ -25,6 +25,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libx11-dev \
     libxt-dev \
     xvfb \
+    pandoc \
     && rm -rf /var/lib/apt/lists/*
 
 # Install BiocManager first
