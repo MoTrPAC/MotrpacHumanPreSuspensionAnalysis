@@ -33,7 +33,7 @@ fuzzy c-means clustering, and publication-quality visualization.
 
 **Important:** This package distributes summary-level results only.
 Subject-level data are not included and must be requested separately through
-[MoTrPAC data access procedures](https://motrpac-data.org).
+[MoTrPAC data access procedures](https://motrpac-data.org/project-overview#acute-exercise).
 
 ## Study design overview
 
