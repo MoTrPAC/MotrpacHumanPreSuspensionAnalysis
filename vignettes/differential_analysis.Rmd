@@ -7,7 +7,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
+```{r knitr-opts, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -27,20 +27,20 @@ The package is designed to distribute summary-level results only. Subject-level 
 
 ## Basic Usage
 
-```{r}
+```{r load-da-all}
 DA_list <- load_differential_analysis()
 ```
 
 This loads all available tissues and omes using lazily loaded package data. Results are returned as a nested list, organized by tissue and assay.
 
 To inspect a single result table:
-```{r}
+```{r da-adipose-prot-str}
 str(DA_list[["adipose"]][["prot-pr"]])
 ```
 Selecting Tissues and Omics Modalities
 
 Users can restrict loading to specific tissues and omes to reduce memory usage and improve clarity.
-```{r}
+```{r load-da-muscle}
 DA_list <- load_differential_analysis(
   selected_tissues = c("muscle"),
   selected_omes = c("transcript-rna-seq", "prot-pr")
@@ -59,7 +59,7 @@ P-values are recalculated within contrasts after filtering.
 Users should consult the `METABOLOMICS_CVS` object if a metabolite of interest appears to be missing.
 
 If you forget which syntax is used for omes & tissues:
-```{r}
+```{r available-omes-tissues}
 ome_available_list()
 tissue_available_list()
 ```
@@ -68,7 +68,7 @@ tissue_available_list()
 ## Epigenomics Data (ATAC-seq and MethylCap-seq)
 
 Epigenomics results are not stored directly in the package due to file size constraints. When epigen = TRUE, results are downloaded from the MoTrPAC Google Cloud bucket using gsutil and cached locally.
-```{r, eval = FALSE}
+```{r load-da-epigen, eval = FALSE}
 DA_list <- load_differential_analysis(
   epigen = TRUE,
   repo_local_dir = "/path/to/local/cache"
@@ -93,7 +93,7 @@ statistical testing—is described in detail in: "Characterization of exercise-m
 alternative splicing landscape in human skeletal muscle, adipose tissue, and blood in the MoTrPAC Study". Due to file size limitations, only significant (FDR<0.05) results are included as a data object.
 
 
-```{r}
+```{r splicing-da-names}
 names(SPLICING_DA)
 ```
 
@@ -101,7 +101,7 @@ names(SPLICING_DA)
 
 Since the differential abundance analysis largely all comes in one format, you can choose to display the results in one big matrix format instead, if you find that to be easier to work with.
 
-```{r}
+```{r load-da-single-matrix}
 DA_matrix <- load_differential_analysis(
   single_matrix = TRUE
 )
@@ -113,7 +113,7 @@ DA_matrix <- load_differential_analysis(
 Setting combine_with_featgene = TRUE merges DA results with the
 HUMAN_FEATURE_TO_GENE mapping table, adding gene-level annotations where applicable.
 
-```{r}
+```{r load-da-annotated}
 DA_list <- load_differential_analysis(
   combine_with_featgene = TRUE
 )
