@@ -425,19 +425,18 @@ a molecular signature pathway, showing z-scores across contrasts.
 # Note: filename is required — the heatmap is saved directly to PDF.
 # Heatmap from a specific pathway (using set_id from SET_TO_ID)
 plot_feature_heatmap(
-  set_id = "11725",
-  selected_tissue = "muscle",
-  selected_ome = "prot-ph",
-  contrast_type = "exercise_with_controls",
-  filename = "feature_heatmap_example.pdf"
+    feature_ids = c("ENSG00000006210.7", "ENSG00000176907.5"),
+    selected_tissue = "muscle",
+    selected_ome = "transcript-rna-seq",
+    filename = "custom_feature_heatmap.pdf"
 )
 
-# Heatmap from a custom list of features
 plot_feature_heatmap(
-  feature_ids = c("PPARGC1A", "TFEB", "VEGFA"),
-  selected_tissue = "muscle",
-  selected_ome = "transcript-rna-seq",
-  filename = "custom_feature_heatmap.pdf"
+    set_id = "00001",
+    selected_tissue = "muscle",
+    selected_ome = "prot-ph",
+    contrast_type = "exercise_with_controls",
+    filename = "feature_heatmap_example.pdf"
 )
 ```
 
@@ -560,23 +559,6 @@ Key parameters:
 
 Pre-computed results are available as `CAMERA_RESULTS`.
 
-## 6.2 Over-Representation Analysis (ORA)
-
-`run_ORA()` performs a hypergeometric test for enrichment of an input set of
-"interesting" features against a background.
-
-```{r run-ora-example}
-# Define a background from all gene sets
-bg <- MOLECULAR_SIGNATURES
-bg[c("PSP", "REFMET")] <- NULL
-bg <- unique(unlist(bg))
-
-# Use OXPHOS genes as the interesting input
-input <- MOLECULAR_SIGNATURES$MITOCARTA[["MITOCARTA_OXPHOS"]]
-
-res <- run_ORA(input = input, background = bg)
-head(res[, c("set", "set_size_in_input", "p_value", "adj_p_value")])
-```
 
 ---
 
