@@ -52,6 +52,7 @@ Imports:
     tidyr,
     ggplot2,
     ggpubr,
+    grid,
     ComplexHeatmap,
     latex2exp,
     Biobase,
