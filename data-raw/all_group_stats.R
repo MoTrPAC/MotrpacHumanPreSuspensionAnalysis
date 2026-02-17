@@ -7,11 +7,11 @@ library(tibble)
 library(here)
 
 repo_local_dir = "~/Downloads"
-qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = "all",
-                                                 epigen = TRUE,
+qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = metab_only_list(),
+                                                 epigen = FALSE,
                                                  repo_local_dir = repo_local_dir)
 
-da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(epigen = TRUE,
+da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected_omes = metab_only_list(),
                                                                         single_matrix = TRUE)
 
 # qc_data = MotrpacHumanPreSuspensionData::load_qc(epigen = FALSE,
@@ -71,7 +71,7 @@ for(tissue in names(qc_data)){
       )
 
     group_stats$tissue = tissue
-    group_stats$assay = assay_filt
+    group_stats$assay = assay
 
     object_name = paste(toupper(tissue), toupper(assay), "SUM_STATS", sep = "_")
     object_name = gsub("-", "_", object_name)

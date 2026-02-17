@@ -23,6 +23,14 @@ devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
                          build_vignettes = TRUE)
 ```
 
+We recommend building the vignettes when installing (use
+`vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
+them).
+
+The vignette `package_overview` describes how to use the package
+functions in detail, but the most common functions for those just
+looking to view the results are also described here in this README.
+
 ## Troubleshooting
 
 - **macOS (especially Apple Silicon):** If you see compilation errors or
@@ -45,14 +53,6 @@ After installation, load the package:
 library(MotrpacHumanPreSuspensionAnalysis)
 ```
 
-We recommend building the vignettes when installing (use
-`vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
-them).
-
-The vignette `package_overview` describes how to use the package
-functions in detail, but the most common functions for those just
-looking to view the results are also described here in this README.
-
 ## Package Use and Structure
 
 This package is the public release version of the results from the
@@ -68,6 +68,30 @@ instead include the n, mean, and SD for feature in each exercise group
 and tissue as well as the differential analysis/hypothesis testing
 summary statistics. It will further include various metadata about the
 feature to gene mapping or sample outliers.
+
+## Data info and background
+
+Described here is the first human cohort of MoTrPAC: sedentary adults
+enrolled prior to study suspension during the COVID-19 pandemic (N=175)
+randomized to either endurance or resistance exercise, or non-exercise
+control. **This package and any results are focused on these
+participant’s acute exercise bout.**
+
+Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or
+CON groups and also to temporal profiles of biospecimen collection
+(Methods). A non-exercising group was deemed critical to control for the
+molecular effects of circadian rhythm, fasting, tissue sampling, and any
+other non-exercise intervention stimulus. The majority of participants
+were female (72%). Females represented a larger percentage of the CON
+group as compared to EE and RE. Mean age was 41 ± 15 years, the average
+BMI was 26.9 ± 4.0 kg/m2, average waist circumference was 92 ± 12 cm.
+Baseline CPET testing by cycle ergometer showed an average VO2peak of 24
+± 7.0 ml/kg/min (Females = 22.2 ± 5.12; Males = 31.3 ± 7.09). See the
+MoTrPAC manuscripts for more information.
+
+There is a larger cohort of subjects being analyzed and that analysis
+will cover many more details about subgroup differences, including
+information about response to longitudinal training, heterogeneity, etc.
 
 ## Getting help
 
@@ -252,7 +276,7 @@ redundant metabolites. Details of this filtering procedure are described
 in the Methods section of the manuscript.
 
 For epigenetic assays (ATAC, methyl), only significant features are
-included to save on file size.
+included, due to file size limitations.
 
 ## Other items
 
@@ -344,14 +368,6 @@ docker run --rm -v "$(pwd)/vignette_output:/output" motrpac-presuspension-test R
   rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output');
   rmarkdown::render('vignettes/internal_users.Rmd', output_dir='/output')
 "
-```
-
-### Running tests
-
-The package uses `testthat` (edition 3). To run the test suite locally:
-
-``` r
-devtools::test()
 ```
 
 ## Acknowledgements
