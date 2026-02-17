@@ -53,7 +53,8 @@
 #' @importFrom grDevices dev.off
 #' @importFrom tibble column_to_rownames
 #' @importFrom tidyr pivot_wider
-#' @importFrom grid grid.text
+#' @importFrom grid grid.text convertUnit convertWidth convertHeight
+#'   grobWidth grobHeight textGrob unit gpar
 #' @examples
 #' \dontrun{
 #' plot_feature_heatmap(set_id = "11725",
