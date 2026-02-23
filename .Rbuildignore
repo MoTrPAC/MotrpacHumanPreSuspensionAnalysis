@@ -1,2 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^data-raw$
+^.*\.code-workspace$
+^README\.Rmd$
+^LICENSE\.md$
+^Dockerfile$
+^\.dockerignore$
+^vignette_output$

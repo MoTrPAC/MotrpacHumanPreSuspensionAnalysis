@@ -6,14 +6,16 @@ library(tidyr)
 library(tibble)
 library(here)
 
-# repo_local_dir = "~/Downloads"
-# qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = "epigen-atac-seq",
-#                                                  epigen = TRUE,
-#                                                  repo_local_dir = repo_local_dir)
-
-qc_data = MotrpacHumanPreSuspensionData::load_qc(epigen = FALSE,
+repo_local_dir = "~/Downloads"
+qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = metab_only_list(),
+                                                 epigen = FALSE,
                                                  repo_local_dir = repo_local_dir)
 
+da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected_omes = metab_only_list(),
+                                                                        single_matrix = TRUE)
+
+# qc_data = MotrpacHumanPreSuspensionData::load_qc(epigen = FALSE,
+#                                                  repo_local_dir = repo_local_dir)
 
 .save_one = function(obj, name) {
   assign(x = name, value = obj)
@@ -30,6 +32,16 @@ for(tissue in names(qc_data)){
   for(assay in names(qc_data[[tissue]])){
     curr_data = qc_data[[tissue]][[assay]][["qc_norm"]]
     if(nrow(curr_data) == 0) next
+    #match to only those that are in the differential analysis
+    assay_filt = ifelse(grepl("metab", assay), "metab", assay)
+    matching_da = da_data %>%
+      dplyr::filter(assay == assay_filt, tissue == !!tissue)
+    if(assay == "epigen-methylcap-seq" | assay == "epigen-atac-seq"){
+      matching_da = matching_da %>% filter(adj_p_value < 0.05)
+    }
+    matching_da = matching_da %>% pull(feature_id) %>% unique()
+    curr_data = curr_data[rownames(curr_data) %in% matching_da,]
+
     curr_meta = qc_data[[tissue]][[assay]][["sample_metadata"]] %>%
       filter(visitcode == "ADU_BAS")
     curr_data = curr_data[,colnames(curr_data) %in% curr_meta$vialLabel]
@@ -64,6 +76,5 @@ for(tissue in names(qc_data)){
     object_name = paste(toupper(tissue), toupper(assay), "SUM_STATS", sep = "_")
     object_name = gsub("-", "_", object_name)
     .save_one(group_stats, name = object_name)
-
   }
 }

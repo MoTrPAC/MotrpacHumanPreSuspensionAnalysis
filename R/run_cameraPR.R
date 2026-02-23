@@ -175,14 +175,14 @@ run_cameraPR <- function(DA_list = NULL,
 
   ## Reformat results ----
   out <- res_list %>%
-    bind_rows(.id = "idcol") %>%
-    mutate(tissue = sub("\\..*", "", idcol),
+    dplyr::bind_rows(.id = "idcol") %>%
+    dplyr::mutate(tissue = sub("\\..*", "", idcol),
            assay = sub(".*\\.", "", idcol),
            idcol = NULL,
            across(.cols = c(tissue, assay),
                   .fns = ~ factor(.x, levels = sort(unique(.x))))) %>%
     # Rename columns
-    rename(contrast = Contrast, set = GeneSet, set_size = NGenes,
+    dplyr::rename(contrast = Contrast, set = GeneSet, set_size = NGenes,
            direction = Direction, t = TwoSampleT, z.std = ZScore,
            p_value = PValue, adj_p_value = FDR) %>%
     # Include contrast_type and contrast_short columns
@@ -202,8 +202,8 @@ run_cameraPR <- function(DA_list = NULL,
         ))
     ) %>%
     # Include collection, database, set_id, and set_short columns
-    left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
-    mutate(set_size = as.integer(set_size),
+    dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
+    dplyr::mutate(set_size = as.integer(set_size),
            set_size_DB = lengths(index)[set],
            size_ratio = round(set_size / set_size_DB,
                               digits = 3L),
@@ -212,16 +212,16 @@ run_cameraPR <- function(DA_list = NULL,
            across(.cols = everything(),
                   .fns = ~ structure(.x, names = NULL))) %>%
     # Convert set columns to factors to reduce the object size
-    mutate(across(.cols = c(set_id, set, set_short),
+    dplyr::mutate(across(.cols = c(set_id, set, set_short),
                   .fns = ~ factor(.x, levels = sort(unique(.x))))) %>%
     droplevels.data.frame() %>%
     # Adjust p-values separately by tissue, ome, contrast, and collection
-    mutate(.by = c(tissue, assay, contrast, collection),
+    dplyr::mutate(.by = c(tissue, assay, contrast, collection),
            adj_p_value = p.adjust(p_value, method = "BH")) %>%
-    arrange(contrast_type, tissue, assay, contrast,
+    dplyr::arrange(contrast_type, tissue, assay, contrast,
             collection, database, p_value) %>%
     # Reorder columns
-    select(tissue, assay, contrast_type, contrast, contrast_short,
+    dplyr::select(tissue, assay, contrast_type, contrast, contrast_short,
            collection, database, set_id, set, set_short,
            set_size, set_size_DB, size_ratio, direction,
            t, df, z.std, p_value, adj_p_value)
@@ -321,15 +321,15 @@ run_cameraPR <- function(DA_list = NULL,
   if (!is.null(.contrast_type)) {
     DA_list <- lapply(DA_list, function(xi) {
       xi %>%
-        select(-any_of(c("contrast_type", "contrast_short"))) %>%
-        mutate(
+        dplyr::select(-any_of(c("contrast_type", "contrast_short"))) %>%
+        dplyr::mutate(
           contrast = factor(contrast,
                             levels = levels(MotrpacHumanPreSuspensionAnalysis::CONTRAST_CONVERTER$contrast))
         ) %>%
-        left_join(MotrpacHumanPreSuspensionAnalysis::CONTRAST_CONVERTER,
+        dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::CONTRAST_CONVERTER,
                   by = "contrast") %>%
-        filter(contrast_type %in% .contrast_type) %>%
-        arrange(contrast) %>%
+        dplyr::filter(contrast_type %in% .contrast_type) %>%
+        dplyr::arrange(contrast) %>%
         droplevels.data.frame()
     })
   }
@@ -340,35 +340,35 @@ run_cameraPR <- function(DA_list = NULL,
     ome_i <- sub(".*\\.", "", name_i)
 
     x <- DA_list[[name_i]] %>%
-      mutate(across(.cols = where(is.factor),
+      dplyr::mutate(across(.cols = where(is.factor),
                     .fns = as.character))
 
     if (convert_features) {
       if (ome_i == "prot-ph") {
         flanking <-
           MotrpacHumanPreSuspensionAnalysis::HUMAN_FEATURE_TO_GENE[, c("feature_id", "flanking_sequence")] %>%
-          mutate(across(.cols = everything(),
+          dplyr::mutate(across(.cols = everything(),
                         .fns = as.character))
 
         # Use flanking sequence as ID
         x <- x %>%
-          left_join(flanking, by = "feature_id") %>%
-          mutate(flanking_sequence = strsplit(flanking_sequence,
+          dplyr::left_join(flanking, by = "feature_id") %>%
+          dplyr::mutate(flanking_sequence = strsplit(flanking_sequence,
                                               split = "\\|")) %>%
           # Convert to single-sequence data
           tidyr::unnest(cols = flanking_sequence) %>%
-          mutate(new_id = flanking_sequence)
+          dplyr::mutate(new_id = flanking_sequence)
       } else if (ome_i == "metab") {
         x <- x %>%
-          mutate(feature_id = as.character(feature_id),
+          dplyr::mutate(feature_id = as.character(feature_id),
                  new_id = feature_id) %>%
-          select(contrast, new_id, z.std)
+          dplyr::select(contrast, new_id, z.std)
       } else {
         # Used to convert proteins and transcripts to genes
         feature_to_symbol <-
           MotrpacHumanPreSuspensionAnalysis::HUMAN_FEATURE_TO_GENE %>%
-          select(feature_id, gene_symbol) %>%
-          mutate(across(.cols = where(is.factor),
+          dplyr::select(feature_id, gene_symbol) %>%
+          dplyr::mutate(across(.cols = where(is.factor),
                         .fns = as.character)) %>%
           distinct()
 
@@ -381,9 +381,9 @@ run_cameraPR <- function(DA_list = NULL,
                paste(dQuote(required_cols), collapse = ", "), ".")
 
         # Include gene_symbol column
-        x <- left_join(x, feature_to_symbol,
+        x <- dplyr::left_join(x, feature_to_symbol,
                        by = "feature_id") %>%
-          mutate(new_id = gene_symbol)
+          dplyr::mutate(new_id = gene_symbol)
 
         if (all(is.na(x$gene_symbol)))
           stop("No features in the ", name_i,
@@ -395,21 +395,21 @@ run_cameraPR <- function(DA_list = NULL,
       x <- x %>%
         # If the new_id is missing, use the feature ID to avoid unnecessarily
         # collapsing or removing rows.
-        mutate(new_id = ifelse(!is.na(new_id),
+        dplyr::mutate(new_id = ifelse(!is.na(new_id),
                                new_id,
                                feature_id)) %>%
-        arrange(contrast, desc(abs(z.std)), z.std) %>%
-        filter(.by = contrast,
+        dplyr::arrange(contrast, desc(abs(z.std)), z.std) %>%
+        dplyr::filter(.by = contrast,
                !duplicated(new_id))
     } else {
       # Do not convert features
-      x <- mutate(x, new_id = feature_id)
+      x <- dplyr::mutate(x, new_id = feature_id)
     }
 
     # Convert to a matrix with contrasts as columns and features as rows. Values
     # of the matrix are z-scores.
     x_wide <- x %>%
-      select(contrast, new_id, z.std) %>%
+      dplyr::select(contrast, new_id, z.std) %>%
       tidyr::pivot_wider(id_cols = new_id,
                          names_from = contrast,
                          values_from = z.std) %>%

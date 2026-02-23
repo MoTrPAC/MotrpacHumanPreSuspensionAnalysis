@@ -149,7 +149,7 @@ run_ORA <- function(input,
 
   out <- data.frame(set = names(index),
                     set_size = lengths(index)) %>%
-    mutate(set_size_DB = set_size_DB[set],
+    dplyr::mutate(set_size_DB = set_size_DB[set],
            size_ratio = round(set_size / set_size_DB, digits = 3L),
            set_size_in_input = lengths(index_filt)[set],
            input_size = length(input),
@@ -161,13 +161,13 @@ run_ORA <- function(input,
                             lower.tail = FALSE),
            across(.cols = everything(),
                   .fns = ~ structure(.x, names = NULL))) %>%
-    arrange(p_value) %>%
-    left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
-    mutate(.by = collection,
+    dplyr::arrange(p_value) %>%
+    dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID, by = "set") %>%
+    dplyr::mutate(.by = collection,
            adj_p_value = p.adjust(p_value, method = "BH")) %>%
     # Reorder columns
-    select(any_of(colnames(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID)), everything()) %>%
-    filter(!is.na(p_value))
+    dplyr::select(any_of(colnames(MotrpacHumanPreSuspensionAnalysis::SET_TO_ID)), everything()) %>%
+    dplyr::filter(!is.na(p_value))
 
   return(out)
 }

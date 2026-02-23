@@ -1,0 +1,697 @@
+---
+title: "MotrpacHumanPreSuspensionAnalysis: Complete Package Overview"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{MotrpacHumanPreSuspensionAnalysis: Complete Package Overview}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r knitr-opts, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5
+)
+```
+
+```{r setup}
+library(MotrpacHumanPreSuspensionAnalysis)
+```
+
+---
+
+# Introduction
+
+`MotrpacHumanPreSuspensionAnalysis` is an R package that distributes
+summary-level results from the MoTrPAC Human Pre-COVID sedentary adult
+exercise study. It provides a unified interface for loading, exploring, and
+analyzing differential abundance results across multiple molecular assays
+("omes") and tissues, along with tools for gene set enrichment analysis,
+fuzzy c-means clustering, and publication-quality visualization.
+
+**Important:** This package distributes summary-level results only.
+Subject-level data are not included and must be requested separately through
+[MoTrPAC data access procedures](https://motrpac-data.org/project-overview#acute-exercise).
+
+## Study design overview
+
+The study examined acute exercise responses across three tissues (adipose,
+blood, and muscle) in sedentary adults randomized to endurance exercise (EE),
+resistance exercise (RE), or control (CON) groups. Samples were collected at
+multiple timepoints relative to a single bout of exercise:
+
+- Pre-exercise (baseline)
+- During exercise (20 min, 40 min)
+- Post-exercise (10 min, 15/30/45 min, 3.5/4 hr, 24 hr)
+
+Molecular profiling spanned seven assay types:
+
+- Transcriptomics (RNA-seq)
+- Global proteomics (prot-pr)
+- Phosphoproteomics (prot-ph)
+- Olink proteomics (prot-ol)
+- Metabolomics (14 targeted and untargeted platforms)
+- ATAC-seq (epigen-atac-seq)
+- MethylCap-seq (epigen-methylcap-seq)
+
+---
+
+# 1. Available Tissues and Omes
+
+Before loading any data, you can check which tissues and omes are available.
+
+```{r tissue-list}
+tissue_available_list()
+```
+
+```{r ome-list}
+ome_available_list()
+```
+
+To see only the metabolomics platforms:
+
+```{r metab-list}
+metab_only_list()
+```
+
+---
+
+# 2. Data Objects
+
+The package ships with a variety of lazily loaded data objects. These objects
+are the backbone of most functions in the package.
+
+## 2.1 Differential Analysis Results
+
+The core DA results are stored as internal data objects (e.g.,
+`MUSCLE_PROT_PR_DA`, `BLOOD_TRNSCRPT_DA`). These should **not** be accessed
+directly. Instead, use the `load_differential_analysis()` function described
+below.
+
+## 2.2 Summary Statistics
+
+Group-level means and standard deviations for normalized expression data are
+stored as `*_SUM_STATS` objects (e.g., `MUSCLE_PROT_PR_SUM_STATS`). Use
+`load_summary_stats()` to access these.
+
+## 2.3 Contrast Converter
+
+The `CONTRAST_CONVERTER` table maps all **33 contrasts** used in differential
+analysis to their short names, types, and categories. Understanding the
+contrast structure is essential for correctly interpreting results.
+
+For a graphical overview of the study design and timepoints, see the
+[MoTrPAC Acute Exercise Study Design](https://motrpac-data.org/project-overview#acute-exercise).
+
+```{r contrast-converter-head}
+head(CONTRAST_CONVERTER)
+```
+
+### Contrast types
+
+The 33 contrasts are organized into five types, each addressing a different
+biological question:
+
+- **`exercise_with_controls`** (10 contrasts) — The primary analysis.
+  Compares each exercise group (Endurance or Resistance) to time-matched
+  controls using a delta-delta design: (exercise post - exercise pre) -
+  (control post - control pre). This removes baseline differences and
+  isolates the exercise-specific response.
+
+- **`exercise_no_controls`** (10 contrasts) — Within-group change from
+  baseline for each exercise group (post - pre), without adjusting for
+  control group changes. These are purely for comparison to describe the effect
+  of the controls. These are not presented as a main result in the manuscript. 
+
+- **`Endur_vs_Resist`** (4 contrasts) — Direct comparison of endurance vs.
+  resistance exercise at each post-exercise timepoint (delta-delta design).
+  Identifies modality-specific responses.
+
+- **`baseline`** (3 contrasts) — Pre-exercise differences between groups
+  (Endurance vs. Resistance, Endurance vs. Control, Resistance vs. Control).
+  Verifies randomization and identifies pre-existing group differences.
+
+- **`control_only`** (6 contrasts) — Control group changes over time relative
+  to their own pre-exercise baseline. Captures effects of fasting, biopsy,
+  or circadian variation unrelated to exercise.
+
+### Available contrasts by type
+
+```{r contrast-barplot, fig.width = 6, fig.height = 3}
+# Number of contrasts per type
+contrast_counts <- as.data.frame(table(CONTRAST_CONVERTER$contrast_type))
+colnames(contrast_counts) <- c("contrast_type", "n")
+
+ggplot2::ggplot(contrast_counts,
+                ggplot2::aes(x = reorder(contrast_type, n), y = n)) +
+  ggplot2::geom_col(fill = "#3C5488") +
+  ggplot2::geom_text(ggplot2::aes(label = n), hjust = -0.3, size = 3.5) +
+  ggplot2::coord_flip() +
+  ggplot2::labs(x = NULL, y = "Number of contrasts",
+                title = "Contrasts per type (33 total)") +
+  ggplot2::theme_minimal() +
+  ggplot2::ylim(0, max(contrast_counts$n) + 1)
+```
+
+```{r contrast-names-by-type, results = "asis"}
+# Show the short contrast names grouped by type
+for (ct in unique(CONTRAST_CONVERTER$contrast_type)) {
+  cat("**", ct, "**\n\n", sep = "")
+  shorts <- CONTRAST_CONVERTER$contrast_short[CONTRAST_CONVERTER$contrast_type == ct]
+  for (s in shorts) cat("-", as.character(s), "\n")
+  cat("\n")
+}
+```
+
+Most downstream analyses focus on `exercise_with_controls`. Make sure to
+filter by `contrast_type` before interpreting results:
+
+```{r filter-primary-contrasts, eval = FALSE}
+DA <- load_differential_analysis(single_matrix = TRUE)
+
+# Keep only the primary exercise-vs-control contrasts
+DA_primary <- DA[DA$contrast_type == "exercise_with_controls", ]
+```
+
+## 2.4 Feature-to-Gene Mapping
+
+`HUMAN_FEATURE_TO_GENE` is a large lookup table (~1.96M rows) that maps
+feature IDs to gene symbols, Entrez IDs, Ensembl IDs, UniProt IDs, RefMet
+names, KEGG IDs, and flanking sequences (for phosphoproteomics).
+
+```{r feature-to-gene-str, eval = FALSE}
+str(HUMAN_FEATURE_TO_GENE[1:5, ])
+```
+which should print:
+
+```
+Classes ‘data.table’ and 'data.frame':	5 obs. of  11 variables:
+ $ assay               : Factor w/ 7 levels "epigen-atac-seq",..: 1 1 1 1 1
+ $ feature_id          : Factor w/ 1958568 levels "(E,E)-Trichostachine",..: 793 794 795 796 797
+ $ entrez_gene         : Factor w/ 23406 levels "1","10","100",..: 8521 8521 4916 8521 8521
+ $ gene_symbol         : Factor w/ 32911 levels "5_8S_rRNA","5S_rRNA",..: 27108 27108 22521 27108 27108
+ $ ensembl_gene        : Factor w/ 50007 levels "ENSG00000000003",..: 4704 4704 10604 4704 4704
+ $ custom_annotation   : Factor w/ 10 levels "3' UTR","5' UTR",..: 6 5 6 6 6
+ $ relationship_to_gene: num  0 0 0 0 0
+ $ uniprot             : Factor w/ 10736 levels "A0A075B6H7","A0A075B6H8",..: NA NA NA NA NA
+ $ refmet_name         : Factor w/ 1513 levels "(E,E)-Trichostachine",..: NA NA NA NA NA
+ $ kegg_id             : Factor w/ 392 levels "C00002","C00003",..: NA NA NA NA NA
+ $ flanking_sequence   : Factor w/ 30682 levels "------MsDEEVEQV",..: NA NA NA NA NA
+ - attr(*, ".internal.selfref")=<externalptr> 
+ - attr(*, "sorted")= chr [1:2] "assay" "feature_id"
+ ```
+ 
+## 2.5 Metabolomics CVs
+
+`METABOLOMICS_CVS` contains coefficients of variation for metabolomics
+features, used internally to select the lowest-CV feature when multiple
+features map to the same RefMet metabolite.
+
+```{r metab-cvs-head}
+head(METABOLOMICS_CVS)
+```
+
+## 2.6 Molecular Signatures
+
+`MOLECULAR_SIGNATURES` is a named list of gene set databases used for
+enrichment analysis. Available databases include:
+
+```{r mol-sig-names}
+names(MOLECULAR_SIGNATURES)
+```
+
+These include canonical pathway databases (BIOCARTA, KEGG_MEDICUS, PID,
+REACTOME, WikiPathways), Gene Ontology collections (GOBP, GOCC, GOMF),
+MitoCarta3.0, PhosphoSitePlus kinase substrates (PSP), RefMet chemical
+subclasses (REFMET), PTMSigDB, and CellMarker.
+
+## 2.7 SET_TO_ID
+
+`SET_TO_ID` maps each molecular signature to a unique numeric ID and
+shortened name for use in figures and enrichment analyses.
+
+```{r set-to-id-head}
+head(SET_TO_ID)
+```
+
+## 2.8 Pre-computed Enrichment and Clustering Results
+
+The package includes pre-computed results for convenience:
+
+- `CAMERA_RESULTS` — CAMERA-PR enrichment results across all tissues and omes
+- `FCM_CLUSTERS` — Fuzzy c-means clustering assignments
+- `FCM_CAMERA` — Cluster-level CAMERA enrichment results
+- `FCM_ORA` — Cluster-level over-representation analysis results
+
+## 2.9 Other Data Objects
+
+- `COVARIATES_FILE` — covariates used in differential modeling
+- `OUTLIERS` — flagged outlier samples from QC review
+- `UTORONTO_TFs` — curated human transcription factor list (Lambert et al.)
+- `OME_TISSUE_CODE` — tissue codes for each ome
+- `SPLICING_DA` — significant differential alternative splicing results
+  (FDR < 0.05)
+
+### Color and Annotation Objects
+
+For consistent figure styling, the package provides named color vectors:
+
+- `HUMAN_TISSUE_COLORS` — tissue colors
+- `HUMAN_EXERCISE_GROUP_COLORS` — exercise group colors (EE, RE, CON)
+- `HUMAN_ACUTE_TIMEPOINT_COLORS` — timepoint phase colors
+- `HUMAN_OME_COLORS` — molecular modality colors
+- `HUMAN_SEX_COLORS` — sex-based colors
+- `HUMAN_TISSUE_ABBR` — tissue abbreviations
+
+---
+
+# 3. Loading Differential Analysis Results
+
+The primary entry point for accessing DA results is
+`load_differential_analysis()`.
+
+## 3.1 Load all results
+
+```{r load-da-all}
+DA_list <- load_differential_analysis()
+```
+
+This returns a nested list organized by tissue (top level) and ome (second
+level):
+
+```{r da-list-structure}
+names(DA_list)
+lapply(DA_list, names)
+```
+
+Each element is a `data.table` with standardized columns including `tissue`,
+`assay`, `contrast`, `contrast_type`, `feature_id`, `logFC`, `z.std`,
+`p_value`, `adj_p_value`, and more.
+
+```{r da-muscle-prot-str}
+str(DA_list[["muscle"]][["prot-pr"]])
+```
+
+## 3.2 Filter by tissue and ome
+
+```{r load-da-muscle-rna}
+DA_muscle_rna <- load_differential_analysis(
+  selected_tissues = "muscle",
+  selected_omes = "transcript-rna-seq"
+)
+```
+
+## 3.3 Return a single matrix
+
+For analyses that prefer a flat data frame:
+
+```{r load-da-single-matrix}
+DA_matrix <- load_differential_analysis(single_matrix = TRUE)
+dim(DA_matrix)
+```
+
+## 3.4 Include gene annotations
+
+Merge DA results with `HUMAN_FEATURE_TO_GENE` in one step:
+
+```{r load-da-annotated}
+DA_annotated <- load_differential_analysis(
+  selected_tissues = "muscle",
+  selected_omes = "prot-pr",
+  combine_with_featgene = TRUE
+)
+colnames(DA_annotated[["muscle"]][["prot-pr"]])
+```
+
+## 3.5 Epigenomics data
+
+Epigenomics results are not bundled with the package due to file size.
+Setting `epigen = TRUE` downloads them from AWS:
+
+```{r load-da-epigen, eval = FALSE}
+DA_list <- load_differential_analysis(epigen = TRUE)
+```
+
+This requires network access and can take 30+ minutes for the initial
+download.
+
+## 3.6 Metabolomics handling
+
+When any metabolomics platform is selected, all metabolomics data are loaded
+to enable consistent platform-level filtering. Redundant features mapping to
+the same RefMet metabolite are resolved by selecting the lowest-CV feature,
+and p-values are recalculated within contrasts. If a metabolite of interest
+appears missing, consult `METABOLOMICS_CVS`.
+
+## 3.7 Splicing data
+
+Differential alternative splicing results (FDR < 0.05 only) are available
+directly:
+
+```{r splicing-da-names}
+names(SPLICING_DA)
+```
+
+---
+
+# 4. Loading Summary Statistics
+
+`load_summary_stats()` loads group-level means and standard deviations for
+normalized expression data.
+
+```{r load-sum-stats, eval = FALSE}
+## Load all summary statistics
+sum_stats <- load_summary_stats()
+
+## Load metabolomics only
+metab_stats <- load_summary_stats(selected_omes = "metab")
+
+## Load as a single combined table
+adipose_rna <- load_summary_stats(
+  selected_tissues = "adipose",
+  selected_omes = "transcript-rna-seq",
+  single_matrix = TRUE
+)
+```
+
+The interface mirrors `load_differential_analysis()` with `selected_tissues`,
+`selected_omes`, and `single_matrix` parameters.
+
+---
+
+# 5. Visualization
+
+The package provides several plotting functions for both individual features
+and pathway-level results.
+
+## 5.1 Single Feature Plots
+
+`plot_single_feature()` creates time-course line plots for a given feature,
+gene, or metabolite across tissues and omes. Points are highlighted when the
+adjusted p-value falls below a threshold.
+
+```{r plot-single-feature-tfeb, fig.width = 5, fig.height = 3}
+# Returns a ggplot object that displays inline.
+# Use the optional output_file parameter to save to PDF.
+plot_single_feature(
+  feature = "TFEB",
+  selected_tissues = "muscle",
+  selected_omes = "prot-pr",
+  p_level = 0.05,
+  color_time_labels = TRUE,
+  include_legend = FALSE
+)
+```
+
+Key parameters:
+
+- `feature` — a feature_id, gene_symbol, or refmet_name (case-insensitive)
+- `p_level` — adjusted p-value threshold; significant points are filled black
+- `color_time_labels` — replaces x-axis text with colored tiles (single-panel
+  only)
+- `scale_factor` — scales all plot elements proportionally for
+  posters/presentations
+- `output_file` — optional path to save (recommended single-panel dimensions:
+  H=1.54in, W=1.225in at scale_factor=1)
+
+## 5.2 Feature Heatmaps
+
+`plot_feature_heatmap()` generates a ComplexHeatmap for a set of features or
+a molecular signature pathway, showing z-scores across contrasts.
+
+```{r plot-feature-heatmap, eval = FALSE}
+# Note: filename is required — the heatmap is saved directly to PDF.
+# Heatmap from a specific pathway (using set_id from SET_TO_ID)
+plot_feature_heatmap(
+    feature_ids = c("ENSG00000006210.7", "ENSG00000176907.5"),
+    selected_tissue = "muscle",
+    selected_ome = "transcript-rna-seq",
+    filename = "custom_feature_heatmap.pdf"
+)
+
+plot_feature_heatmap(
+    set_id = "00001",
+    selected_tissue = "muscle",
+    selected_ome = "prot-ph",
+    contrast_type = "exercise_with_controls",
+    filename = "feature_heatmap_example.pdf"
+)
+```
+
+Key parameters:
+
+- `feature_ids` — character vector of feature IDs for the heatmap rows
+- `set_id` — alternatively, a pathway ID from `SET_TO_ID` (overrides
+  `feature_ids`)
+- `selected_tissue` — one or more tissues (multi-tissue supported)
+- `selected_ome` — exactly one ome
+- `contrast_type` — which contrasts to display
+- `post_min` / `post_hr` — specify exact timepoints (15, 30, or 45 min;
+  3.5 or 4 hr)
+- `full_modality_names` — display "Endurance Exercise" instead of "EE"
+- `max_size` — limit the number of features displayed from a pathway
+
+## 5.3 Enrichment Heatmaps
+
+`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR or PTM-SEA
+results, showing enrichment z-scores with significance bubbles.
+
+```{r plot-enrich-heatmap, eval = FALSE}
+# Note: filename is required — the heatmap is saved directly to PDF.
+# Using pre-computed CAMERA results
+plot_enrich_heatmap(
+  x = CAMERA_RESULTS,
+  selected_tissues = "muscle",
+  selected_ome = "prot-pr",
+  contrast_type = "exercise_with_controls",
+  n_top = 10,
+  filename = "enrichment_heatmap.pdf"
+)
+
+# Filter to specific pathways
+plot_enrich_heatmap(
+  x = CAMERA_RESULTS,
+  set_ids = c("00269", "00930"),
+  selected_tissues = c("adipose", "blood"),
+  selected_ome = "transcript-rna-seq",
+  filename = "selected_pathways.pdf"
+)
+```
+
+## 5.4 Cluster Trajectory Plots
+
+After running fuzzy c-means clustering, use `plot_cmeans()` to visualize
+cluster trajectories as line plots colored by membership probability.
+
+```{r plot-cmeans, eval = FALSE}
+# Note: filename is required — the plot is saved directly to PDF.
+FCM <- run_cmeans(selected_tissues = "adipose")
+
+plot_cmeans(
+  FCM = FCM[["adipose"]],
+  filename = "adipose_clusters.pdf",
+  min_membership = 0.3,
+  ncol = 4
+)
+```
+
+Key parameters:
+
+- `keep_clusters` — subset to specific cluster numbers
+- `min_membership` — minimum membership probability for display
+- `common_ylim` — use the same y-axis across all cluster panels
+- `modality` — show "both", "Endur" only, or "Resist" only
+
+## 5.5 Cluster Enrichment Heatmaps
+
+`plot_cluster_enrichment()` generates bubble heatmaps for cluster-level
+enrichment results (from `run_cluster_cameraPR()` or `run_cluster_ORA()`).
+
+```{r plot-cluster-enrichment, eval = FALSE}
+# Note: filename is required — the heatmap is saved directly to PDF.
+plot_cluster_enrichment(
+  x = FCM_CAMERA,
+  selected_ome = "prot-pr",
+  selected_tissues = "muscle",
+  filename = "cluster_enrichment.pdf"
+)
+```
+
+---
+
+# 6. Enrichment Analysis
+
+The package provides wrappers for competitive gene set testing and
+over-representation analysis.
+
+## 6.1 CAMERA-PR (Competitive Gene Set Testing)
+
+`run_cameraPR()` performs pre-ranked Correlation Adjusted MEan RAnk gene set
+analysis on the DA z-statistics. It tests whether molecular signatures show
+coordinated up- or down-regulation.
+
+```{r run-cameraPR-muscle, eval = FALSE}
+# Run on muscle global proteomics with GOBP and Reactome databases
+camera_res <- run_cameraPR(
+  selected_omes = "prot-pr",
+  selected_tissues = "muscle",
+  database = c("GOBP", "REACTOME")
+)
+head(camera_res)
+```
+
+```{r run-cameraPR-all, eval = FALSE}
+# Run on all omes with all databases (default)
+camera_all <- run_cameraPR()
+```
+
+Key parameters:
+
+- `database` — one or more of: BIOCARTA, KEGG_MEDICUS, PID, REACTOME, WP,
+  GOBP, GOCC, GOMF, MITOCARTA, PSP (prot-ph only), REFMET (metab only)
+- `path_to_gmt` — optionally supply custom GMT files (overrides `database`)
+- `min_size` — minimum set size for testing (default: 5)
+- `overlap_cutoff` — minimum proportion of set genes in the dataset
+  (default: 0.7)
+- `DA_list` — optionally supply custom DA results
+
+Pre-computed results are available as `CAMERA_RESULTS`.
+
+
+---
+
+# 7. Fuzzy C-Means Clustering
+
+`run_cmeans()` performs fuzzy c-means (FCM) clustering on z-score matrices
+from differential analysis, grouping features with similar temporal response
+patterns.
+
+```{r run-cmeans-default, eval = FALSE}
+# Run with defaults (13 clusters for adipose/blood, 12 for muscle)
+FCM <- run_cmeans()
+names(FCM)  # one element per tissue
+```
+
+```{r run-cmeans-explore, eval = FALSE}
+# Explore optimal cluster numbers
+FCM_explore <- run_cmeans(
+  selected_tissues = "adipose",
+  num_clusters_adipose = 3:14
+)
+
+# Run for a single modality
+FCM_endur <- run_cmeans(
+  selected_tissues = "muscle",
+  modality = "Endur"
+)
+```
+
+Features are scaled by their standard deviation (including pre-exercise
+zeros) before clustering. Clusters are reordered by hierarchical clustering
+of centroids so that similar trajectories appear adjacent.
+
+Pre-computed clustering results are available as `FCM_CLUSTERS`.
+
+## 7.1 Cluster-Level Enrichment with CAMERA-PR
+
+`run_cluster_cameraPR()` tests whether molecular signatures localize to
+specific cluster centroids using modified signed rank tests.
+
+```{r run-cluster-cameraPR, eval = FALSE}
+FCM <- run_cmeans()
+cluster_camera <- run_cluster_cameraPR(FCM = FCM)
+head(cluster_camera)
+```
+
+Pre-computed results: `FCM_CAMERA`.
+
+## 7.2 Cluster-Level Over-Representation Analysis
+
+`run_cluster_ORA()` performs ORA within each cluster, identifying
+over-represented molecular signatures among features with high membership
+probabilities.
+
+```{r run-cluster-ora, eval = FALSE}
+FCM <- run_cmeans()
+cluster_ora <- run_cluster_ORA(
+  FCM = FCM,
+  min_prob = 0.3
+)
+head(cluster_ora)
+```
+
+Pre-computed results: `FCM_ORA`.
+
+---
+
+# 8. Typical Workflow
+
+Below is a typical analysis workflow combining the major package functions:
+
+```{r typical-workflow, eval = FALSE}
+# 1. Load differential analysis results
+DA_list <- load_differential_analysis(
+  selected_tissues = "muscle",
+  selected_omes = c("transcript-rna-seq", "prot-pr"),
+  combine_with_featgene = TRUE
+)
+
+# 2. Explore a specific gene
+plot_single_feature(
+  feature = "PPARGC1A",
+  selected_tissues = "muscle",
+  selected_omes = c("transcript-rna-seq", "prot-pr"),
+  p_level = 0.05
+)
+
+# 3. Run enrichment analysis
+camera_res <- run_cameraPR(
+  selected_omes = c("transcript-rna-seq", "prot-pr"),
+  selected_tissues = "muscle",
+  database = c("GOBP", "REACTOME")
+)
+
+# 4. Visualize top enriched pathways
+plot_enrich_heatmap(
+  x = camera_res,
+  selected_tissues = "muscle",
+  selected_ome = "prot-pr",
+  contrast_type = "exercise_with_controls",
+  n_top = 10,
+  filename = "muscle_prot_enrichment.pdf"
+)
+
+# 5. Perform clustering
+FCM <- run_cmeans(selected_tissues = "muscle")
+
+# 6. Visualize clusters
+plot_cmeans(
+  FCM = FCM[["muscle"]],
+  filename = "muscle_clusters.pdf",
+  min_membership = 0.3
+)
+
+# 7. Cluster-level enrichment
+cluster_res <- run_cluster_cameraPR(
+  FCM = FCM,
+  selected_tissues = "muscle"
+)
+
+# 8. Visualize cluster enrichment
+plot_cluster_enrichment(
+  x = cluster_res,
+  selected_ome = "prot-pr",
+  selected_tissues = "muscle",
+  filename = "muscle_cluster_enrichment.pdf"
+)
+```
+
+---
+
+# 9. Session Info
+
+```{r session-info}
+sessionInfo()
+```

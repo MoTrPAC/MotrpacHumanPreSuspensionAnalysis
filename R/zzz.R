@@ -25,7 +25,8 @@
 
 # https://r-pkgs.org/code.html#sec-code-onLoad-onAttach
 .onLoad <- function(libname, pkgname) {
-  loadNamespace("roxygen2")
+  # Only apply the roxygen2 hack during development (when roxygen2 is loaded)
+  if (!isNamespaceLoaded("roxygen2")) return(invisible())
 
   # Hack so that devtools::document() doesn't take hours
   environment(.custom_block_set_env) <- asNamespace("roxygen2")
@@ -40,6 +41,8 @@
 }
 
 .onUnload <- function(libname, pkgname) {
+  if (!isNamespaceLoaded("roxygen2")) return(invisible())
+
   environment(.block_set_env) <- asNamespace("roxygen2")
 
   suppressWarnings({

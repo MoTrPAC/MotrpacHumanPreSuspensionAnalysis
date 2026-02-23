@@ -4,21 +4,76 @@
 # MotrpacHumanPreSuspensionAnalysis
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 # Installation
 
-More vignettes are currently being developed, as well as a pkgdown
-website to get users more familiar with the data.
+## Requirements
+
+**R >= 4.4 is required.** Several dependencies (e.g. TMSig) require
+R 4.4 or later. The package will not install on older R versions.
+
+## Important: Bioconductor Dependencies
+
+This package relies on several Bioconductor packages
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct
+Bioconductor version for your R installation before installing. Using
+the wrong Bioconductor version will cause dependency failures.
+
+| R version | Bioconductor version |
+|-----------|---------------------|
+| R 4.4.x   | 3.20                |
+| R 4.5.x   | 3.22                |
+
+**For R 4.4:**
 
 ``` r
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.20")
 devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
                          build_vignettes = TRUE)
 ```
 
-We recommend building the vignettes when installing.
+**For R 4.5:**
 
-(use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")`)
+``` r
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.22")
+devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
+                         build_vignettes = TRUE)
+```
+
+You can check your R version with `R.version.string` and your
+Bioconductor version with `BiocManager::version()`.
+
+We recommend building the vignettes when installing (use
+`vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
+them).
+
+The vignette `package_overview` describes how to use the package
+functions in detail, but the most common functions for those just
+looking to view the results are also described here in this README.
+
+## Troubleshooting
+
+- **macOS (especially Apple Silicon):** If you see compilation errors or
+  missing tools, install Xcode Command Line Tools first:
+
+  ``` bash
+  xcode-select --install
+  ```
+
+- **Bioconductor errors** (e.g. version mismatch warnings or failed
+  binaries): Re-run `BiocManager::install(version = "X.YZ")` with the
+  correct version for your R installation (see table above) before the
+  GitHub install.
+
+After installation, load the package:
+
+``` r
+library(MotrpacHumanPreSuspensionAnalysis)
+```
 
 ## Package Use and Structure
 
@@ -36,6 +91,30 @@ and tissue as well as the differential analysis/hypothesis testing
 summary statistics. It will further include various metadata about the
 feature to gene mapping or sample outliers.
 
+## Data info and background
+
+Described here is the first human cohort of MoTrPAC: sedentary adults
+enrolled prior to study suspension during the COVID-19 pandemic (N=175)
+randomized to either endurance or resistance exercise, or non-exercise
+control. **This package and any results are focused on these
+participant's acute exercise bout.**
+
+Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or
+CON groups and also to temporal profiles of biospecimen collection
+(Methods). A non-exercising group was deemed critical to control for the
+molecular effects of circadian rhythm, fasting, tissue sampling, and any
+other non-exercise intervention stimulus. The majority of participants
+were female (72%). Females represented a larger percentage of the CON
+group as compared to EE and RE. Mean age was 41 ± 15 years, the average
+BMI was 26.9 ± 4.0 kg/m2, average waist circumference was 92 ± 12 cm.
+Baseline CPET testing by cycle ergometer showed an average VO2peak of 24
+± 7.0 ml/kg/min (Females = 22.2 ± 5.12; Males = 31.3 ± 7.09). See the
+MoTrPAC manuscripts for more information.
+
+There is a larger cohort of subjects being analyzed and that analysis
+will cover many more details about subgroup differences, including
+information about response to longitudinal training, heterogeneity, etc.
+
 ## Getting help
 
 For questions, bug reporting, and data requests for this package, please
@@ -46,7 +125,7 @@ possible.
 
 ### Omic modeling summary statistics (Differential Analysis)
 
-See more documentation via `?load_differential_analysis`
+See more documentation via `?load_differential_analysis` or the vignette
 
 Note that the public release of epigenetic files is through AWS CDN, and
 the file sizes are quite a bit larger than the other omes, so setting
@@ -73,7 +152,7 @@ names(differential_analysis[["blood"]])
 
 By default,`load_differential_analysis` loads in the dataset in a nested
 list first by tissue, then by ome. Choose whichever tissues or omes
-you’d like via `selected_omes` or `selected_tissues`. You can find
+you'd like via `selected_omes` or `selected_tissues`. You can find
 available tissues via `tissue_available_list()` or
 `ome_available_list()`. Or if you enter in a wrong mistaken tissue/ome,
 a warning or error will help.
@@ -89,12 +168,12 @@ single_matrix = load_differential_analysis(single_matrix = TRUE)
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
 #>             refmet/feature name.
 colnames(single_matrix)
-#>  [1] "tissue"             "assay"              "platform"          
-#>  [4] "full_model"         "contrast"           "contrast_short"    
-#>  [7] "contrast_type"      "contrast_category"  "randomGroupCode"   
-#> [10] "Timepoint"          "feature_id"         "logFC"             
+#>  [1] "tissue"             "assay"              "platform"
+#>  [4] "full_model"         "contrast"           "contrast_short"
+#>  [7] "contrast_type"      "contrast_category"  "randomGroupCode"
+#> [10] "Timepoint"          "feature_id"         "logFC"
 #> [13] "CI.L"               "CI.R"               "degrees_of_freedom"
-#> [16] "logLik"             "t"                  "AveExpr"           
+#> [16] "logLik"             "t"                  "AveExpr"
 #> [19] "z.std"              "p_value"            "adj_p_value"
 ```
 
@@ -109,19 +188,19 @@ groups directly, and finally comparisons within group without a matched
 control.
 
 The majority of the analysis is done via exercise groups relative to the
-controls (“exercise_with_controls”). Make sure you filter to whichever
+controls ("exercise_with_controls"). Make sure you filter to whichever
 category you prefer before continuing with analysis.
 
 ``` r
 single_matrix %>% dplyr::pull(contrast_type) %>% unique()
-#> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist       
-#> [4] baseline               control_only          
+#> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist
+#> [4] baseline               control_only
 #> 5 Levels: exercise_with_controls exercise_no_controls ... control_only
 ```
 
-If you’d like to display things in terms of the specific groups being
-compared instead, you can use the ‘contrast_category’ column. (EE-CON,
-RE-CON would be subsets of the ‘exercise_with_controls’ category from
+If you'd like to display things in terms of the specific groups being
+compared instead, you can use the 'contrast_category' column. (EE-CON,
+RE-CON would be subsets of the 'exercise_with_controls' category from
 above, for example.)
 
 ``` r
@@ -133,8 +212,8 @@ single_matrix %>% dplyr::pull(contrast_category) %>% unique()
 The splicing data was processed in a separate analysis effort, but
 significant results (FDR \< 0.05) are available in this R package as
 well. The full set is available on the motrpac data hub, but is not
-included here because of file size limitations. See “Exercise modulation
-of the alternative splicing landscape in human tissues” for more
+included here because of file size limitations. See "Exercise modulation
+of the alternative splicing landscape in human tissues" for more
 information.
 
 ``` r
@@ -177,10 +256,10 @@ summary_stats = load_summary_stats(
 names(summary_stats)
 #> [1] "adipose" "blood"   "muscle"
 names(summary_stats[["blood"]])
-#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"      
-#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"  
-#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"    
-#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"           
+#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"
+#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"
+#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"
+#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"
 #> [13] "transcript-rna-seq"
 ```
 
@@ -205,20 +284,21 @@ upon request via the Motrpac Consortium.
 ``` r
 single_matrix = load_summary_stats(single_matrix = TRUE)
 colnames(single_matrix)
-#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
+#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"
 #> [5] "Mean"            "SD"              "tissue"          "assay"
 ```
 
-Although summary statistics are provided for all normalized expression
-features, only features with paired sample size n \>= 3 were eligible
-for hypothesis testing in downstream differential analyses. As a result,
-some features—particularly those affected by missingness in certain
-assays—may appear in the summary-statistics tables but lack
-corresponding differential-analysis p-values.
+Summary statistics were filtered to only those that qualified for
+differential analysis. This means for proteomics/phosphoproteomics,
+samples required a paired n\>=3 to be included. See the methods in the
+manuscript for more information.
 
 For metabolomics assays, summary statistics are computed after filtering
 redundant metabolites. Details of this filtering procedure are described
 in the Methods section of the manuscript.
+
+For epigenetic assays (ATAC, methyl), only significant features are
+included, due to file size limitations.
 
 ## Other items
 
@@ -226,10 +306,10 @@ in the Methods section of the manuscript.
 
 ``` r
 colnames(CAMERA_RESULTS)
-#>  [1] "tissue"         "assay"          "contrast_type"  "contrast"      
-#>  [5] "contrast_short" "collection"     "database"       "set_id"        
-#>  [9] "set"            "set_short"      "set_size"       "set_size_DB"   
-#> [13] "size_ratio"     "direction"      "t"              "df"            
+#>  [1] "tissue"         "assay"          "contrast_type"  "contrast"
+#>  [5] "contrast_short" "collection"     "database"       "set_id"
+#>  [9] "set"            "set_short"      "set_size"       "set_size_DB"
+#> [13] "size_ratio"     "direction"      "t"              "df"
 #> [17] "z.std"          "p_value"        "adj_p_value"
 ```
 
@@ -276,14 +356,43 @@ head(HUMAN_FEATURE_TO_GENE)
 The feature-to-gene map links each feature tested in differential
 analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as
 the gene identifier source. Proteomics feature IDs (UniProt IDs) were
-mapped to gene symbols and Entrez IDs using UniProt’s mapping files.
+mapped to gene symbols and Entrez IDs using UniProt's mapping files.
 Epigenomics features were mapped to the nearest gene using the
 ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release
 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were
 assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18).
 This file links all of the features included in any ome/tissue in our
-analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
+analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
 RNAseq) may link up in terms of ome names.
+
+## For Developers
+
+### Testing installation with Docker
+
+A `Dockerfile` is included to verify that the package and all its
+dependencies install correctly in a clean Linux environment. This is
+useful for catching missing system libraries or silent dependency
+failures before release.
+
+``` bash
+# Build the image (installs all Imports, Suggests, and Remotes)
+docker build -t motrpac-presuspension-test .
+
+# Run the container to confirm the package loads
+docker run --rm motrpac-presuspension-test
+```
+
+To render vignettes inside the container:
+
+``` bash
+docker run --rm -v "$(pwd)/vignette_output:/output" motrpac-presuspension-test bash -c "
+  apt-get update && apt-get install -y --no-install-recommends pandoc &&
+  R -e \"
+    rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');
+    rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output')
+  \"
+"
+```
 
 ## Acknowledgements
 

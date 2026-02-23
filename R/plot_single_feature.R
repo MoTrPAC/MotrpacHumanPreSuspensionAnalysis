@@ -24,7 +24,6 @@
 #' @importFrom scales label_number
 #' @importFrom dplyr mutate filter if_else c_across
 #' @importFrom stringr str_to_sentence str_c
-#' @importFrom forcats fct_recode
 #' @importFrom ggplot2 ggplot
 #'
 #'
@@ -152,9 +151,9 @@ plot_single_feature = function(feature,
   summary_stats = MotrpacHumanPreSuspensionAnalysis::load_summary_stats(selected_tissues = selected_tissues,
                                                                         selected_omes = selected_omes,
                                                                         single_matrix = TRUE) %>%
-    filter(feature_id %in% feature_specific_da$feature_id) %>%
-    mutate(SE = SD/sqrt(Count),
-           CI_95 = qt((1 + 0.95)/2, Count - 1))
+    dplyr::filter(feature_id %in% feature_specific_da$feature_id) %>%
+    dplyr::mutate(SE = SD/sqrt(Count),
+                  CI_95 = qt((1 + 0.95)/2, Count - 1))
   #this code is now matching the previous `mean_cl_normal` implementation, see: `Hmisc::smean.cl.normal`
   #where instead of using a strict wald CI, the SE multiplier is estimated from a t-distribution
   #makes the bounds slightly larger in most cases. Bigger diff with smaller n
@@ -171,14 +170,14 @@ plot_single_feature = function(feature,
     dplyr::left_join(assay_names_table,by = c("assay" = "assay_code")) %>%
     dplyr::mutate(
       tissue = stringr::str_to_sentence(tissue),
-      Timepoint = forcats::fct_recode(Timepoint,
-                                      "Pre" = "pre_exercise",
-                                      "D20M" = "during_20_min",
-                                      "D40M" = "during_40_min",
-                                      "P10M" = "post_10_min",
-                                      "P15-45M" = "post_15_30_45_min",
-                                      "P3.5/4H" = "post_3.5_4_hr",
-                                      "P24H" = "post_24_hr"
+      Timepoint = dplyr::recode(Timepoint,
+                                "pre_exercise" = "Pre",
+                                "during_20_min" = "D20M",
+                                "during_40_min" = "D40M",
+                                "post_10_min" = "P10M",
+                                "post_15_30_45_min" = "P15-45M",
+                                "post_3.5_4_hr" = "P3.5/4H",
+                                "post_24_hr" = "P24H"
       ),
       tissue_assay = stringr::str_c(tissue, " ", assay_short_text)
     )
