@@ -10,3 +10,4 @@ loading_different_items*
 data-raw/human-precovid*
 vignette_output
 docs
+*.code-workspace
