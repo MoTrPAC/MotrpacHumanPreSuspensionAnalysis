@@ -38,7 +38,7 @@ To inspect a single result table:
 str(DA_list[["adipose"]][["prot-pr"]])
 ```
 
-Selecting Tissues and Omics Modalities
+## Selecting Tissues and Omics Modalities
 
 Users can restrict loading to specific tissues and omes to reduce memory usage and improve clarity.
 
@@ -71,7 +71,7 @@ tissue_available_list()
 
 ## Epigenomics Data (ATAC-seq and MethylCap-seq)
 
-Epigenomics results are not stored directly in the package due to file size constraints. When `epigen = TRUE`, results are downloaded from the MoTrPAC Google Cloud bucket using gsutil and cached locally.
+Epigenomics results are not stored directly in the package due to file size constraints. When `epigen = TRUE`, results are downloaded from the MoTrPAC Google Cloud bucket using `gsutil` and cached locally.
 
 ```{r load-da-epigen, eval = FALSE}
 DA_list <- load_differential_analysis(
