@@ -55,7 +55,7 @@ Note: For metabolomics assays, multiple features may map to the same reference m
 
 The lowest coefficient-of-variation (CV) feature is selected.
 
-Feature identifiers are replaced with standardized RefMet names.
+Feature identifiers are replaced with standardized RefMet names. 
 
 P-values are recalculated within contrasts after filtering.
 
@@ -71,23 +71,17 @@ tissue_available_list()
 
 ## Epigenomics Data (ATAC-seq and MethylCap-seq)
 
-Epigenomics results are not stored directly in the package due to file size constraints. When `epigen = TRUE`, results are downloaded from the MoTrPAC Google Cloud bucket using `gsutil` and cached locally.
+Epigenomics results are not stored directly in the package due to file size constraints. When `epigen = TRUE`, results are downloaded from the MoTrPAC AWS location, which may take a lot longer than other data objects. 
 
 ```{r load-da-epigen, eval = FALSE}
 DA_list <- load_differential_analysis(
-  epigen = TRUE,
-  repo_local_dir = "/path/to/local/cache"
+  epigen = TRUE
 )
 ```
 
 *Important points to note*:
 
-Epigenomics downloads can take 30 minutes or longer.
-
-A local directory is required for temporary file storage.
-
-Users must have working `gsutil` access and appropriate permissions.
-
+Epigenomics downloads can take 30 minutes or longer!
 
 ## Splicing Data
 
