@@ -27,14 +27,14 @@ Authors@R: c(
           email = "nclark@broadinstitute.org",
           role = c("aut"),
           comment = c(ORCID = "0000-0003-0988-321X")),
-    person(given = "Daniel", family = "Katz",
-          email = "dankatz@stanford.edu",
-          role = c("aut"),
-          comment = c(ORCID = "0000-0001-7237-8502")),
     person(given = "David", family = "Jimenez-Morales",
           email = "david.jimenez-morales@stanford.edu",
           role = c("aut"),
-          comment = c(ORCID = "0000-0003-4356-6461"))
+          comment = c(ORCID = "0000-0003-4356-6461")),
+    person(given = "Daniel", family = "Katz",
+          email = "dankatz@stanford.edu",
+          role = c("aut"),
+          comment = c(ORCID = "0000-0001-7237-8502"))
  )
 Description: What the package does (one paragraph).
 License: MIT + file LICENSE
