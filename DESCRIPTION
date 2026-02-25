@@ -1,7 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 0.1.0
-Date: Feb 23rd, 2026
+Version: 0.2.0
+Date: Feb 25, 2026
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -74,8 +74,7 @@ Suggests:
     roxygen2,
     table.glue,
     testthat (>= 3.0.0),
-    variancePartition,
-    MotrpacHumanPreSuspensionData (>= 0.0.1.100)
+    variancePartition
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Remotes:
