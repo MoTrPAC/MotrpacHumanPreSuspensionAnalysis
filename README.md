@@ -7,6 +7,64 @@
 
 <!-- badges: end -->
 
+## Overview
+
+This R package provides the public release of summary statistics,
+differential analysis results, and downstream modeling outputs from the
+**Molecular Transducers of Physical Activity Consortium (MoTrPAC)**
+human pre-COVID suspension cohort.
+
+The first human cohort of MoTrPAC enrolled sedentary adults prior to
+study suspension during the COVID-19 pandemic (N=175), randomized to
+endurance exercise (EE), resistance exercise (RE), or non-exercise
+control (CON). **This package focuses on the acute exercise bout** from
+that cohort.
+
+Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or
+CON groups and also to temporal profiles of biospecimen collection. A
+non-exercising group was deemed critical to control for the molecular
+effects of circadian rhythm, fasting, tissue sampling, and any other
+non-exercise intervention stimulus. The majority of participants were
+female (72%). Mean age was 41 ± 15 years, the average BMI was 26.9 ± 4.0
+kg/m², and average VO2peak was 24 ± 7.0 ml/kg/min. See the MoTrPAC
+manuscripts for full cohort details.
+
+There is a larger cohort of subjects being analyzed by the MoTrPAC
+Consortium for recruitment following the COVID suspension, and that
+analysis will cover many more details about subgroup differences,
+including information about response to longitudinal training,
+heterogeneity, etc.
+
+### What is included
+
+- **Differential analysis** results (all tissues and omic platforms)
+- **Group-level summary statistics** (n, mean, SD per
+  feature/group/tissue)
+- **Enrichment results** (CAMERA-PR pathway analysis)
+- **Fuzzy c-means clustering** and cluster-level enrichment
+- **Feature-to-gene mapping** (Ensembl v105 / GENCODE 39)
+- Visualization functions for heatmaps, PCA, enrichment, and
+  single-feature plots
+- **Splicing analysis** significant results (FDR \< 0.05)
+
+### What is NOT included
+
+To protect participant privacy and comply with data-use governance
+policies, individual-level (subject-level) molecular or phenotypic data
+are **not** included. Such data are available only through formal data
+access requests to the MoTrPAC consortium.
+
+### Versioning note
+
+The functions in version 0.2.0 were those used to generate the initial
+bioRxiv pre-print. Over the course of reviews and additional analysis,
+modifications may occur—refer to previous release history if you need to
+exactly recreate pre-print Figures. We will aim to provide version
+information via the GitHub “Releases” section for major version
+milestones.
+
+------------------------------------------------------------------------
+
 # Installation
 
 ## Requirements
@@ -90,51 +148,6 @@ At the moment, the primary functions with this optional dependency are:
 If the private package is not installed, these functions will return a
 clear error message with access guidance.
 
-## Package Use and Structure
-
-This package is the public release version of the results from the
-Molecular Transducers of Physical Activity Consortium. The primary aim
-of the package is to facilitate enabling reproducible downstream
-interpretation and access to analysis results. The functions in this
-package in version 0.1.0 were the ones used to generate the biorxiv
-pre-print. Over the course of reviews and additional analysis, it is
-possible that modifications to this package’s functions will happen, so
-please refer to previous release history if you would like to exactly
-recreate the figures in the pre-print.
-
-To protect participant privacy and comply with data-use governance
-policies, individual-level (subject-level) molecular or phenotypic data
-are not included in this package and are available only through formal
-data access requests to the MoTrPAC consortium. This package will
-instead include the n, mean, and SD for feature in each exercise group
-and tissue as well as the differential analysis/hypothesis testing
-summary statistics. It will further include various metadata about the
-feature to gene mapping or sample outliers.
-
-## Data info and background
-
-Described here is the first human cohort of MoTrPAC: sedentary adults
-enrolled prior to study suspension during the COVID-19 pandemic (N=175)
-randomized to either endurance or resistance exercise, or non-exercise
-control. **This package and any results are focused on these
-participant’s acute exercise bout.**
-
-Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or
-CON groups and also to temporal profiles of biospecimen collection
-(Methods). A non-exercising group was deemed critical to control for the
-molecular effects of circadian rhythm, fasting, tissue sampling, and any
-other non-exercise intervention stimulus. The majority of participants
-were female (72%). Females represented a larger percentage of the CON
-group as compared to EE and RE. Mean age was 41 ± 15 years, the average
-BMI was 26.9 ± 4.0 kg/m2, average waist circumference was 92 ± 12 cm.
-Baseline CPET testing by cycle ergometer showed an average VO2peak of 24
-± 7.0 ml/kg/min (Females = 22.2 ± 5.12; Males = 31.3 ± 7.09). See the
-MoTrPAC manuscripts for more information.
-
-There is a larger cohort of subjects being analyzed and that analysis
-will cover many more details about subgroup differences, including
-information about response to longitudinal training, heterogeneity, etc.
-
 ## Getting help
 
 For questions, bug reporting, and data requests for this package, please
@@ -143,7 +156,11 @@ href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/issues"
 target="_blank">submit a new issue</a> and include as many details as
 possible.
 
-### Omic modeling summary statistics (Differential Analysis)
+------------------------------------------------------------------------
+
+# Usage
+
+## Omic modeling summary statistics (Differential Analysis)
 
 See more documentation via `?load_differential_analysis` or the vignette
 
@@ -262,7 +279,7 @@ head(SPLICING_DA$adipose$`AS-rMATS`, 3)
 #> 3: ENSG00000164654 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise
 ```
 
-### Omic modeling summary statistics
+## Omic modeling summary statistics
 
 See more documentation via `?load_summary_stats`
 
@@ -324,9 +341,7 @@ in the Methods section of the manuscript.
 For epigenetic assays (ATAC, methyl), only significant features are
 included, due to file size limitations.
 
-## Other items
-
-### Enrichment Results
+## Enrichment Results
 
 ``` r
 colnames(CAMERA_RESULTS)
@@ -346,7 +361,7 @@ This file structure is more or less just an enrichment level match for
 the comparisons described in the single-matrix differential analysis
 results, where all tissues and assays are included in all the analysis.
 
-### Feature to gene file:
+## Feature to gene file
 
 ``` r
 head(HUMAN_FEATURE_TO_GENE)
@@ -389,9 +404,9 @@ This file links all of the features included in any ome/tissue in our
 analysis. Use this to see how some levels of omic analysis (e.g. ATAC,
 RNAseq) may link up in terms of ome names.
 
-## For Developers
+# For Developers
 
-### Testing installation with Docker
+## Testing installation with Docker
 
 A `Dockerfile` is included to verify that the package and all its
 dependencies install correctly in a clean Linux environment. This is
