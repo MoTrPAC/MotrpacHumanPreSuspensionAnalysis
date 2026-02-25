@@ -37,6 +37,7 @@ Authors@R: c(
           comment = c(ORCID = "0000-0001-7237-8502"))
  )
 Description: What the package does (one paragraph).
+URL: https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
