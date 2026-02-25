@@ -26,10 +26,14 @@ jobs:
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          extra-packages: any::pkgdown, local::.
-          needs: website
+      - name: Install dependencies
+        shell: Rscript {0}
+        run: |
+          install.packages(c("BiocManager", "remotes", "pkgdown"), repos = "https://cloud.r-project.org")
+          options(repos = BiocManager::repositories())
+          BiocManager::install(c("ComplexHeatmap", "Biobase", "Mfuzz", "TMSig", "variancePartition"), ask = FALSE, update = FALSE)
+          remotes::install_github("MoTrPAC/MotrpacBicQC", upgrade = "never")
+          remotes::install_deps(dependencies = TRUE, upgrade = "never")
 
       - name: Deploy pkgdown site
         run: pkgdown::deploy_to_branch(new_process = FALSE)
