@@ -63,6 +63,13 @@ RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC', upgrade='never')"
 COPY . /tmp/package
 WORKDIR /tmp/package
 
+# Install all package dependencies declared in DESCRIPTION (Imports/Suggests/Remotes)
+RUN R -e "install.packages('pak', repos='https://cloud.r-project.org')"
+RUN R -e "pak::local_install_dev_deps(dependencies = TRUE)"
+
+# Verify a known required dependency is available before package install
+RUN R -e "if (!requireNamespace('ggpubr', quietly = TRUE)) stop('ggpubr is not installed')"
+
 # Build and install the package with R CMD
 RUN R CMD build --no-build-vignettes . && \
     R CMD INSTALL MotrpacHumanPreSuspensionAnalysis_*.tar.gz
