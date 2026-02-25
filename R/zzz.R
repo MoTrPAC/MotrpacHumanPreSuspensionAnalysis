@@ -1,8 +1,11 @@
 
-# Modification of roxygen2:::block_set_env
+# Modification of roxygen2 block_set_env internals
 .custom_block_set_env <- function(block, env) {
-  block <- roxygen2:::block_evaluate(block, env)
-  block <- roxygen2:::block_find_object(block, env)
+  block_evaluate <- getFromNamespace("block_evaluate", "roxygen2")
+  block_find_object <- getFromNamespace("block_find_object", "roxygen2")
+
+  block <- block_evaluate(block, env)
+  block <- block_find_object(block, env)
 
   val <- block[["object"]][["value"]]
 
@@ -15,10 +18,13 @@
   return(block)
 }
 
-# Identical to roxygen2:::block_set_env
+# Identical to roxygen2 block_set_env internals
 .block_set_env <- function(block, env) {
-  block <- roxygen2:::block_evaluate(block, env)
-  block <- roxygen2:::block_find_object(block, env)
+  block_evaluate <- getFromNamespace("block_evaluate", "roxygen2")
+  block_find_object <- getFromNamespace("block_find_object", "roxygen2")
+
+  block <- block_evaluate(block, env)
+  block <- block_find_object(block, env)
 
   return(block)
 }

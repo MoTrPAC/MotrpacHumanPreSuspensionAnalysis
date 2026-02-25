@@ -510,6 +510,10 @@ RSGWM2<-function(target.gene.name,
 .load_scion_matrixes = function(desired_matrixes,
                                 subset_TFs = TRUE,
                                 subset_DE = TRUE){
+  check_package_installation(pkg = "MotrpacHumanPreSuspensionData")
+  private_data_ns <- asNamespace("MotrpacHumanPreSuspensionData")
+  private_load_qc <- get("load_qc", envir = private_data_ns, inherits = FALSE)
+
   final_combined_matrix = data.frame()
   for(desired_input in desired_matrixes){
     desired_tissue = sub("\\..*", "", desired_input)
@@ -520,9 +524,9 @@ RSGWM2<-function(target.gene.name,
     if(!all(desired_ome %in% ome_available_list()))
       stop("The syntax for regulators or targets isn't right. Regulators and targets should be in tissue.ome format (e.g blood.transcript-rna-seq)")
 
-    desired_qc_norm_single = MotrpacHumanPreSuspensionData::load_qc(selected_omes = desired_ome,
-                                                                    selected_tissues = desired_tissue,
-                                                                    remove_unnamed_metab = TRUE)
+    desired_qc_norm_single = private_load_qc(selected_omes = desired_ome,
+                         selected_tissues = desired_tissue,
+                         remove_unnamed_metab = TRUE)
     #-------------------------------------------------------------------------------
     # here we handle parameters and use imputed matrixes for prot-(pr/ph)
     if(any(desired_ome == "prot-ph" | desired_ome == "prot-pr")) #have to add 'any' to handle multiple metab platforms
@@ -578,7 +582,11 @@ RSGWM2<-function(target.gene.name,
 .find_shared_scion_matrixes = function(randomGroupCode,
                                        scion_matrix_one,
                                        scion_matrix_two){
-  pheno = MotrpacHumanPreSuspensionData::pheno[["data"]] %>%
+  check_package_installation(pkg = "MotrpacHumanPreSuspensionData")
+  private_data_ns <- asNamespace("MotrpacHumanPreSuspensionData")
+  pheno_object <- get("pheno", envir = private_data_ns, inherits = FALSE)
+
+  pheno = pheno_object[["data"]] %>%
     dplyr::filter(visitcode == "ADU_BAS") %>%
     dplyr::filter(randomGroupCode == !!randomGroupCode)
 
