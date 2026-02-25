@@ -57,6 +57,44 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>This R package provides the public release of summary statistics, differential analysis results, and downstream modeling outputs from the <strong>Molecular Transducers of Physical Activity Consortium (MoTrPAC)</strong> human pre-COVID suspension cohort.</p>
+<p>The first human cohort of MoTrPAC enrolled sedentary adults prior to study suspension during the COVID-19 pandemic (N=175), randomized to endurance exercise (EE), resistance exercise (RE), or non-exercise control (CON). <strong>This package focuses on the acute exercise bout</strong> from that cohort.</p>
+<p>Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or CON groups and also to temporal profiles of biospecimen collection. A non-exercising group was deemed critical to control for the molecular effects of circadian rhythm, fasting, tissue sampling, and any other non-exercise intervention stimulus. The majority of participants were female (72%). Mean age was 41 ± 15 years, the average BMI was 26.9 ± 4.0 kg/m², and average VO2peak was 24 ± 7.0 ml/kg/min. See the MoTrPAC manuscripts for full cohort details.</p>
+<p>There is a larger cohort of subjects being analyzed by the MoTrPAC Consortium for recruitment following the COVID suspension, and that analysis will cover many more details about subgroup differences, including information about response to longitudinal training, heterogeneity, etc.</p>
+<div class="section level3">
+<h3 id="what-is-included">What is included<a class="anchor" aria-label="anchor" href="#what-is-included"></a>
+</h3>
+<ul>
+<li>
+<strong>Differential analysis</strong> results (all tissues and omic platforms)</li>
+<li>
+<strong>Group-level summary statistics</strong> (n, mean, SD per feature/group/tissue)</li>
+<li>
+<strong>Enrichment results</strong> (CAMERA-PR pathway analysis)</li>
+<li>
+<strong>Fuzzy c-means clustering</strong> and cluster-level enrichment</li>
+<li>
+<strong>Feature-to-gene mapping</strong> (Ensembl v105 / GENCODE 39)</li>
+<li>Visualization functions for heatmaps, PCA, enrichment, and single-feature plots</li>
+<li>
+<strong>Splicing analysis</strong> significant results (FDR &lt; 0.05)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="what-is-not-included">What is NOT included<a class="anchor" aria-label="anchor" href="#what-is-not-included"></a>
+</h3>
+<p>To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular or phenotypic data are <strong>not</strong> included. Such data are available only through formal data access requests to the MoTrPAC consortium.</p>
+</div>
+<div class="section level3">
+<h3 id="versioning-note">Versioning note<a class="anchor" aria-label="anchor" href="#versioning-note"></a>
+</h3>
+<p>The functions in version 0.2.0 were those used to generate the initial bioRxiv pre-print. Over the course of reviews and additional analysis, modifications may occur—refer to previous release history if you need to exactly recreate pre-print Figures. We will aim to provide version information via the GitHub “Releases” section for major version milestones.</p>
+<hr>
+</div>
+</div>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -128,25 +166,18 @@
 <p>If the private package is not installed, these functions will return a clear error message with access guidance.</p>
 </div>
 <div class="section level2">
-<h2 id="package-use-and-structure">Package Use and Structure<a class="anchor" aria-label="anchor" href="#package-use-and-structure"></a>
-</h2>
-<p>This package is the public release version of the results from the Molecular Transducers of Physical Activity Consortium. The primary aim of the package is to facilitate enabling reproducible downstream interpretation and access to analysis results. The functions in this package in version 0.1.0 were the ones used to generate the biorxiv pre-print. Over the course of reviews and additional analysis, it is possible that modifications to this package’s functions will happen, so please refer to previous release history if you would like to exactly recreate the figures in the pre-print.</p>
-<p>To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular or phenotypic data are not included in this package and are available only through formal data access requests to the MoTrPAC consortium. This package will instead include the n, mean, and SD for feature in each exercise group and tissue as well as the differential analysis/hypothesis testing summary statistics. It will further include various metadata about the feature to gene mapping or sample outliers.</p>
-</div>
-<div class="section level2">
-<h2 id="data-info-and-background">Data info and background<a class="anchor" aria-label="anchor" href="#data-info-and-background"></a>
-</h2>
-<p>Described here is the first human cohort of MoTrPAC: sedentary adults enrolled prior to study suspension during the COVID-19 pandemic (N=175) randomized to either endurance or resistance exercise, or non-exercise control. <strong>This package and any results are focused on these participant’s acute exercise bout.</strong></p>
-<p>Participants were randomized in an approximate 8:8:3 ratio to EE, RE, or CON groups and also to temporal profiles of biospecimen collection (Methods). A non-exercising group was deemed critical to control for the molecular effects of circadian rhythm, fasting, tissue sampling, and any other non-exercise intervention stimulus. The majority of participants were female (72%). Females represented a larger percentage of the CON group as compared to EE and RE. Mean age was 41 ± 15 years, the average BMI was 26.9 ± 4.0 kg/m2, average waist circumference was 92 ± 12 cm. Baseline CPET testing by cycle ergometer showed an average VO2peak of 24 ± 7.0 ml/kg/min (Females = 22.2 ± 5.12; Males = 31.3 ± 7.09). See the MoTrPAC manuscripts for more information.</p>
-<p>There is a larger cohort of subjects being analyzed and that analysis will cover many more details about subgroup differences, including information about response to longitudinal training, heterogeneity, etc.</p>
-</div>
-<div class="section level2">
 <h2 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
 </h2>
 <p>For questions, bug reporting, and data requests for this package, please <a href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/issues" target="_blank" class="external-link">submit a new issue</a> and include as many details as possible.</p>
-<div class="section level3">
-<h3 id="omic-modeling-summary-statistics-differential-analysis">Omic modeling summary statistics (Differential Analysis)<a class="anchor" aria-label="anchor" href="#omic-modeling-summary-statistics-differential-analysis"></a>
-</h3>
+<hr>
+</div>
+</div>
+<div class="section level1">
+<h1 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
+</h1>
+<div class="section level2">
+<h2 id="omic-modeling-summary-statistics-differential-analysis">Omic modeling summary statistics (Differential Analysis)<a class="anchor" aria-label="anchor" href="#omic-modeling-summary-statistics-differential-analysis"></a>
+</h2>
 <p>See more documentation via <code><a href="reference/load_differential_analysis.html">?load_differential_analysis</a></code> or the vignette</p>
 <p>Note that the public release of epigenetic files is through AWS CDN, and the file sizes are quite a bit larger than the other omes, so setting <code>epigen = TRUE</code> can be very slow!</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -221,9 +252,9 @@
 <span><span class="co">#&gt; 2: ENSG00000169946 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise</span></span>
 <span><span class="co">#&gt; 3: ENSG00000164654 AS-rMATS ADUEndur.post_15_30_45_min - ADUEndur.pre_exercise</span></span></code></pre></div>
 </div>
-<div class="section level3">
-<h3 id="omic-modeling-summary-statistics">Omic modeling summary statistics<a class="anchor" aria-label="anchor" href="#omic-modeling-summary-statistics"></a>
-</h3>
+<div class="section level2">
+<h2 id="omic-modeling-summary-statistics">Omic modeling summary statistics<a class="anchor" aria-label="anchor" href="#omic-modeling-summary-statistics"></a>
+</h2>
 <p>See more documentation via <code><a href="reference/load_summary_stats.html">?load_summary_stats</a></code></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">summary_stats</span> <span class="op">=</span> <span class="fu"><a href="reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span></span>
@@ -257,13 +288,9 @@
 <p>For metabolomics assays, summary statistics are computed after filtering redundant metabolites. Details of this filtering procedure are described in the Methods section of the manuscript.</p>
 <p>For epigenetic assays (ATAC, methyl), only significant features are included, due to file size limitations.</p>
 </div>
-</div>
 <div class="section level2">
-<h2 id="other-items">Other items<a class="anchor" aria-label="anchor" href="#other-items"></a>
+<h2 id="enrichment-results">Enrichment Results<a class="anchor" aria-label="anchor" href="#enrichment-results"></a>
 </h2>
-<div class="section level3">
-<h3 id="enrichment-results">Enrichment Results<a class="anchor" aria-label="anchor" href="#enrichment-results"></a>
-</h3>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">CAMERA_RESULTS</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "tissue"         "assay"          "contrast_type"  "contrast"      </span></span>
@@ -274,9 +301,9 @@
 <p>Quick summary: CAMERA-PR is a method of enrichment that incorporates all features to generate a comparison of the test statistics between in-pathway vs out-of-pathway test statistics to see if the statistics within pathway are significant.</p>
 <p>This file structure is more or less just an enrichment level match for the comparisons described in the single-matrix differential analysis results, where all tissues and assays are included in all the analysis.</p>
 </div>
-<div class="section level3">
-<h3 id="feature-to-gene-file">Feature to gene file:<a class="anchor" aria-label="anchor" href="#feature-to-gene-file"></a>
-</h3>
+<div class="section level2">
+<h2 id="feature-to-gene-file">Feature to gene file<a class="anchor" aria-label="anchor" href="#feature-to-gene-file"></a>
+</h2>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">HUMAN_FEATURE_TO_GENE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Key: &lt;assay, feature_id&gt;</span></span>
@@ -307,12 +334,12 @@
 <p>The feature-to-gene map links each feature tested in differential analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as the gene identifier source. Proteomics feature IDs (UniProt IDs) were mapped to gene symbols and Entrez IDs using UniProt’s mapping files. Epigenomics features were mapped to the nearest gene using the ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18). This file links all of the features included in any ome/tissue in our analysis. Use this to see how some levels of omic analysis (e.g. ATAC, RNAseq) may link up in terms of ome names.</p>
 </div>
 </div>
+<div class="section level1">
+<h1 id="for-developers">For Developers<a class="anchor" aria-label="anchor" href="#for-developers"></a>
+</h1>
 <div class="section level2">
-<h2 id="for-developers">For Developers<a class="anchor" aria-label="anchor" href="#for-developers"></a>
+<h2 id="testing-installation-with-docker">Testing installation with Docker<a class="anchor" aria-label="anchor" href="#testing-installation-with-docker"></a>
 </h2>
-<div class="section level3">
-<h3 id="testing-installation-with-docker">Testing installation with Docker<a class="anchor" aria-label="anchor" href="#testing-installation-with-docker"></a>
-</h3>
 <p>A <code>Dockerfile</code> is included to verify that the package and all its dependencies install correctly in a clean Linux environment. This is useful for catching missing system libraries or silent dependency failures before release.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Build the image (installs all Imports, Suggests, and Remotes)</span></span>
 <span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> motrpac-presuspension-test .</span>
@@ -327,7 +354,6 @@
 <span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="st">    rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output')</span></span>
 <span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a><span class="st">  </span><span class="dt">\"</span></span>
 <span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="st">"</span></span></code></pre></div>
-</div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
