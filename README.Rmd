@@ -84,6 +84,20 @@ After installation, load the package:
 library(MotrpacHumanPreSuspensionAnalysis)
 ```
 
+## Consortium-only optional features
+
+Most functionality in this package is fully public and works without additional access.
+Some advanced workflows rely on the private package `MotrpacHumanPreSuspensionData`
+that is available only to MoTrPAC consortium members.
+
+At the moment, the primary functions with this optional dependency are:
+
+- `run_SCION()`
+- `plot_precovid_cca()`
+
+If the private package is not installed, these functions will return a clear
+error message with access guidance.
+
 
 
 ## Package Use and Structure

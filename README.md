@@ -75,6 +75,21 @@ After installation, load the package:
 library(MotrpacHumanPreSuspensionAnalysis)
 ```
 
+## Consortium-only optional features
+
+Most functionality in this package is fully public and works without
+additional access. Some advanced workflows rely on the private package
+`MotrpacHumanPreSuspensionData` that is available only to MoTrPAC
+consortium members.
+
+At the moment, the primary functions with this optional dependency are:
+
+- `run_SCION()`
+- `plot_precovid_cca()`
+
+If the private package is not installed, these functions will return a
+clear error message with access guidance.
+
 ## Package Use and Structure
 
 This package is the public release version of the results from the
@@ -258,14 +273,16 @@ summary_stats = load_summary_stats(
   single_matrix = FALSE,
   verbose = TRUE
 )
+#> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
+#> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
 names(summary_stats)
 #> [1] "adipose" "blood"   "muscle"
 names(summary_stats[["blood"]])
-#>  [1] "epigen-atac-seq"    "metab-t-amines"     "metab-t-conv"      
-#>  [4] "metab-t-oxylipneg"  "metab-t-tca"        "metab-u-hilicpos"  
-#>  [7] "metab-u-ionpneg"    "metab-u-lrpneg"     "metab-u-lrppos"    
-#> [10] "metab-u-rpneg"      "metab-u-rppos"      "prot-ol"           
-#> [13] "transcript-rna-seq"
+#>  [1] "epigen-atac-seq"      "epigen-methylcap-seq" "metab-t-amines"      
+#>  [4] "metab-t-conv"         "metab-t-oxylipneg"    "metab-t-tca"         
+#>  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      
+#> [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       
+#> [13] "prot-ol"              "transcript-rna-seq"
 ```
 
 By default, load_summary_stats() loads group- and timepoint-level
@@ -288,6 +305,8 @@ upon request via the Motrpac Consortium.
 
 ``` r
 single_matrix = load_summary_stats(single_matrix = TRUE)
+#> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
+#> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
 colnames(single_matrix)
 #> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
 #> [5] "Mean"            "SD"              "tissue"          "assay"
