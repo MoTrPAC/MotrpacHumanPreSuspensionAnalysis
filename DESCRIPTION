@@ -1,7 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 0.0.0.9002
-Date: Feb 4th, 2026
+Version: 0.1.0
+Date: Feb 23rd, 2026
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -27,6 +27,10 @@ Authors@R: c(
           email = "nclark@broadinstitute.org",
           role = c("aut"),
           comment = c(ORCID = "0000-0003-0988-321X")),
+    person(given = "David", family = "Jimenez-Morales",
+          email = "david.jimenez-morales@stanford.edu",
+          role = c("aut"),
+          comment = c(ORCID = "0000-0003-4356-6461")),
     person(given = "Daniel", family = "Katz",
           email = "dankatz@stanford.edu",
           role = c("aut"),
@@ -63,6 +67,7 @@ Imports:
 Suggests:
     here,
     knitr,
+    pkgdown,
     pheatmap,
     rmarkdown,
     readr,

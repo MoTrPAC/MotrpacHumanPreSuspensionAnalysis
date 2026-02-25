@@ -88,7 +88,7 @@ library(MotrpacHumanPreSuspensionAnalysis)
 
 ## Package Use and Structure
 
-This package is the public release version of the results from the Molecular Transducers of Physical Activity Consortium. The primary aim of the package is to facilitate enabling reproducible downstream interpretation and access to analysis results. 
+This package is the public release version of the results from the Molecular Transducers of Physical Activity Consortium. The primary aim of the package is to facilitate enabling reproducible downstream interpretation and access to analysis results. The functions in this package in version 0.1.0 were the ones used to generate the biorxiv pre-print. Over the course of reviews and additional analysis, it is possible that modifications to this package's functions will happen, so please refer to previous release history if you would like to exactly recreate the figures in the pre-print.
 
 To protect participant privacy and comply with data-use governance policies, individual-level (subject-level) molecular or phenotypic data are not included in this package and are available only through formal data access requests to the MoTrPAC consortium. This package will instead include the n, mean, and SD for feature in each exercise group and tissue as well as the differential analysis/hypothesis testing summary statistics. It will further include various metadata about the feature to gene mapping or sample outliers.
 

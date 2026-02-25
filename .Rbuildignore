@@ -7,3 +7,7 @@
 ^Dockerfile$
 ^\.dockerignore$
 ^vignette_output$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
