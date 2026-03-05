@@ -1,3 +1,8 @@
+# MotrpacHumanPreSuspensionAnalysis 0.2.1
+
+-Added clinical chemistry differential analysis using the same structure as the molecular differential analysis
+  see: `CLIN_CHEMISTRY_DA`
+
 # MotrpacHumanPreSuspensionAnalysis 0.2.0
 
 ## Documentation and website
