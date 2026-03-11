@@ -14,7 +14,7 @@
 #' Character scalar specifying the local repository directory used for data access
 #' and output.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether the analysis corresponds to
 #' \code{"acute"} or \code{"training"} exercise.
 #'
@@ -52,19 +52,19 @@
 #' @author christopher jin
 
 .generate_metabolomics_inputs = function(repo_local_dir,
-                                         acute_vs_training,
+                                         model_type,
                                          tissue,
                                          assay,
                                          parallel = F){
+  message(assay); message(tissue)
   desired_ome = assay
-  ome_data = load_qc(repo_local_dir,
-                     selected_tissue = tissue,
+  ome_data = load_qc(selected_tissue = tissue,
                      selected_ome = desired_ome,
                      load_acute_only = FALSE,
                      remove_unnamed_metab = TRUE)
   if (length(ome_data) > 0) {
     metadata = ome_data[[tissue]][[desired_ome]][['sample_metadata']]
-    if (acute_vs_training == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
+    if (model_type == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
     rownames(metadata) = metadata$vialLabel
     data_matrix = ome_data[[tissue]][[desired_ome]][['qc_norm']] %>%
       dplyr::select(as.character(metadata$vialLabel))
@@ -75,7 +75,7 @@
                                           include_technical = TRUE)
 
     .run_models(repo_local_dir = repo_local_dir,
-                acute_vs_training = acute_vs_training,
+                model_type = model_type,
                 expression_object = data_matrix,
                 process_metadata = process_metadata,
                 tissue = tissue,

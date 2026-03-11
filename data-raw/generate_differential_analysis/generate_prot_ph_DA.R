@@ -21,7 +21,7 @@
 #' Character scalar specifying the local repository directory used for data access
 #' and output.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether the analysis corresponds to
 #' \code{"acute"} or \code{"training"} exercise.
 #'
@@ -58,10 +58,10 @@
 #' @author christopher jin
 
 .generate_prot_ph_inputs = function(repo_local_dir,
-                                    acute_vs_training,
+                                    model_type,
                                     tissue,
                                     parallel = F){
-  if(acute_vs_training == "training" & tissue == "adipose"){
+  if(model_type == "training" & tissue == "adipose"){
     message("Note: Adipose Prot-ph/pr has no training samples. No training analysis will be done.")
   }else{
     desired_ome = 'prot-ph'
@@ -74,7 +74,7 @@
 
     if (length(ome_data) > 0) {
       metadata = ome_data[[tissue]][[desired_ome]][['sample_metadata']]
-      if (acute_vs_training == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
+      if (model_type == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
 
       rownames(metadata) = metadata$vialLabel
       data_matrix = ome_data[[tissue]][[desired_ome]][['qc_norm']] %>%
@@ -86,7 +86,7 @@
                                             include_technical = F)
 
       .run_models(repo_local_dir = repo_local_dir,
-                  acute_vs_training = acute_vs_training,
+                  model_type = model_type,
                   expression_object = data_matrix,
                   process_metadata = process_metadata,
                   tissue = tissue,

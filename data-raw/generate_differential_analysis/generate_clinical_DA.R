@@ -9,7 +9,7 @@ output_local = "~/Downloads/"
 #for process cov
 helpers = file.path(here(), "data-raw", "generate_differential_analysis", "generate_differential_modeling_functions.R")
 gsutil_helpers = file.path(here(), "data-raw", "gsutil_path_parsing.R")
-
+#
 source(helpers)
 source(gsutil_helpers)
 
@@ -38,7 +38,7 @@ process_metadata = process_covariates(meta = metab_metadata,
                                       include_technical = TRUE)
 
 fit = run_dream(expression_object = clin_chem_df,
-                acute_vs_training = "acute",
+                model_type = "acute",
                 process_metadata = process_metadata,
                 voom = FALSE,
                 parallel = FALSE)
@@ -80,6 +80,7 @@ write.table(full_metadata, file = file_name, row.names = F, sep = '\t', quote = 
 usethis::use_data(CLIN_CHEMISTRY_DA,
                   overwrite = TRUE,
                   version = 3)
+
 
 
 

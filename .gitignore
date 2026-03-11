@@ -11,3 +11,4 @@ data-raw/human-precovid*
 vignette_output
 docs
 *.code-workspace
+CLAUDE*

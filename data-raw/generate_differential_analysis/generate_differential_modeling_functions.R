@@ -17,7 +17,7 @@
 #' A model-ready expression object (e.g., \code{edgeR::DGEList} or matrix),
 #' with columns corresponding to samples.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar specifying whether the analysis corresponds to
 #' \code{"acute"} or \code{"training"} exercise.
 #'
@@ -55,7 +55,7 @@
 #' @author christopher jin
 
 run_dream = function(expression_object = NULL,
-                     acute_vs_training = NULL,
+                     model_type = NULL,
                      process_metadata,
                      voom = FALSE,
                      parallel = FALSE){
@@ -67,11 +67,13 @@ run_dream = function(expression_object = NULL,
   meta_matrix = process_metadata$metadata
   meta_matrix = meta_matrix[match(colnames(expression_object), rownames(meta_matrix)), ] #reorder so they're in the same order as colnames of raw_counts
   #in theory, ^ they should already be the same, because they're matched beforehand...but I'm keeping it just in case.
-  if(acute_vs_training == "acute") contrast_expressions = .generate_contrasts_acute(meta_matrix) #generate contrasts in a consistent way
-  if(acute_vs_training == "training") contrast_expressions = .generate_contrasts_training(meta_matrix)
+  if(model_type == "acute") contrast_expressions = .generate_contrasts_acute(meta_matrix) #generate contrasts in a consistent way
+  if(model_type == "training") contrast_expressions = .generate_contrasts_training(meta_matrix)
+  if(model_type == "sex_differences") contrast_expressions = .generate_sex_contrasts(meta_matrix)
 
-  if(acute_vs_training == "acute")  formula = process_metadata$full_formula %>% as.formula()
-  if(acute_vs_training == "training") formula = process_metadata$training_formula %>% as.formula()
+  if(model_type == "acute")  formula = process_metadata$full_formula %>% as.formula()
+  if(model_type == "training") formula = process_metadata$training_formula %>% as.formula()
+  if(model_type == "sex_differences") formula = process_metadata$sex_differences_formula %>% as.formula()
 
   L = variancePartition::makeContrastsDream(formula,
                                             meta_matrix,
@@ -268,20 +270,25 @@ process_covariates = function(meta,
     dplyr::mutate(across(all_of(num_cov$covariate), ~ scale(.) %>% as.numeric())) %>%
     dplyr::mutate(across(all_of(factor_cov$covariate), ~ as.factor(.) %>% droplevels())) %>%
     dplyr::mutate(group_timepoint = droplevels(interaction(randomGroupCode, Timepoint))) %>%
-    dplyr::mutate(visit_group_timepoint = droplevels(interaction(visitcode, randomGroupCode, Timepoint)))
+    dplyr::mutate(visit_group_timepoint = droplevels(interaction(visitcode, randomGroupCode, Timepoint))) %>%
+    dplyr::mutate(sex_group_timepoint = droplevels(interaction(Sex, randomGroupCode, Timepoint)))
 
   technical_covs = covariates %>% filter(tech_or_design == "Technical")
-  full_formula = names(sel_meta)[!names(sel_meta) %in% c("randomGroupCode", "Timepoint", "visitcode", "pid", "group_timepoint", "visit_group_timepoint")] #remove these from the character vector
+  full_formula = names(sel_meta)[!names(sel_meta) %in% c("randomGroupCode", "Timepoint", "visitcode", "pid", "group_timepoint", "visit_group_timepoint", "sex_group_timepoint")] #remove these from the character vector
   #the purpose of the design covariates section is to make a model.matrix()
   design_covs = c(full_formula[!full_formula %in% as.character(technical_covs$covariate)], "group_timepoint")
   if(!include_technical){ #remove for any modeling where some covariates have been regressed out
     full_formula = full_formula[!full_formula %in% technical_covs$covariate]
   }
+  sex_diff_covs = full_formula[!full_formula %in% c("Sex", "codedsiteid")]
+  sex_formula_string = paste(sex_diff_covs, collapse = " + ")
+  formula_string_sex_differences = paste("~ 0 + sex_group_timepoint + ", sex_formula_string, "+ (1 | pid)")
+
   formula_string = paste(full_formula, collapse = " + ")
+
   #we readd group_timepoint first because of the way some contrast matrixes drop values in case of interactions w other levels of factors in the contrast matrixes
   formula_string_full = paste("~ 0 + group_timepoint + ", formula_string, "+ (1 | pid)")
   formula_string_training = paste("~ 0 + visit_group_timepoint + ", formula_string, "+ (visitcode | pid)")
-
   non_mixed_model = paste("~ 0 + group_timepoint + ", formula_string)
 
   #so i remove group_timepoint above and then make sure that it comes first because the order of the string can sometimes
@@ -291,6 +298,7 @@ process_covariates = function(meta,
 
   covariates_return[["full_formula"]] = formula_string_full
   covariates_return[["training_formula"]] = formula_string_training
+  covariates_return[["sex_differences_formula"]] = formula_string_sex_differences
 
   covariates_return[["metadata"]] = sel_meta #so this is with all the tech/num cov in the correct format
   covariates_return[["non_mixed_model"]] = non_mixed_model
@@ -382,4 +390,37 @@ process_covariates = function(meta,
   return(pre_contrast_expressions)
 }
 
+.generate_sex_contrasts = function(metadata){
+  pre_contrast_expressions <- c()
+  timepoints = unique(metadata$Timepoint)
+  for(tp in timepoints){
+    # message(tp)
+    if (tp == 'pre_exercise'){
+      pre_contrast_expressions = c(pre_contrast_expressions, "sex_group_timepointFemale.ADUEndur.pre_exercise - sex_group_timepointMale.ADUEndur.pre_exercise + sex_group_timepointFemale.ADUControl.pre_exercise - sex_group_timepointMale.ADUControl.pre_exercise + sex_group_timepointFemale.ADUResist.pre_exercise - sex_group_timepointMale.ADUResist.pre_exercise")    }else{
+        meta_tp = metadata %>% filter(Timepoint == tp)
+        for(group in c("ADUEndur", "ADUResist")){
+          #contrast in differences b/t male and female, when fit seperately by sex
+          contrast_expression = paste0("((sex_group_timepointFemale.", group, ".", tp, " - ", "sex_group_timepointFemale.", group, ".pre_exercise) - ",
+                                       "(sex_group_timepointMale.", group, ".", tp, " - ", "sex_group_timepointMale.", group, ".pre_exercise)) - ",
+                                       "((sex_group_timepointFemale.ADUControl.", tp, " - ", "sex_group_timepointFemale.ADUControl.pre_exercise) - ",
+                                       "(sex_group_timepointMale.ADUControl.", tp, " - ", "sex_group_timepointMale.ADUControl.pre_exercise))"
+          )
+          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
+
+          #contrast in just female tp - female baseline (relative to control)
+          contrast_expression = paste0("(sex_group_timepointFemale.", group, ".", tp, " - ", "sex_group_timepointFemale.", group, ".pre_exercise) - ",
+                                       "(sex_group_timepointFemale.ADUControl.", tp, " - ", "sex_group_timepointFemale.ADUControl.pre_exercise)"
+          )
+          #contrast in just male tp - male baseline (relative to control)
+          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
+
+          contrast_expression = paste0("(sex_group_timepointMale.", group, ".", tp, " - ", "sex_group_timepointMale.", group, ".pre_exercise) - ",
+                                       "(sex_group_timepointMale.ADUControl.", tp, " - ", "sex_group_timepointMale.ADUControl.pre_exercise)"
+          )
+          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
+        }
+      }
+  }
+  return(pre_contrast_expressions)
+}
 

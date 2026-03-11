@@ -31,7 +31,7 @@
 #' Character vector of tissues to process, or \code{"all"} to include all
 #' available tissues.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether inputs should be generated for acute or
 #' training analyses. Only \code{"acute"} analyses are publicly released.
 #'
@@ -69,7 +69,7 @@
 generate_DA_inputs = function(repo_local_dir = NULL,
                               selected_omes = "all",
                               selected_tissues = "all",
-                              acute_vs_training = "acute",
+                              model_type = "acute",
                               epigen = TRUE,
                               parallel = FALSE){
   message("NOTE: Methylation analysis is being processed using a Generalized Linear Mixed Model instead of the Linear Mixed Model that most omes are being processed by. Therefore, performing methylation DA Input will not be offered in this function")
@@ -80,15 +80,15 @@ generate_DA_inputs = function(repo_local_dir = NULL,
   if(!all(selected_tissues %in% tissue_available_list())){message("Invalid tissue selection. Try 'tissue_available_list()' for a list")}
 
   selected_omes = selected_omes[!selected_omes %in% "epigen-methylcap-seq"] #get rid of methylcap--see above message
-  if(!epigen){selected_omes = selected_omes[!selected_omes %in% "epigen-atac-seq"]} #remove atac if epigenetics are not desired
+  if(!epigen) selected_omes = selected_omes[!selected_omes %in% "epigen-atac-seq"] #remove atac if epigenetics are not desired
 
   for (tissue in selected_tissues){
-    if("transcript-rna-seq" %in% selected_omes) .generate_transcriptomics_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, parallel = parallel)
-    if("prot-ol" %in% selected_omes) .generate_prot_ol_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, parallel = parallel)
-    if("prot-ph" %in% selected_omes) .generate_prot_ph_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, parallel = parallel)
-    if("prot-pr" %in% selected_omes) .generate_prot_pr_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, parallel = parallel)
-    for(metab_assay in grep("^metab-", selected_omes, value = TRUE)) .generate_metabolomics_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, assay = metab_assay, parallel = parallel)
-    if("epigen-atac-seq" %in% selected_omes) .generate_atac_inputs(repo_local_dir = repo_local_dir, acute_vs_training = acute_vs_training, tissue = tissue, parallel = parallel)
+    if("transcript-rna-seq" %in% selected_omes) .generate_transcriptomics_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, parallel = parallel)
+    if("prot-ol" %in% selected_omes) .generate_prot_ol_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, parallel = parallel)
+    if("prot-ph" %in% selected_omes) .generate_prot_ph_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, parallel = parallel)
+    if("prot-pr" %in% selected_omes) .generate_prot_pr_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, parallel = parallel)
+    for(metab_assay in grep("^metab-", selected_omes, value = TRUE)) .generate_metabolomics_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, assay = metab_assay, parallel = parallel)
+    if("epigen-atac-seq" %in% selected_omes) .generate_atac_inputs(repo_local_dir = repo_local_dir, model_type = model_type, tissue = tissue, parallel = parallel)
   }
 }
 
@@ -107,7 +107,7 @@ generate_DA_inputs = function(repo_local_dir = NULL,
 #' @param repo_local_dir
 #' Character scalar specifying the local repository directory used for output.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether the model corresponds to acute or training
 #' analyses.
 #'
@@ -153,7 +153,7 @@ generate_DA_inputs = function(repo_local_dir = NULL,
 #' @author christopher jin
 
 .run_models = function(repo_local_dir,
-                       acute_vs_training,
+                       model_type,
                        expression_object,
                        process_metadata,
                        tissue,
@@ -165,22 +165,25 @@ generate_DA_inputs = function(repo_local_dir = NULL,
   dir.create(da_path, recursive = TRUE, showWarnings = FALSE)
 
   fit = run_dream(expression_object = expression_object,
-                  acute_vs_training = acute_vs_training,
+                  model_type = model_type,
                   process_metadata = process_metadata,
                   voom = voom,
                   parallel = parallel)
 
+  if(model_type == "acute") relevant_formula = process_metadata[["full_formula"]]
+  if(model_type == "training") relevant_formula = process_metadata[["training_formula"]]
+  if(model_type == "sex_differences") relevant_formula = process_metadata[["sex_differences_formula"]]
 
   write_output = .convert_dream_output(fit,
                                        metadata = process_metadata$original_meta,
                                        tissue = tissue,
-                                       formula = process_metadata$full_formula,
+                                       formula = relevant_formula,
                                        ome = ome)
   write_with_path_name(write_output,
                        local_path = da_path,
                        ome = ome,
                        tissue = tissue,
                        data_category = 'da',
-                       data_details = paste0('dream-', acute_vs_training))
+                       data_details = paste0('dream-', model_type))
 
 }
