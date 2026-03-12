@@ -255,7 +255,7 @@ process_covariates = function(meta,
   if(!is.null(custom_covariates)){
     input_covariates = custom_covariates
   }else{
-    input_covariates = COVARIATES_FILE
+    input_covariates = MotrpacHumanPreSuspensionAnalysis::COVARIATES_FILE
   }
   covariates = input_covariates %>%
     as.data.frame() %>%
@@ -273,7 +273,7 @@ process_covariates = function(meta,
     dplyr::mutate(visit_group_timepoint = droplevels(interaction(visitcode, randomGroupCode, Timepoint))) %>%
     dplyr::mutate(sex_group_timepoint = droplevels(interaction(Sex, randomGroupCode, Timepoint)))
 
-  technical_covs = covariates %>% filter(tech_or_design == "Technical")
+  technical_covs = covariates %>% dplyr::filter(tech_or_design == "Technical")
   full_formula = names(sel_meta)[!names(sel_meta) %in% c("randomGroupCode", "Timepoint", "visitcode", "pid", "group_timepoint", "visit_group_timepoint", "sex_group_timepoint")] #remove these from the character vector
   #the purpose of the design covariates section is to make a model.matrix()
   design_covs = c(full_formula[!full_formula %in% as.character(technical_covs$covariate)], "group_timepoint")
@@ -366,6 +366,7 @@ process_covariates = function(meta,
     # message(tp)
     if (!tp == 'pre_exercise'){
       # meta_tp = metadata %>% filter(Timepoint == tp)
+      # Chris: note - should just make contrast_Endur_Cntrl = paste0(contrast_Endur, " - ", contrast_Cntrls) at some point. This could definitely be refactored...
       contrast_Endur_Cntrl = sprintf("group_timepointADUEndur.%s - group_timepointADUEndur.pre_exercise - group_timepointADUControl.%s + group_timepointADUControl.pre_exercise", tp, tp)
       contrast_Endur = sprintf("group_timepointADUEndur.%s - group_timepointADUEndur.pre_exercise", tp)
       contrast_Resist_Cntrl = sprintf("group_timepointADUResist.%s - group_timepointADUResist.pre_exercise - group_timepointADUControl.%s + group_timepointADUControl.pre_exercise", tp, tp)
@@ -391,36 +392,28 @@ process_covariates = function(meta,
 }
 
 .generate_sex_contrasts = function(metadata){
-  pre_contrast_expressions <- c()
+  contrast_expressions <- c()
   timepoints = unique(metadata$Timepoint)
   for(tp in timepoints){
     # message(tp)
-    if (tp == 'pre_exercise'){
-      pre_contrast_expressions = c(pre_contrast_expressions, "sex_group_timepointFemale.ADUEndur.pre_exercise - sex_group_timepointMale.ADUEndur.pre_exercise + sex_group_timepointFemale.ADUControl.pre_exercise - sex_group_timepointMale.ADUControl.pre_exercise + sex_group_timepointFemale.ADUResist.pre_exercise - sex_group_timepointMale.ADUResist.pre_exercise")    }else{
-        meta_tp = metadata %>% filter(Timepoint == tp)
-        for(group in c("ADUEndur", "ADUResist")){
-          #contrast in differences b/t male and female, when fit seperately by sex
-          contrast_expression = paste0("((sex_group_timepointFemale.", group, ".", tp, " - ", "sex_group_timepointFemale.", group, ".pre_exercise) - ",
-                                       "(sex_group_timepointMale.", group, ".", tp, " - ", "sex_group_timepointMale.", group, ".pre_exercise)) - ",
-                                       "((sex_group_timepointFemale.ADUControl.", tp, " - ", "sex_group_timepointFemale.ADUControl.pre_exercise) - ",
-                                       "(sex_group_timepointMale.ADUControl.", tp, " - ", "sex_group_timepointMale.ADUControl.pre_exercise))"
-          )
-          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
+    if (tp == 'pre_exercise') next
+    meta_tp = metadata %>% filter(Timepoint == tp)
+    for(group in c("ADUEndur", "ADUResist")){
+      if ((tp == 'during_20_min' | tp == 'during_40_min') &&  group == "ADUResist") next
+      #female tp - female baseline (relative to control)
+      female_grp_vs_control = paste0("(sex_group_timepointFemale.", group, ".", tp, " - ", "sex_group_timepointFemale.", group, ".pre_exercise) - ",
+                                     "(sex_group_timepointFemale.ADUControl.", tp, " - ", "sex_group_timepointFemale.ADUControl.pre_exercise)"
+                                     )
+      #male is the same except sub Female for Male
+      male_grp_vs_control = gsub("Female", "Male", female_grp_vs_control)
 
-          #contrast in just female tp - female baseline (relative to control)
-          contrast_expression = paste0("(sex_group_timepointFemale.", group, ".", tp, " - ", "sex_group_timepointFemale.", group, ".pre_exercise) - ",
-                                       "(sex_group_timepointFemale.ADUControl.", tp, " - ", "sex_group_timepointFemale.ADUControl.pre_exercise)"
-          )
-          #contrast in just male tp - male baseline (relative to control)
-          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
+      #female vs male. Positive = female change > male change.
+      female_change_vs_male_change = paste0(female_grp_vs_control, " - ", male_grp_vs_control)
 
-          contrast_expression = paste0("(sex_group_timepointMale.", group, ".", tp, " - ", "sex_group_timepointMale.", group, ".pre_exercise) - ",
-                                       "(sex_group_timepointMale.ADUControl.", tp, " - ", "sex_group_timepointMale.ADUControl.pre_exercise)"
-          )
-          pre_contrast_expressions = c(pre_contrast_expressions, contrast_expression)
-        }
-      }
+      contrast_expressions = c(contrast_expressions, female_grp_vs_control, male_grp_vs_control, female_change_vs_male_change)
+
+    }
   }
-  return(pre_contrast_expressions)
+  return(contrast_expressions)
 }
 
