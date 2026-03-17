@@ -56,6 +56,8 @@ Molecular profiling spanned seven assay types:
 - ATAC-seq (epigen-atac-seq)
 - MethylCap-seq (epigen-methylcap-seq)
 
+There are also key clinical values 
+
 ---
 
 # 1. Available Tissues and Omes
@@ -127,11 +129,12 @@ biological question:
 
 - **`Endur_vs_Resist`** (4 contrasts) — Direct comparison of endurance vs.
   resistance exercise at each post-exercise timepoint (delta-delta design).
-  Identifies modality-specific responses.
+  Identifies modality-differing responses.
 
 - **`baseline`** (3 contrasts) — Pre-exercise differences between groups
   (Endurance vs. Resistance, Endurance vs. Control, Resistance vs. Control).
-  Verifies randomization and identifies pre-existing group differences.
+  Verifies randomization and identifies pre-existing group differences. Also 
+  evaluates the potential effect of the familiarization protocol. 
 
 - **`control_only`** (6 contrasts) — Control group changes over time relative
   to their own pre-exercise baseline. Captures effects of fasting, biopsy,
