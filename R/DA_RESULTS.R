@@ -102,3 +102,15 @@
 #' @keywords datasets
 "SPLICING_DA"
 
+
+#' Clinical Chemistry Differential analysis
+#'
+#' A data object containing results from a differential expression analysis of the clinical
+#' analytes as described in data-raw/differential_analysis_results/
+#'
+#' @docType data
+#' @keywords datasets
+"CLIN_CHEMISTRY_DA"
+
+
+

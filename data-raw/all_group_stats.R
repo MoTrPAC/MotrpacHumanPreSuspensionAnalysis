@@ -14,8 +14,21 @@ qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = metab_only_list
 da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected_omes = metab_only_list(),
                                                                         single_matrix = TRUE)
 
-# clin_sum_stats =
+#----------include clinical chemistry to summary stats by merging----------
+clin_chemistry = MotrpacHumanPreSuspensionData::load_clinical_data()[["chemistry"]] %>%
+  dplyr::bind_rows() %>%
+  tibble::column_to_rownames("analyte_name")
+metab_metadata = MotrpacHumanPreSuspensionData::load_pheno(load_acute_only = FALSE)[["pheno_data"]] %>%
+  filter(vialLabel %in% colnames(clin_chemistry))
 
+#see: data-raw/generate_differential_analysis
+clin_da = MotrpacHumanPreSuspensionAnalysis::CLIN_CHEMISTRY_DA %>%
+  mutate(platform = "")
+
+qc_data[["blood"]][["clinical_chemistry"]][["qc_norm"]] = clin_chemistry
+qc_data[["blood"]][["clinical_chemistry"]][["sample_metadata"]] = metab_metadata
+da_data = rbind(da_data, clin_da)
+#----------include clinical chemistry to summary stats by merging----------
 
 .save_one = function(obj, name) {
   assign(x = name, value = obj)
@@ -29,9 +42,10 @@ da_data = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected
 #older code. not really efficient but should find sum stats easily.
 
 for(tissue in names(qc_data)){
-  for(assay in names(qc_data[[tissue]])){
+  # for(assay in names(qc_data[[tissue]])){
+  for(assay in c("clinical_chemistry")){
     curr_data = qc_data[[tissue]][[assay]][["qc_norm"]]
-    if(nrow(curr_data) == 0) next
+    if(is.null(curr_data) || nrow(curr_data) == 0) next
     #match to only those that are in the differential analysis
     assay_filt = ifelse(grepl("metab", assay), "metab", assay)
     matching_da = da_data %>%

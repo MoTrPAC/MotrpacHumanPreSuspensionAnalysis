@@ -3,17 +3,15 @@
 \docType{data}
 \name{CLIN_CHEMISTRY_DA}
 \alias{CLIN_CHEMISTRY_DA}
-\title{Differential Alternative Splicing Results}
+\title{Clinical Chemistry Differential analysis}
 \format{
-A data frame containing all differential analysis results for clinical metabolites.
-}
-\source{
-Generated as described in \code{data-raw/generate_differential_analysis}
+An object of class \code{data.frame} with 297 rows and 20 columns.
 }
 \usage{
 CLIN_CHEMISTRY_DA
 }
 \description{
-A data object containing results from a differential analysis for the clinical chemistry analytes.
+A data object containing results from a differential expression analysis of the clinical
+analytes as described in data-raw/differential_analysis_results/
 }
 \keyword{datasets}

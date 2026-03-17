@@ -62,7 +62,7 @@
                      selected_ome = desired_ome,
                      load_acute_only = FALSE,
                      remove_unnamed_metab = TRUE)
-  if (length(ome_data) > 0) {
+  if (length(ome_data) > 0 && nrow(ome_data[[tissue]][[desired_ome]][["qc_norm"]] > 0)) {
     metadata = ome_data[[tissue]][[desired_ome]][['sample_metadata']]
     if (model_type == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
     rownames(metadata) = metadata$vialLabel

@@ -19,6 +19,8 @@
 #' These data are analyzed using generalized linear mixed models rather than the
 #' linear mixed model framework used for other omics layers.
 #'
+#' **NOTE**: variancePartition_1.36.3 gives me an error. Seems to work fine on variancePartition_1.40.1.
+#'
 #' @param repo_local_dir
 #' Character scalar specifying the local repository directory upstream of where
 #' intermediate and output files will be written.
@@ -62,6 +64,7 @@
 #' @note
 #' Training analyses are omitted from public release due to limited sample sizes
 #' and lack of adequate group representation.
+#'
 #'
 #' @keywords internal
 #' @author christopher jin

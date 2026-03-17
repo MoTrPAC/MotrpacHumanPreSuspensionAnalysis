@@ -66,23 +66,18 @@ qc_norm_counts = lapply(seq_len(nrow(samples_per_plat)), function(row) {
 qualifying_omes_tissues = qc_norm_counts %>%
   group_by(tissue, assay) %>%
   mutate(flag_low_n = any(n < 3)) %>%
-  filter(flag_low_n) %>%
+  filter(!flag_low_n) %>%
   distinct(tissue, assay)
 
 #--------------------------------
 
 for(row in seq(nrow(qualifying_omes_tissues))){
+  if(grepl("prot|transcript", qualifying_omes_tissues$assay[row])) next
   generate_DA_inputs(repo_local_dir = "~/Downloads/",
-                     model_type = "acute",
+                     model_type = "sex_differences",
                      selected_omes = qualifying_omes_tissues$assay[row],
                      selected_tissues = qualifying_omes_tissues$tissue[row],
                      epigen = FALSE,
                      parallel = FALSE)
 }
 
-generate_DA_inputs(repo_local_dir = "~/Downloads/",
-                   model_type = "sex_differences",
-                   selected_omes = "transcript-rna-seq",
-                   selected_tissues = "blood",
-                   epigen = FALSE,
-                   parallel = FALSE)
