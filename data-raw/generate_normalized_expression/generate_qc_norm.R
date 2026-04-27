@@ -65,15 +65,16 @@
 generate_qc_norm = function(repo_local_dir = NULL,
                             selected_omes = "all",
                             selected_tissues = "all",
-                            epigen = TRUE){
-  if(all(selected_omes == "all")) selected_omes = MotrpacHumanPreSuspensionData::ome_available_list()
-  if(all(selected_tissues == "all")) selected_tissues = MotrpacHumanPreSuspensionData::tissue_available_list()
+                            epigen = TRUE,
+                            config_file = NULL){
+  if(all(selected_omes == "all")) selected_omes = ome_available_list()
+  if(all(selected_tissues == "all")) selected_tissues = tissue_available_list()
 
-  if(!all(selected_omes %in% MotrpacHumanPreSuspensionData::ome_available_list())){
+  if(!all(selected_omes %in% ome_available_list())){
     stop("Invalid ome selection. Try 'ome_available_list()' for a list")
   }
 
-  if(!all(selected_tissues %in% MotrpacHumanPreSuspensionData::tissue_available_list())){
+  if(!all(selected_tissues %in% tissue_available_list())){
     stop("Invalid tissue selection. Try 'tissue_available_list()' for a list")
   }
 
@@ -93,7 +94,8 @@ generate_qc_norm = function(repo_local_dir = NULL,
     generate_prot_pr_imputed(repo_local_dir)
   }
   if(any(grepl("metab", selected_omes))) {
-    message("Refer to the Metabolomics notebook for generation of metabolomics CVs and normalized data")
+    #this function requires a 'config' file because it needs to source files from multiple repositories
+   generate_metab_qc_norm(config_file = config_file)
   }
   if("epigen-atac-seq" %in% selected_omes) generate_atac_qc_norm(repo_local_dir)
   if("epigen-methyl-seq" %in% selected_omes){

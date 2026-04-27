@@ -44,7 +44,7 @@
 
 generate_prot_ol_qc_norm = function(repo_local_dir){
   desired_ome = 'prot-ol'; tissue = 'blood'
-  local_path = file.path(repo_local_dir, "data", "tmp/")
+  local_path = file.path(repo_local_dir)
   olink_data_path = "gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_results_v1.0.txt"
   olink_data = MotrpacBicQC::dl_read_gcp(olink_data_path, tmpdir = local_path, check_first = T)
   sample_metadata = MotrpacBicQC::dl_read_gcp('gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_metadata-samples_v1.0.txt',
@@ -80,7 +80,7 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
 
   #here we remove outliers
   outliers_data = OUTLIERS$vialLabel
-  pheno_data_parsed = load_pheno(repo_local_dir, load_acute_only = FALSE)$pheno_data
+  pheno_data_parsed = load_pheno(load_acute_only = FALSE)$pheno_data
 
   raw_olink_wide_manifest <- dplyr::left_join(raw_olink_wide, pheno_data_parsed, by='vialLabel') %>%
     dplyr::select(pid, visitcode, plate_id, vialLabel, BMI, calculatedAge, Timepoint,study, sex_psca,starts_with('OID'))

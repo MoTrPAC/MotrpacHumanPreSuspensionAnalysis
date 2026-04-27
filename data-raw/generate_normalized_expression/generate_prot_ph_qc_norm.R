@@ -47,15 +47,14 @@
 #' @author christopher jin
 
 generate_prot_ph_qc_norm = function(repo_local_dir){
-  check_package_installation(pkg = "cmapR") #needed for GCT
+  local_path = repo_local_dir
 
   desired_ome = 'prot-ph'; tissue_types = c('muscle', 'adipose')
-  local_path = paste0(repo_local_dir, "data/tmp/")
   ome_vial_meta = list()
   ome_vial_meta[["muscle"]] = "gs://motrpac-data-hub/human-precovid/results/proteomics-untargeted/t10-muscle/prot-ph/motrpac_human-precovid_t10-muscle_prot-ph_vial-metadata_v1.0-pnbi.txt"
   ome_vial_meta[["adipose"]] = "gs://motrpac-data-hub/human-precovid/results/proteomics-untargeted/t07-adipose/prot-ph/motrpac_human-precovid_t07-adipose_prot-ph_vial-metadata_v1.0.txt"
 
-  pheno_data_parsed = load_pheno(repo_local_dir, load_acute_only = FALSE)$pheno_data
+  pheno_data_parsed = load_pheno(load_acute_only = FALSE)$pheno_data
   metadata_path = paste0(local_path, "freeze/proteomics/metadata/")
   qc_norm_path = paste0(local_path, "freeze/proteomics/qc-norm/")
   dir.create(metadata_path, recursive = TRUE, showWarnings = FALSE)
@@ -92,7 +91,7 @@ generate_prot_ph_qc_norm = function(repo_local_dir){
                                   cdesc=meta_merge,
                                   rid =rownames(mat),
                                   cid = colnames(mat))
-    phospho_nonnorm <- cmapR::subset_gct(phospho_nonnorm, cid = which(phospho_nonnorm@cdesc$protocol == "01")) #remove HA participants
+    phospho_nonnorm <- cmapR::subset_gct(phospho_nonnorm, cid = which(phospho_nonnorm@cdesc$study == "01")) #remove HA participants
     #This is non-batch effect corrected, median-normalized dataset
     phospho_mednorm <- .median_mad_norm(phospho_nonnorm, mad = F)
 
@@ -152,8 +151,13 @@ generate_prot_ph_qc_norm = function(repo_local_dir){
 
     sample_metadata_output = PH@cdesc %>% dplyr::select(c("vialLabel", "tmt_plex", "tmt16_channel"))
 
+    feature_metadata_output = PH@rdesc %>%
+      dplyr::rename(feature_id = ptm_id) %>%
+      dplyr::select(feature_id, everything()) %>%
+      dplyr::filter(feature_id %in% rownames(phospho_output))
+
     write_with_path_name(sample_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
     write_with_path_name(phospho_output, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log2-mn')
-    write_with_path_name(rdesc, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+    write_with_path_name(feature_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
   }
 }

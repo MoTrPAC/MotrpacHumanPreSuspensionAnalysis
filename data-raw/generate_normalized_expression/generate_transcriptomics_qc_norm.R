@@ -91,7 +91,7 @@ generate_transcriptomics_qc_norm = function(repo_local_dir){
 
     #-----here we filter lowly expressed genes and transform into logcpm
     raw_dge = edgeR::DGEList(counts = raw_counts_input)
-    keep = rowSums(cpm(raw_dge) > 0.5) >= round(length(raw_counts_input)*0.1)
+    keep = rowSums(edgeR::cpm(raw_dge) > 0.5) >= round(length(raw_counts_input)*0.1)
     filt_dge = raw_dge[keep, , keep.lib.sizes=FALSE]
     dge = edgeR::calcNormFactors(filt_dge, method="TMM")
     norm_counts = edgeR::cpm(dge,log=TRUE)

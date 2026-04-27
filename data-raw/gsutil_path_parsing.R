@@ -31,7 +31,7 @@ write_with_path_name = function(actual_data_object = NULL,
   all_file_header = "human-precovid-sed-adu" #this is the base structure for all files within the phase.
   tissue_code = .match_ome_tissue_code(desired_ome = ome, input_tissue = tissue)
   file_name = paste(all_file_header, tissue_code, ome, data_category, data_details, sep = "_")
-  file_name = paste0(local_path, file_name, "_v", version, file_type)
+  file_name = paste0(local_path,"/", file_name, "_v", version, file_type)
   if(return_name_only) {
     return(file_name)
   }else{
