@@ -186,11 +186,16 @@ for (tissue in names(existing_metab_package)) {
 
 ### ATAC-seq
 
-Skipping for file size purposes. 
+No changes needed for ATACseq. feature metadata lines up perfectly. 
+```{r, eval = FALSE}
+atac_dataset = load_qc(selected_omes = "epigen-atac-seq",
+                       epigen = TRUE,
+                       repo_local_dir = repo_local_dir)
+```
 
 ### Methylation (MethylCap-seq)
 
-Methylation processing relies on external pipelines not integrated into this workflow. Contact cajin@stanford.edu or yongchao.ge@mssm.edu with questions.
+Skipping for file size purposes. 
 
 ---
 

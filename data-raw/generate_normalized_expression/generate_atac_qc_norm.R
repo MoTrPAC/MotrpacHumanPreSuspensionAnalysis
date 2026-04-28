@@ -92,7 +92,7 @@ generate_atac_qc_norm = function(repo_local_dir,
     tissue_metadata = ome_meta[ome_meta$vialLabel %in% tissue_pheno$vialLabel, ] #so we use it for the second filtering here
     raw_atac_input = raw_atac_input[, colnames(raw_atac_input) %in% tissue_pheno$vialLabel] #now remove the HA, peds from the counts matrix too
 
-    min_count = 2*median(as.matrix(raw_atac_input)) #so we go with a more aggresive pruning strategy with ATAC to limit the analyzed peaks
+    min_count = 2 * stats::median(as.matrix(raw_atac_input)) #so we go with a more aggresive pruning strategy with ATAC to limit the analyzed peaks
     min_samples = 0.5*dim(raw_atac_input)[2] #number of samples that have to pass the minimum count above
 
     #---so atac has no outliers, no need to subset those
@@ -111,10 +111,10 @@ generate_atac_qc_norm = function(repo_local_dir,
 
     if (parallel){
       num_cores = parallel::detectCores() - 2
-      param <- SnowParam(num_cores, "SOCK", progressbar = TRUE)
-      suppressWarnings({voom_object <- variancePartition::voomWithDreamWeights(dge_list, formula = as.formula(formula), data = meta, BPPARAM = param)})
+      param <- BiocParallel::SnowParam(num_cores, "SOCK", progressbar = TRUE)
+      suppressWarnings({voom_object <- variancePartition::voomWithDreamWeights(dge_list, formula = stats::as.formula(formula), data = meta, BPPARAM = param)})
     }else{
-      voom_object <- variancePartition::voomWithDreamWeights(dge_list, formula = as.formula(formula), data = meta)
+      voom_object <- variancePartition::voomWithDreamWeights(dge_list, formula = stats::as.formula(formula), data = meta)
     }
     atac_norm <- voom_object$E
 
@@ -122,8 +122,8 @@ generate_atac_qc_norm = function(repo_local_dir,
     design_cov = paste(process_metadata[["design_cov"]], collapse = " + ")
     message(tissue," technical: ", technical_cov, " design: ", design_cov)
     batch_corrected = limma::removeBatchEffect(atac_norm,
-                                               covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
-                                               design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
+                                               covariates = stats::model.matrix(stats::as.formula(paste("~ ", technical_cov)), data = meta),
+                                               design = stats::model.matrix(stats::as.formula(paste("~ ", design_cov)), data = meta))
     batch_corrected = as.data.frame(batch_corrected)
     batch_corrected$feature_id = rownames(batch_corrected)
     batch_corrected = batch_corrected %>%
@@ -131,10 +131,44 @@ generate_atac_qc_norm = function(repo_local_dir,
     #for RNA, ATAC, we just want to generate only the list of the features that actually exist so the features in each ome can be easily referenced
     only_features = batch_corrected %>% dplyr::select(feature_id)
 
+    atac_annotated = .annotate_atac_features(only_features)
+
     write_with_path_name(tissue_metadata, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
     write_with_path_name(batch_corrected, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log-cpm')
-    write_with_path_name(only_features, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+    #in version 1.4 we also attach the gene level information into the feature metadata.
+    write_with_path_name(atac_annotated, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features', version = "1.4")
 
   }
+}
+
+.annotate_atac_features = function(feature_metadata){
+  atacpeakmeta = feature_metadata %>%
+    dplyr::mutate(chrom = gsub(":.*", "", feature_id),
+                  start = as.numeric(gsub(".*:|-.*", "", feature_id)),
+                  end = as.numeric(gsub(".*-", "", feature_id))) %>%
+    data.table::as.data.table()
+
+  atac_peakdf = pre_cawg_get_peak_annotations_hs(atacpeakmeta)
+  ensembl = biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", version = 105)
+
+  attributes <- c("ensembl_gene_id", "entrezgene_id", "external_gene_name")
+  atac_lookup_df = biomaRt::getBM(attributes = attributes,
+                                  filters = "ensembl_gene_id",
+                                  values = atac_peakdf$ensembl_gene,
+                                  mart = ensembl) %>%
+    dplyr::full_join(atac_peakdf, c("ensembl_gene_id" = "ensembl_gene")) %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
+    dplyr::select(feature_id,
+                  gene_symbol,
+                  ensembl_gene = ensembl_gene_id,
+                  entrez_gene = entrezgene_id,
+                  custom_annotation,
+                  relationship_to_gene) %>%
+    dplyr::group_by(feature_id) %>%
+    dplyr::slice(match(min(entrez_gene), entrez_gene)) %>%
+    dplyr::mutate(entrez_gene = as.character(entrez_gene),
+                  platform = "epigen-atac-seq")
+
+  return(atac_lookup_df)
 }
 

@@ -108,5 +108,19 @@ write_with_path_name = function(actual_data_object = NULL,
 }
 
 
+.validate_staging_folder = function(){
+  current_staging_folder = "gs://pre-cawg/staging_20260428"
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/epigenomics", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/metabolomics-targeted", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/metabolomics-untargeted", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/proteomics", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/resources", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/transcriptomics", current_staging_folder))
+  system(paste("gsutil cp -R gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3/clinical_chemistry", current_staging_folder))
+
+
+}
+
+
 
 

@@ -27,12 +27,19 @@
 #' @keywords internal metabolomics normalization
 #' @author christopher jin
 
-generate_metab_qc_norm = function(config_file = "~/config.json") {
+generate_metab_qc_norm = function(config_file = "~/config.json",
+                                  redownload = FALSE) {
   if(!file.exists(config_file))
     stop(config_file, " not found. This function requires a config file to locate motrpac_bic_norm_qc_repo_path and precovid_repo_path.")
 
   config = jsonlite::fromJSON(config_file)
   repo_local_dir = config$precovid_repo_path
+
+  tmp = file.path(normalizePath(config$precovid_repo_path), "data", "tmp", "metabolomics_qc_norm")
+  if(redownload){
+    message("This function was run with redownload = FALSE. It will fail if you have not downloaded the raw metabolomics files")
+    .download_metab_files(tmp = tmp)
+  }
 
   source(file.path(normalizePath(config$motrpac_bic_norm_qc_repo_path), "tools/unsupervised_normalization_functions.R"))
   source(file.path(normalizePath(config$motrpac_bic_norm_qc_repo_path), "tools/MetabolomicsLibrary.R"))
@@ -44,7 +51,7 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
   imputation_alpha = 0.2
   max_allowed_NA_rate = 0.2
   required_meta_vars = c("codedsiteid", "visitcode", "pid", "BID", "Timepoint", "randomGroupCode",
-                          "htcmavg_hwwt", "wtkg_pcaa", "calculatedAge", "Sex")
+                         "htcmavg_hwwt", "wtkg_pcaa", "calculatedAge", "Sex")
 
   # Load raw metabolomics data
   metab_files = file.path(repo_local_dir, "data", "tmp", "metabolomics_qc_norm")
@@ -130,8 +137,8 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
     curr_meta$num_NAs = colSums(is.na(curr_data[, rownames(curr_meta)]))
 
     impute_as_needed = .organize_missingness(curr_data, new_processed_dataset,
-                                              metabolomics_processed_datasets, newname,
-                                              max_allowed_NA_rate, imputation_alpha)
+                                             metabolomics_processed_datasets, newname,
+                                             max_allowed_NA_rate, imputation_alpha)
     curr_data_imp = impute_as_needed[["curr_data_imp"]]
     metabolomics_processed_datasets = impute_as_needed[["metabolomics_processed_datasets"]]
 
@@ -259,13 +266,14 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
     metabolomics_processed_datasets[[currname]]$data_use = curr_data_use
   }
 
-  # Write loop
+  # Write loop according to bic data structure format. -----------
   outdir = file.path(repo_local_dir, "data", "tmp", "freeze")
+  full_refmet_fixed_table = .build_metab_refmet_map(metabolomics_processed_datasets)
+
   for(dataset in names(metabolomics_processed_datasets)) {
     if(is.null(metabolomics_processed_datasets[[dataset]]$data_use)) next
 
     ome = strsplit(dataset, ",")[[1]][2]
-
     tissue_code = strsplit(dataset, ",")[[1]][1]
     tissue = OME_TISSUE_CODE %>% filter(tissue_code == !!tissue_code, ome == !!ome) %>% pull(tissue)
 
@@ -289,11 +297,20 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
       dplyr::filter(tissue == tissue_code, platform == ome) %>%
       dplyr::select(feature_id, pct_na_imputed)
 
+    relevant_refmet_fixes = full_refmet_fixed_table %>%
+      dplyr::filter(dataset == !!dataset) %>%
+      dplyr::select(feature_id, refmet_name, refmet_id, kegg_id)
+
     metadata_features = metabolomics_processed_datasets[[dataset]]$row_annot %>%
       as.data.frame() %>%
+      dplyr::filter(!stringr::str_detect(rownames(.), "(?i)istd|standard")) %>%
       dplyr::rename(feature_id = metabolite_name) %>%
       dplyr::filter(feature_id %in% qc_norm_table$feature_id) %>%
-      dplyr::left_join(., relevant_impute_table, by = "feature_id")
+      dplyr::select(-refmet_name) %>%
+      dplyr::left_join(., relevant_impute_table, by = "feature_id") %>%
+      dplyr::left_join(., relevant_refmet_fixes, by = "feature_id") %>%
+      dplyr::select(feature_id, refmet_name, everything())
+
 
     write_with_path_name(qc_norm_table,
                          local_path = file.path(single_outdir, "qc-norm/"),
@@ -325,9 +342,34 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
   invisible(metabolomics_processed_datasets)
 }
 
+#internal function for downloading the metab raw results from the google cloud bucket.
+.download_metab_files = function(tmp,
+                                 gsutil_cmd = "gsutil"){
+
+  # Bucket structure is: tissue/platform/results/<data files>. For GET, this path should
+  # also have a qa_qc directory with the qc_metrics and sample_metadata files.
+  targeted_buckets = c("gs://motrpac-data-hub/human-precovid/results/metabolomics-targeted/")
+  untargeted_buckets = c("gs://motrpac-data-hub/human-precovid/results/metabolomics-untargeted/")
+  clinical_bucket = c(" gs://motrpac-data-hub/human-precovid/phenotype/human-precovid-sed-adu/raw/data_sets/")
+  pheno_bucket = "gs://motrpac-data-hub/human-eqc/adult/" #Human eqc data and randomization information
+
+  for(targeted_bucket in targeted_buckets){
+    rem_prev = targeted_bucket == targeted_buckets[1] # TRUE for first iteration of for loop, seems unnecessary
+    obj = DownloadBucketLocal(targeted_bucket,tmp,gsutil_cmd)
+  }
+  for(untargeted_bucket in untargeted_buckets){
+    obj = DownloadBucketLocal(untargeted_bucket,tmp,gsutil_cmd)
+  }
+}
 
 
-# Private: reorders annotation to match sample data row order
+# Reorders or rebuilds a row-annotation data frame to match the order of
+# `metabolites`. Fast path: if all names are already rownames, subsets directly.
+# Slow path: iterates and matches by the first column, taking the first hit when
+# duplicates exist. Returns NULL (with a printed error) if any name is absent.
+# metabolites: character vector of metabolite names matching rownames of sample data
+# anno: data frame with metabolite names as rownames or in the first column
+# Returns: anno reordered/subset to align with metabolites, or NULL on failure
 .reconstruct_anno = function(metabolites, anno) {
   if(all(metabolites %in% rownames(anno))) return(anno[metabolites,])
   m = c()
@@ -343,7 +385,14 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
   return(m)
 }
 
-# Private: parses tissue/platform/site and initializes the processed dataset list entry
+# Parses tissue, platform, and site from a comma-delimited dataset name and
+# initializes the corresponding entry in metabolomics_processed_datasets with
+# tissue/site/platform metadata and control data. Site names of the form
+# "University of X" are shortened to "X"; single-word names are used as-is.
+# currname: comma-delimited string, e.g. "t02-plasma,metab-t-conv,named"
+# new_processed_dataset: parsed dataset list (must contain sample_meta$site)
+# metabolomics_processed_datasets: accumulator list built across loop iterations
+# Returns: list(newname, metabolomics_processed_datasets)
 .organize_some_names = function(currname, new_processed_dataset, metabolomics_processed_datasets) {
   curr_tissue = strsplit(currname, split = ",")[[1]][1]
   curr_platform = strsplit(currname, split = ",")[[1]][2]
@@ -366,7 +415,18 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
   return(list(newname = newname, metabolomics_processed_datasets = metabolomics_processed_datasets))
 }
 
-# Private: feature-level filtering + KNN imputation; returns updated list components
+# Filters features with zero variance, blank/placeholder rownames, or NA rate
+# above max_allowed_NA_rate, records NA patterns by metabolite and sample, then
+# runs KNN imputation via min_val_knn_hybrid_imputation. Single-feature datasets
+# skip filtering and imputation entirely. Updates metabolomics_processed_datasets
+# in place with control data and NA audit info for newname.
+# curr_data: feature × sample numeric matrix
+# new_processed_dataset: parsed dataset (provides row_annot and sample_data rownames)
+# metabolomics_processed_datasets: accumulator list, updated for newname
+# newname: key into metabolomics_processed_datasets being populated
+# max_allowed_NA_rate: features with row NA fraction above this are dropped
+# imputation_alpha: alpha parameter passed to min_val_knn_hybrid_imputation
+# Returns: list(curr_data_imp, metabolomics_processed_datasets, curr_data_row_annot, rows_to_remove)
 .organize_missingness = function(curr_data, new_processed_dataset,
                                  metabolomics_processed_datasets, newname,
                                  max_allowed_NA_rate, imputation_alpha) {
@@ -435,6 +495,252 @@ generate_metab_qc_norm = function(config_file = "~/config.json") {
 }
 
 
-.fix_refmet_names = function(){
+# Applies manual corrections to refmet_name to align all values with the current
+# RefMet standard. Two correction sources are merged into one pass: feature_id-
+# based overrides for cases where the stored refmet_name is wrong/missing, and a
+# name-to-name map covering capitalization errors, typos, slash-delimited
+# ambiguities, and lab-internal naming conventions. Some labs submitted
+# annotations using outdated LIPID MAPS names or lab-internal aliases that
+# predate the current RefMet standard.
+# metab: data frame with columns feature_id and refmet_name
+# Returns: metab with refmet_name corrected in place
+.fix_refmet_names = function(metab) {
+  # feature_id-based overrides
+  metab <- metab %>%
+    mutate(
+      refmet_name = case_when(
+        feature_id == "13-HODE" ~ "13-HODE",
+        feature_id == "13 HODE" ~ "13-HODE",
+        TRUE ~ refmet_name
+      )
+    )
+
+  refmet_name_map <- c(
+    "cholesterol sulfate"              = "Cholesterol sulfate",
+    "oleamide"                         = "Oleamide",
+    "tridecylamine"                    = "Tridecylamine",
+    "PGE2 thanolamide"                 = "PGE2 ethanolamide",
+    "12(13)-EpMOE"                     = "12(13)-EpOME",
+    "Docosatetraenoic aicd"            = "Docosatetraenoic acid",
+    "Tetracosenoic aicd"               = "Tetracosenoic acid",
+    "Prostagladin"                     = "Prostaglandin",
+
+    "Chenodeoxycholic acid\\Deoxycholic acid"   = "Deoxycholic acid",
+    "Glycocholic acid\\Glycohyocholic acid"     = "Glycocholic acid",
+
+    "N-Lauroylglycine"                 = "NAGly 12:0",
+    "N-linoleoylglycine"               = "NAGly 18:2(9Z,12Z)",
+    "N-Oleoyl glycine"                 = "NAGly 18:1(9Z)",
+    "N-Undecanoylglycine"              = "NAGly 11:0",
+    "N-Myristoylglycine"               = "NAGly 14:0",
+
+    "CAR 12:0-OH"                      = "CAR 12:0;OH",
+    "CAR 14:0-OH"                      = "CAR 14:0;OH",
+    "CAR 14:1-OH"                      = "CAR 14:1;OH",
+    "CAR 4:0-OH"                       = "CAR 4:0;OH",
+
+    "DG 16:0_16:0_0:0"                 = "DG 16:0_16:0",
+    "DG 16:0_16:1_0:0"                 = "DG 16:0_16:1",
+    "DG 16:0_18:1_0:0"                 = "DG 16:0_18:1",
+    "DG 18:2_18:2_0:0"                 = "DG 18:2_18:2",
+    "DG 18:2_18:3_0:0"                 = "DG 18:2_18:3",
+
+    "13-OxoODE(13-KODE)"               = "13-Oxo-ODE",
+    "2-Arachidonoyl Glycerol (2AG)"    = "MG 0:0/20:4/0:0",
+    "5,6-DiHET"                        = "5,6-DiHETE",
+    "8(9)-DiHET"                       = "8,9-DiHETE",
+    "CoA(15:0)_and_CoA(C14:1-OH)"     = "Pentadecanoyl-CoA/Hydroxytetradecenoyl-CoA",
+    "CoA(2:0-COOH)_and_CoA(4:0-OH)"   = "Malonyl-CoA/Hydroxybutyryl-CoA",
+    "Linoleoyl Ethanolamide (LEA)"     = "Linoleoyl-EA",
+    "Oleoyl Ethanolamide (OEA)"        = "Oleoyl-EA",
+    "PC(O-33:2)>PC(O-15:0/18:2)"      = "PC O-16:1/20:4",
+    "PC(O-36:5)<PC(O-16:1/20:4)"      = "PC O-16:1/20:4",
+    "PE(36:4)>(16:0_20:4)"            = "PE 16:0_20:4",
+    "PE(38:4)>(PE(18:0_20:4)"         = "PE 18:0_20:4",
+    "Stearoyl Ethanolamide (ceramid)"  = "Stearoyl-EA"
+  )
+
+  metab <- metab %>%
+    mutate(refmet_name = dplyr::recode(refmet_name, !!!refmet_name_map, .default = refmet_name))
+
+  return(metab)
+}
+
+# Eric Leslie's implementation of the Metabolomics Workbench RefMet batch API.
+# Queries RefMet to standardize metabolite names and retrieve RefMet IDs and
+# KEGG IDs. Platform-specific LC suffixes (_hp_, _rp_, _rn_, _in_, _lp_, _ln_)
+# are stripped from names before lookup. All names are submitted in a single
+# POST request.
+# metab: data frame with columns feature_id, refmet_name, dataset
+# Returns: data frame with columns feature_id, platform, refmet_name, refmet_id, kegg_id
+.annotate_refmet = function(metab){
+  tosearch <- "_hp_|_rp_|_rn_|_in_|_lp_|_ln_"
+  metab <- metab %>%
+    dplyr::mutate(
+      lookup_refmet = dplyr::if_else(
+        grepl(tosearch, refmet_name),
+        gsub("(.*)(_\\w{2}_\\w{1})", "\\1", refmet_name),
+        refmet_name
+      ),
+      lookup_refmet = trimws(lookup_refmet)
+    )
+
+  mets <- stringi::stri_join_list(list(metab$lookup_refmet), sep = "\n")
+  h <- curl::new_handle()
+  curl::handle_setform(h, metabolite_name = mets)
+  req <- curl::curl_fetch_memory(
+    "https://www.metabolomicsworkbench.org/databases/refmet/name_to_refmet_new_minID.php",
+    handle = h
+  )
+
+  refmet_result <- utils::read.table(
+    text = rawToChar(req$content),
+    header = TRUE,
+    na.strings = "-",
+    stringsAsFactors = FALSE,
+    quote = "",
+    comment.char = "",
+    sep = "\t"
+  )
+
+  refmet_result[is.na(refmet_result)] <- '-'
+  refmet_result[refmet_result == ''] <- '-'
+
+  refmet_annotated <- refmet_result %>%
+    dplyr::transmute(
+      lookup_refmet = Input.name,
+      refmet_name_std = Standardized.name,
+      refmet_id = RefMet_ID,
+      kegg_id = KEGG_ID
+    ) %>%
+    dplyr::left_join(
+      metab %>% dplyr::select(feature_id, lookup_refmet, dataset),
+      by = "lookup_refmet",
+      relationship = "many-to-many"
+    ) %>%
+    dplyr::transmute(
+      feature_id,
+      platform = "metabolomics",
+      refmet_name = dplyr::na_if(refmet_name_std, "-"),
+      refmet_id = dplyr::na_if(refmet_id, "-"),
+      kegg_id = dplyr::na_if(kegg_id, "-")
+    ) %>%
+    dplyr::distinct()
+
+  return(refmet_annotated)
+}
+
+
+#using Eric Leslie's implementation of kegg API(s).
+
+# Note Chris: I got rid of eric's method 1 (Load RefMet to KEGG map from Metabolomics Workbench REST API) because we already use metabolomics workbench for the above refmet mapping.
+# Calling metab workbench again added 0 new features.
+.annotate_kegg_resources = function(final_metab){
+
+  # ==============================================================================
+  # APPLY ADDITIONAL KEGG ANNOTATION METHODS
+  # ==============================================================================
+  cat("\n=== APPLYING ADDITIONAL KEGG ANNOTATION METHODS ===\n")
+  cat("Current KEGG coverage:", sum(!is.na(final_metab$kegg_id)), "/", nrow(final_metab),
+      "(", round(100 * mean(!is.na(final_metab$kegg_id)), 1), "%)\n\n")
+
+  # Store original KEGG IDs for comparison
+  final_metab <- final_metab %>%
+    mutate(kegg_id_original = kegg_id)
+
+  # Method 2: Annotate using KEGGREST
+  cat("Querying KEGG database via KEGGREST...\n")
+
+  # Get metabolites that still don't have KEGG IDs
+  metab_no_kegg = final_metab %>%
+    filter(is.na(kegg_id), !is.na(refmet_name)) %>%
+    mutate(kegg_id_keggrest = .get_kegg_ids_via_keggrest(refmet_name))
+
+  final_metab_keggrest <- final_metab %>%
+    left_join(
+      metab_no_kegg %>% select(feature_id, kegg_id_keggrest),
+      by = "feature_id",
+      relationship = "many-to-many"
+    ) %>%
+    mutate(kegg_id = if_else(is.na(kegg_id), kegg_id_keggrest, kegg_id)) %>%
+    select(-kegg_id_keggrest) %>%
+    distinct() %>%
+    select(-kegg_id_original)
+
+  cat("Final KEGG coverage:", sum(!is.na(final_metab_keggrest$kegg_id)), "/", nrow(final_metab_keggrest),
+      "(", round(100 * mean(!is.na(final_metab_keggrest$kegg_id)), 1), "%)\n\n")
+
+  return(final_metab_keggrest)
 
 }
+
+# Downloads the full KEGG compound list in a single API call via
+# KEGGREST::keggList("compound"), parses all synonyms, and resolves
+# metabolite_names by exact local match. Avoids per-compound API queries.
+# Multiple KEGG IDs for the same name are collapsed with ";".
+# metabolite_names: character vector of RefMet-standardized metabolite names
+# Returns: character vector aligned to metabolite_names (NA where no match)
+.get_kegg_ids_via_keggrest = function(metabolite_names) {
+  all_compounds = KEGGREST::keggList("compound")
+
+  compound_df = data.frame(
+    kegg_id = stringr::str_remove(names(all_compounds), "cpd:"),
+    raw_name = as.character(all_compounds),
+    stringsAsFactors = FALSE
+  ) %>%
+    tidyr::separate_rows(raw_name, sep = ";") %>%
+    dplyr::mutate(raw_name = trimws(raw_name)) %>%
+    dplyr::group_by(raw_name) %>%
+    dplyr::summarise(kegg_id = paste(kegg_id, collapse = ";"), .groups = "drop")
+
+  data.frame(raw_name = metabolite_names, stringsAsFactors = FALSE) %>%
+    dplyr::left_join(compound_df, by = "raw_name") %>%
+    dplyr::pull(kegg_id)
+}
+
+
+
+# Assembles the full feature-to-RefMet annotation table across all metabolomics
+# platforms. Collects row annotations from each platform's row_annot, applies
+# manual RefMet name corrections (.fix_refmet_names), queries the RefMet batch
+# API (.annotate_refmet), and fills residual KEGG IDs via KEGGREST
+# (.annotate_kegg_resources). Only named features (is_named == TRUE) are
+# included; targeted immuno panels lacking is_named are treated as named.
+# metabolomics_processed_datasets: named list output from the normalization loop
+# Returns: data frame with feature_id, original_refmet_annotation, refmet_name,
+#   refmet_id, kegg_id, dataset, and additional row_annot metadata columns
+.build_metab_refmet_map = function(metabolomics_processed_datasets){
+  metab = bind_rows(lapply(names(metabolomics_processed_datasets), FUN = function(metab_platform) {
+    platform = metabolomics_processed_datasets[[metab_platform]][["row_annot"]]
+    specific_platform_name = metab_platform
+
+    # Targeted immuno panels don't have is_named; treat as named
+    if (!"is_named" %in% names(platform)) platform$is_named <- TRUE
+
+    platform %>%
+      dplyr::mutate(
+        is_named = as.logical(is_named),
+        across(any_of(c("metabolite_name","refmet_name","formula")), as.character),
+        dataset = specific_platform_name,
+      )
+  })) %>%
+    dplyr::rename(feature_id = metabolite_name) %>%
+    dplyr::filter(is_named == TRUE)
+
+  manual_fixes_done = .fix_refmet_names(metab)
+  refmet_annotations = .annotate_refmet(manual_fixes_done) %>%
+    dplyr::select(feature_id, refmet_name, refmet_id, kegg_id)
+
+  #------add refmet stuff via API------
+  manual_fixes_refmet = manual_fixes_done %>%
+    dplyr::rename(original_refmet_annotation = refmet_name) %>%
+    dplyr::left_join(., refmet_annotations, by = c("feature_id"), relationship = "many-to-many")
+
+  #------add additional kegg annotations----------
+  final_metab_refmet_map = .annotate_kegg_resources(manual_fixes_refmet)
+
+  return(final_metab_refmet_map)
+}
+
+
+
