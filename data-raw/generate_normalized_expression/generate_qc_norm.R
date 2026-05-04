@@ -10,6 +10,8 @@
 #' provides a reproducible, end-to-end mechanism for generating all analysis-ready
 #' inputs used in downstream modeling and visualization workflows.
 #'
+#' NOTE: The Clinical Chemistry object is processed differently. See the `generate_clinical_qc_norm` function for more details.
+#'
 #' @details
 #' Depending on user-specified options, this function may generate:
 #' \itemize{
@@ -61,6 +63,23 @@
 #' @author Christopher Jin
 #'
 #' @importFrom MotrpacHumanPreSuspensionData ome_available_list tissue_available_list
+
+
+
+# Now that these are not exported functions, make sure to load all of the data-raw relevant functions
+# config = jsonlite::fromJSON("~/config.json")
+# repo_local_dir = paste0(config$precovid_repo_path, "data/tmp/")
+#
+# source(file.path(here(), "data-raw", "gsutil_path_parsing.R"))
+# source(file.path(here(), "data-raw", "generate_differential_analysis", "generate_differential_modeling_functions.R"))
+#
+# invisible(lapply(
+#   list.files(file.path(here::here(), "data-raw", "generate_normalized_expression"),
+#              pattern = "\\.R$", full.names = TRUE),
+#   source
+# )
+# )
+
 
 generate_qc_norm = function(repo_local_dir = NULL,
                             selected_omes = "all",

@@ -48,10 +48,10 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
   olink_data_path = "gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_results_v1.0.txt"
   olink_data = MotrpacBicQC::dl_read_gcp(olink_data_path, tmpdir = local_path, check_first = T)
   sample_metadata = MotrpacBicQC::dl_read_gcp('gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_metadata-samples_v1.0.txt',
-                                tmpdir = local_path, check_first = T) %>%
+                                              tmpdir = local_path, check_first = T) %>%
     dplyr::rename(vialLabel = sample_id)
   protein_metadata = MotrpacBicQC::dl_read_gcp('gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_metadata-proteins_v1.0.txt',
-                                 tmpdir = local_path, check_first = T ) %>%
+                                               tmpdir = local_path, check_first = T ) %>%
     dplyr::rename(OlinkID = olink_id)
 
   metadata_path = paste0(local_path, "freeze/proteomics/metadata/")
@@ -95,9 +95,6 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
     dplyr::mutate(across(starts_with('1'), ~as.numeric(.)) )
 
   sample_metadata_output = sample_metadata[sample_metadata$vialLabel %in% colnames(new_norm_table),]
-  protein_metadata_output = protein_metadata %>%
-    dplyr::rename(feature_id = OlinkID) %>%
-    dplyr::filter(feature_id %in% rownames(new_norm_table))
 
   wider_metadata = merge(sample_metadata_output, pheno_data_parsed, by = 'vialLabel')
   process_metadata = process_covariates(meta = wider_metadata,
@@ -109,16 +106,115 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
   message(tissue, ";", desired_ome, ";technical: ", technical_cov, ";design: ", design_cov)
 
   new_norm_table = limma::removeBatchEffect(new_norm_table,
-                                     covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
-                                     design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
+                                            covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
+                                            design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
 
   oids <- rownames(new_norm_table)
   new_norm_table <- as.data.frame(new_norm_table)
   new_norm_table$feature_id <- oids
   new_norm_table <- new_norm_table %>% dplyr::select(feature_id, everything()) #set feature_id as first col
 
+  protein_metadata_output = .annotate_olink(protein_metadata) %>%
+    dplyr::filter(feature_id %in% rownames(new_norm_table))
+
   write_with_path_name(sample_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
   write_with_path_name(new_norm_table, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log2')
-  write_with_path_name(protein_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+  write_with_path_name(protein_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features', version = "1.4")
+}
+
+
+
+.annotate_olink = function(protein_metadata){
+
+  #olink reshape, we leave the gene target that olink provided in the column "assay" as a check later on, but rename it generically
+  olink = protein_metadata %>%
+    dplyr::mutate(len_UP = str_count(uniprot_entry)) %>%
+    tidyr::separate(uniprot_entry, into = c("uniprot", "redundant_ids"), sep = "_") %>%
+    dplyr::mutate(gene_platform = str_remove(assay, pattern = "_.*")) %>%
+    dplyr::select(feature_id = OlinkID, uniprot, gene_platform, redundant_ids) %>%
+    dplyr::mutate(platform = "prot-ol")
+
+  # human UniProt database download
+  uniprot_db = .get_uniprot_mapping()
+
+  ####compile olink and annotate####
+  olink_features = olink %>%
+    dplyr::mutate(uniprot_lookup = str_remove(uniprot, "-.*")) %>%
+    dplyr::left_join(uniprot_db, by = c("uniprot_lookup" = "UniProtKB-AC")) %>%
+    dplyr::mutate(ensg_lookup = str_remove(Ensembl, "\\..*"))
+
+  ensembl = biomaRt::useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name", "uniprotswissprot")
+
+  prot_lookup_df = biomaRt::getBM(attributes = attributes,
+                                  filters = "uniprotswissprot",
+                                  values = olink_features$uniprot_lookup,
+                                  mart = ensembl) %>%
+    dplyr::distinct() %>%
+    dplyr::full_join(olink_features, by = c("uniprotswissprot" = "uniprot_lookup")) %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
+    dplyr::mutate(ensembl_gene = dplyr::if_else(is.na(ensembl_gene_id),
+                                                str_remove(Ensembl, "\\..*"),
+                                                ensembl_gene_id)) %>%
+    dplyr::mutate(entrez_gene = dplyr::if_else(is.na(entrezgene_id),
+                                               `GeneID (EntrezGene)`,
+                                               as.character(entrezgene_id))) %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(is.na(gene_symbol),
+                                               str_remove(`UniProtKB-ID`, "_HUMAN"),
+                                               gene_symbol)) %>%
+    dplyr::select(entrez_gene, feature_id, gene_symbol, uniprot, ensembl_gene, platform) %>%
+    dplyr::group_by(feature_id) %>%
+    dplyr::slice(match(min(entrez_gene), entrez_gene))
+
+  #these are a few incorrect gene names that are manually corrected
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "HECD4"] <- "HECTD4"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "WASH6"] <- "WASH6P"
+
+  # anyNA(prot_lookup_df) no missing values.
+
+  #and finally rearrange to make it ready for the human feature to gene file.
+  prot_lookup_df  = prot_lookup_df %>%
+    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot)
+
+  return(prot_lookup_df)
+
+}
+
+
+.get_uniprot_mapping = function(){
+  url <- "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping_selected.tab.gz"
+  destfile = file.path(tempdir(), "HUMAN_9606_idmapping_selected.tab.gz")
+  if (file.exists(destfile) == FALSE) {
+    download.file(url, destfile = destfile)
+  }
+  uniprot_db_full = read_tsv(destfile)
+  colnames(uniprot_db_full) = c('UniProtKB-AC',
+                                'UniProtKB-ID',
+                                'GeneID (EntrezGene)',
+                                'RefSeq',
+                                'GI',
+                                'PDB',
+                                'GO',
+                                'UniRef100',
+                                'UniRef90',
+                                'UniRef50',
+                                'UniParc',
+                                'PIR',
+                                'NCBI-taxon',
+                                'MIM',
+                                'UniGene',
+                                'PubMed',
+                                'EMBL',
+                                'EMBL-CDS',
+                                'Ensembl',
+                                'Ensembl_TRS',
+                                'Ensembl_PRO',
+                                'Additional PubMed')
+
+  uniprot_db = uniprot_db_full %>%
+    dplyr::select('UniProtKB-AC', 'Ensembl', 'UniProtKB-ID', 'GeneID (EntrezGene)')
+
+  return(uniprot_db)
 }
 

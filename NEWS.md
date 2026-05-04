@@ -1,20 +1,29 @@
+
 # MotrpacHumanPreSuspensionAnalysis 0.2.2
 
 
-## Backend: QC normalization pipeline updates (data-raw)
+## Backend: Feature metadata gene annotation (data-raw)
 
-- Added `qc_norm_visualization_helpers.R` and `qc_norm_visualization.Rmd` to compare outputs from each
-  `generate_*_qc_norm()` function against the corresponding objects in `MotrpacHumanPreSuspensionData`,
-  covering qc_norm feature/sample overlap, value correlation, feature_metadata ID overlap, and
-  sample_metadata column-level value diffs.
-- Prot-PR/PH: updated covariates file so `tmt_plex` is used as the primary covariate throughout,
-  replacing the previous `plex_site` variable (an interaction of `Plex` and `Cas` specific to muscle).
-  No change to differential analysis results; standardizes covariate representation across tissues.
-- Prot-PR/PH: renamed feature identifier column from `protein_id` to `feature_id` in feature_metadata
-  output, matching the qc_norm matrix and all other omes. feature_metadata now only includes features
-  retained in the final qc_norm matrix.
-- Prot-PR/PH: updated `generate_prot_pr_qc_norm()` and `generate_prot_ph_qc_norm()` to reference the
-  `study` column in eQC metadata (previously `protocol`), reflecting an upstream rename in the eQC file.
+These changes will only make functional differences for analysts with sample level data from `MotrpacHumanPreSuspensionData`
+
+- Added gene-level annotation to feature_metadata outputs for all proteomics omes. Previously,
+  feature_metadata for Prot-PR, Prot-PH, and Prot-OL contained only raw provenance columns (UniProt
+  accessions, PTM identifiers, redundant IDs) with no standardized gene symbol or Ensembl mapping.
+  Feature metadata files now include `gene_symbol`, `ensembl_gene`, and `entrez_gene` columns
+  derived from a three-round BioMart lookup strategy.
+- Added `.annotate_olink()` to `generate_prot_ol_qc_norm.R`: resolves Olink protein metadata
+  (UniProt accession from `uniprot_entry`) to gene symbols and Ensembl IDs. Lookup proceeds via
+  UniProt → gene symbol → Entrez ID, with three progressive BioMart passes to maximize coverage.
+- Added `.annotate_prot_pr()` to `generate_prot_pr_qc_norm.R`: extends the per-tissue
+  `feature_metadata_output` from `PR@rdesc` with gene annotations. Uses `feature_id` (= `protein_id`,
+  a UniProt accession) as the lookup key.
+- Added `.annotate_prot_ph()` to `generate_prot_ph_qc_norm.R`: same three-round annotation for
+  phosphoproteomics. Uses `protein_id` (not `feature_id`, which is the PTM site identifier) as the
+  UniProt lookup key, preserving the full PTM `feature_id` in the output.
+- Added `.get_uniprot_mapping()` helper to `generate_prot_ol_qc_norm.R`: downloads the UniProt
+  human ID mapping table to `tempdir()` (cached within the session) and returns the four columns
+  needed for annotation (`UniProtKB-AC`, `Ensembl`, `UniProtKB-ID`, `GeneID (EntrezGene)`).
+
 
 # MotrpacHumanPreSuspensionAnalysis 0.2.1
 

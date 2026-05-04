@@ -120,7 +120,7 @@ regenerated_prot_ph = load_regenerated_qc("prot-ph", qc_norm_path, metadata_path
 
 compare_qc_norm("prot-ph", existing_prot_ph_package, regenerated_prot_ph,
                 tissues = c("muscle", "adipose"),
-                feature_key = "protein_id")
+                feature_key = "ptm_id")
 ```
 
 ### Olink Targeted Proteomics (Prot-OL)

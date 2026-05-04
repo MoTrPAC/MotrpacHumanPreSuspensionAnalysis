@@ -63,13 +63,6 @@ file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "da", "dre
 file_name = paste0(output_local, file_name, "_v", "1.3", file_type)
 write.table(CLIN_CHEMISTRY_DA, file = file_name, row.names = F, sep = '\t', quote = F)
 
-# log-QC-norm
-log_cln_out = log_clin_chem_df %>% tibble::rownames_to_column("feature_id") %>%
-  select(feature_id, everything())
-file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "qc-norm", "log2-transformed", sep = "_")
-file_name = paste0(output_local, file_name, "_v", "1.3", file_type)
-write.table(log_cln_out, file = file_name, row.names = F, sep = '\t', quote = F)
-
 #metadata
 full_metadata = MotrpacHumanPreSuspensionData::pheno$data %>% filter(vialLabel %in% colnames(log_cln_out))
 file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "metadata", "samples", sep = "_")
