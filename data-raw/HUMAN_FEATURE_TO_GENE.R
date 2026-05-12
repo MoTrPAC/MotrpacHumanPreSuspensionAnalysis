@@ -1,9 +1,5 @@
-## This script will be changed in the future. For now, I am just modifying the
-## HUMAN_FEATURE_TO_GENE table from MotrpacHumanPreSuspension.
-
 library(dplyr)
 library(data.table)
-
 
 # # Add flanking sequence to HUMAN_FEATURE_TO_GENE ----
 #

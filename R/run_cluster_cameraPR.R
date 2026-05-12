@@ -56,8 +56,7 @@
 #'
 #' @author Tyler Sagendorf
 #'
-#' @importFrom dplyr %>% bind_rows mutate select everything left_join rename
-#'   across
+#' @importFrom dplyr %>% bind_rows mutate select everything left_join rename across
 #' @importFrom stats p.adjust
 #'
 #' @export run_cluster_cameraPR
@@ -238,8 +237,7 @@ run_cluster_cameraPR <- function(FCM,
 #'
 #' @author Tyler Sagendorf
 #'
-#' @importFrom dplyr %>% filter select mutate case_when left_join arrange all_of
-#'   desc
+#' @importFrom dplyr %>% filter select mutate case_when left_join arrange all_of desc
 #' @importFrom tidyr pivot_longer pivot_wider nest unnest
 #' @importFrom tibble rownames_to_column column_to_rownames deframe
 #'

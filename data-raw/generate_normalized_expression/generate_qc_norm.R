@@ -66,7 +66,7 @@
 
 
 
-# Now that these are not exported functions, make sure to load all of the data-raw relevant functions
+# Now that these are not exported functions, make sure to load all of the data-raw relevant functions:
 # config = jsonlite::fromJSON("~/config.json")
 # repo_local_dir = paste0(config$precovid_repo_path, "data/tmp/")
 #
@@ -119,9 +119,11 @@ generate_qc_norm = function(repo_local_dir = NULL,
   if("epigen-atac-seq" %in% selected_omes) generate_atac_qc_norm(repo_local_dir)
   if("epigen-methyl-seq" %in% selected_omes){
     message("Methylation processing requires analysis pipelines not compatible
-            with this generate function. Please reach out to cajin@stanford.edu
+            with this generate function. The existing function will only generate an annotated
+            feature metadata file. Please reach out to cajin@stanford.edu
             or yongchao.ge@mssm.edu if any questions about methylation come up.")
   }
+  message("For information about generation of qc-norm for the clinical chemistry, refer to the data-raw/generate_normalized_expression/generate_clinical_qc_norm.R")
   return("QC Norm Generation Complete")
 }
 

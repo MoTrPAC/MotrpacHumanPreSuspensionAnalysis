@@ -137,12 +137,14 @@ generate_transcriptomics_qc_norm = function(repo_local_dir){
     dplyr::full_join(rna_features, by = "ensembl_gene_id", relationship = "many-to-many") %>%
     dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
     dplyr::select(feature_id,
+                  entrez_gene = entrezgene_id,
                   gene_symbol,
-                  ensembl_gene = ensembl_gene_id,
-                  entrez_gene = entrezgene_id) %>%
+                  ensembl_gene = ensembl_gene_id) %>%
     dplyr::group_by(feature_id) %>%
     dplyr::slice(match(min(entrez_gene), entrez_gene)) %>%
-    dplyr::mutate(entrez_gene = as.character(entrez_gene)) %>%
+    dplyr::mutate(entrez_gene = as.character(entrez_gene),
+                  assay = "transcript-rna-seq") %>%
+    dplyr::relocate(assay) %>%
     dplyr::distinct()
 
   return(rna_lookup_df)

@@ -32,8 +32,7 @@
 #' @export plot_enrich_heatmap
 #'
 #' @import ComplexHeatmap
-#' @importFrom dplyr %>% filter slice_min pull distinct mutate left_join arrange
-#'   rename count
+#' @importFrom dplyr %>% filter slice_min pull distinct mutate left_join arrange rename count
 #' @importFrom grDevices dev.off cairo_pdf
 #' @importFrom grid convertUnit unit gpar
 #' @importFrom latex2exp TeX

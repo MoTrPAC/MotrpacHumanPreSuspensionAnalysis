@@ -364,6 +364,8 @@ plot_single_feature = function(feature,
 #' @returns The matched \code{feature_id} string (case-correct) if found,
 #'   otherwise \code{NA_character_}
 #' @keywords internal
+#' @noRd
+
 .is_clinical_chemistry_feature = function(feature) {
   ids = MotrpacHumanPreSuspensionAnalysis::BLOOD_CLINICAL_CHEMISTRY_SUM_STATS$feature_id
   matched = ids[tolower(ids) == tolower(feature)]

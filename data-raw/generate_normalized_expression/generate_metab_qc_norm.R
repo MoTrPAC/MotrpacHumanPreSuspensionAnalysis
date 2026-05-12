@@ -309,7 +309,8 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
       dplyr::select(-refmet_name) %>%
       dplyr::left_join(., relevant_impute_table, by = "feature_id") %>%
       dplyr::left_join(., relevant_refmet_fixes, by = "feature_id") %>%
-      dplyr::select(feature_id, refmet_name, everything())
+      dplyr::mutate(assay = "metab") %>%
+      dplyr::select(assay, feature_id, refmet_name, refmet_id, kegg_id, everything())
 
 
     write_with_path_name(qc_norm_table,
@@ -667,6 +668,11 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
     distinct() %>%
     select(-kegg_id_original)
 
+  final_metab_keggrest = final_metab_keggrest %>%
+    dplyr::group_by(feature_id, refmet_id) %>%
+    dplyr::filter(!(is.na(kegg_id) & any(!is.na(kegg_id)))) %>%
+    dplyr::ungroup()
+
   cat("Final KEGG coverage:", sum(!is.na(final_metab_keggrest$kegg_id)), "/", nrow(final_metab_keggrest),
       "(", round(100 * mean(!is.na(final_metab_keggrest$kegg_id)), 1), "%)\n\n")
 
@@ -697,7 +703,6 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
     dplyr::left_join(compound_df, by = "raw_name") %>%
     dplyr::pull(kegg_id)
 }
-
 
 
 # Assembles the full feature-to-RefMet annotation table across all metabolomics

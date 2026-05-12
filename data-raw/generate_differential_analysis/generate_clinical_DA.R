@@ -5,7 +5,12 @@ library(MotrpacHumanPreSuspensionData)
 library(dplyr)
 library(here)
 
-output_local = "~/Downloads/"
+config_file = "~/config.json"
+config = jsonlite::fromJSON(config_file)
+repo_local_dir = config$precovid_repo_path
+output_local = file.path(repo_local_dir, "data", "tmp", "freeze", "clinical-chemistry", "da")
+dir.create(output_local, recursive = TRUE, showWarnings = FALSE)
+
 #for process cov
 helpers = file.path(here(), "data-raw", "generate_differential_analysis", "generate_differential_modeling_functions.R")
 gsutil_helpers = file.path(here(), "data-raw", "gsutil_path_parsing.R")
@@ -26,7 +31,7 @@ log_clin_chem_df = clin_chemistry %>%
 
 #just plug in a random targeted metab platform for metadata and covariates
 metab_metadata = MotrpacHumanPreSuspensionData::load_pheno()[["pheno_data"]] %>%
-  filter(vialLabel %in% colnames(clin_chem_df))
+  filter(vialLabel %in% colnames(log_clin_chem_df))
 
 clin_chem_df = log_clin_chem_df %>%
   select(any_of(metab_metadata$vialLabel))
@@ -49,7 +54,7 @@ CLIN_CHEMISTRY_DA = .convert_dream_output(fit,
                                           metadata = process_metadata$original_meta,
                                           tissue = "blood",
                                           formula = process_metadata$full_formula,
-                                          ome = "clinical_chemistry") %>%
+                                          ome = "clinical-chemistry") %>%
   mutate(tissue = "blood") %>%
   left_join(CONTRAST_CONVERTER, by = "contrast") %>%
   select(any_of(colnames(da_column_only)))
@@ -59,15 +64,9 @@ all_file_header = "human-precovid-sed-adu" #this is the base structure for all f
 tissue_code = "t02-plasma"
 
 #DA table
-file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "da", "dream-acute", sep = "_")
-file_name = paste0(output_local, file_name, "_v", "1.3", file_type)
-write.table(CLIN_CHEMISTRY_DA, file = file_name, row.names = F, sep = '\t', quote = F)
-
-#metadata
-full_metadata = MotrpacHumanPreSuspensionData::pheno$data %>% filter(vialLabel %in% colnames(log_cln_out))
-file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "metadata", "samples", sep = "_")
-file_name = paste0(output_local, file_name, "_v", "1.3", file_type)
-write.table(full_metadata, file = file_name, row.names = F, sep = '\t', quote = F)
+file_name = paste(all_file_header, tissue_code, "clinical-chemistry", "da", "dream-acute", sep = "_")
+file_name = paste0(output_local, "/", file_name, "_v", "1.4", file_type)
+write.table(CLIN_CHEMISTRY_DA, file = file_name, row.names = FALSE, sep = '\t', quote = F)
 
 
 usethis::use_data(CLIN_CHEMISTRY_DA,

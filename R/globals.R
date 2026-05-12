@@ -124,6 +124,18 @@ utils::globalVariables(
     "Mean",
     "SE",
     "qt",
-    "CI_95"
+    "CI_95",
+    "chrom",
+    "start",
+    "end",
+    ".SD",
+    "short_annotation",
+    "annotation",
+    "dist_upstream",
+    "geneStart",
+    "dist_downstream",
+    "geneEnd",
+    "relationship_to_gene",
+    "geneStrand"
   )
 )

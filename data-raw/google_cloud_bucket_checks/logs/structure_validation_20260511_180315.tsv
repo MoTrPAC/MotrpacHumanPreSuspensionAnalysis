@@ -1,0 +1,1187 @@
+ome	tissue	data_category	data_details	status	reason	file_path
+epigen-atac-seq	blood	qc-norm	log-cpm	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/qc-norm/human-precovid-sed-adu_t05-pbmc_epigen-atac-seq_qc-norm_log-cpm_v1.2.txt
+epigen-atac-seq	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t05-pbmc_epigen-atac-seq_metadata_features_v1.4.txt
+epigen-atac-seq	blood	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t05-pbmc_epigen-atac-seq_metadata_samples_v1.2.txt
+epigen-atac-seq	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+epigen-atac-seq	blood	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/da/human-precovid-sed-adu_t05-pbmc_epigen-atac-seq_da_dream-acute_v1.2.txt
+epigen-atac-seq	muscle	qc-norm	log-cpm	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/qc-norm/human-precovid-sed-adu_t06-muscle_epigen-atac-seq_qc-norm_log-cpm_v1.2.txt
+epigen-atac-seq	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t06-muscle_epigen-atac-seq_metadata_features_v1.4.txt
+epigen-atac-seq	muscle	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t06-muscle_epigen-atac-seq_metadata_samples_v1.2.txt
+epigen-atac-seq	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+epigen-atac-seq	muscle	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/da/human-precovid-sed-adu_t06-muscle_epigen-atac-seq_da_dream-acute_v1.2.txt
+metab-t-amines	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-t-amines_qc-norm_log2_v1.3.txt
+metab-t-amines	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-amines_metadata_features_v1.4.txt
+metab-t-amines	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-amines_metadata_samples_v1.3.txt
+metab-t-amines	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-conv	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-t-conv_qc-norm_log2_v1.3.txt
+metab-t-conv	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-conv_metadata_features_v1.4.txt
+metab-t-conv	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-conv_metadata_samples_v1.3.txt
+metab-t-conv	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-imm-crt	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-t-imm-crt_qc-norm_log2_v1.3.txt
+metab-t-imm-crt	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-imm-crt_metadata_features_v1.4.txt
+metab-t-imm-crt	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-imm-crt_metadata_samples_v1.3.txt
+metab-t-imm-crt	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-oxylipneg	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-t-oxylipneg_qc-norm_log2_v1.3.txt
+metab-t-oxylipneg	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-oxylipneg_metadata_features_v1.4.txt
+metab-t-oxylipneg	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-oxylipneg_metadata_samples_v1.3.txt
+metab-t-oxylipneg	blood	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-oxylipneg_metadata_removed-samples_v1.3.txt
+metab-t-tca	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-t-tca_qc-norm_log2_v1.3.txt
+metab-t-tca	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-tca_metadata_features_v1.4.txt
+metab-t-tca	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t02-plasma_metab-t-tca_metadata_samples_v1.3.txt
+metab-t-tca	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-amines	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-t-amines_qc-norm_log2_v1.3.txt
+metab-t-amines	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-amines_metadata_features_v1.4.txt
+metab-t-amines	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-amines_metadata_samples_v1.3.txt
+metab-t-amines	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-nuc	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-t-nuc_qc-norm_log2_v1.3.txt
+metab-t-nuc	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-nuc_metadata_features_v1.4.txt
+metab-t-nuc	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-nuc_metadata_samples_v1.3.txt
+metab-t-nuc	muscle	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-nuc_metadata_removed-samples_v1.3.txt
+metab-t-oxylipneg	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-t-oxylipneg_qc-norm_log2_v1.3.txt
+metab-t-oxylipneg	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-oxylipneg_metadata_features_v1.4.txt
+metab-t-oxylipneg	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-oxylipneg_metadata_samples_v1.3.txt
+metab-t-oxylipneg	muscle	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-oxylipneg_metadata_removed-samples_v1.3.txt
+metab-t-tca	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-t-tca_qc-norm_log2_v1.3.txt
+metab-t-tca	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-tca_metadata_features_v1.4.txt
+metab-t-tca	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t10-muscle_metab-t-tca_metadata_samples_v1.3.txt
+metab-t-tca	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-acoa	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-acoa_qc-norm_log2_v1.3.txt
+metab-t-acoa	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-acoa_metadata_features_v1.4.txt
+metab-t-acoa	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-acoa_metadata_samples_v1.3.txt
+metab-t-acoa	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-acoa_metadata_removed-samples_v1.3.txt
+metab-t-amines	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-amines_qc-norm_log2_v1.3.txt
+metab-t-amines	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-amines_metadata_features_v1.4.txt
+metab-t-amines	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-amines_metadata_samples_v1.3.txt
+metab-t-amines	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-amines_metadata_removed-samples_v1.3.txt
+metab-t-ka	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-ka_qc-norm_log2_v1.3.txt
+metab-t-ka	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-ka_metadata_features_v1.4.txt
+metab-t-ka	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-ka_metadata_samples_v1.3.txt
+metab-t-ka	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-nuc	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-nuc_qc-norm_log2_v1.3.txt
+metab-t-nuc	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-nuc_metadata_features_v1.4.txt
+metab-t-nuc	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-nuc_metadata_samples_v1.3.txt
+metab-t-nuc	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-t-oxylipneg	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-oxylipneg_qc-norm_log2_v1.3.txt
+metab-t-oxylipneg	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-oxylipneg_metadata_features_v1.4.txt
+metab-t-oxylipneg	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-oxylipneg_metadata_samples_v1.3.txt
+metab-t-oxylipneg	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-oxylipneg_metadata_removed-samples_v1.3.txt
+metab-t-tca	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-t-tca_qc-norm_log2_v1.3.txt
+metab-t-tca	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-tca_metadata_features_v1.4.txt
+metab-t-tca	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-tca_metadata_samples_v1.3.txt
+metab-t-tca	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-targeted/metadata/human-precovid-sed-adu_t11-adipose_metab-t-tca_metadata_removed-samples_v1.3.txt
+metab-u-hilicpos	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-hilicpos_qc-norm_log2_v1.3.txt
+metab-u-hilicpos	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-hilicpos_metadata_features_v1.4.txt
+metab-u-hilicpos	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-hilicpos_metadata_samples_v1.3.txt
+metab-u-hilicpos	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-ionpneg	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-ionpneg_qc-norm_log2_v1.3.txt
+metab-u-ionpneg	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-ionpneg_metadata_features_v1.4.txt
+metab-u-ionpneg	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-ionpneg_metadata_samples_v1.3.txt
+metab-u-ionpneg	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-lrpneg	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-lrpneg_qc-norm_log2_v1.3.txt
+metab-u-lrpneg	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-lrpneg_metadata_features_v1.4.txt
+metab-u-lrpneg	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-lrpneg_metadata_samples_v1.3.txt
+metab-u-lrpneg	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-lrppos	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-lrppos_qc-norm_log2_v1.3.txt
+metab-u-lrppos	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-lrppos_metadata_features_v1.4.txt
+metab-u-lrppos	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-lrppos_metadata_samples_v1.3.txt
+metab-u-lrppos	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-rpneg	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-rpneg_qc-norm_log2_v1.3.txt
+metab-u-rpneg	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rpneg_metadata_features_v1.4.txt
+metab-u-rpneg	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rpneg_metadata_samples_v1.3.txt
+metab-u-rpneg	blood	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rpneg_metadata_removed-samples_v1.3.txt
+metab-u-rppos	blood	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t02-plasma_metab-u-rppos_qc-norm_log2_v1.3.txt
+metab-u-rppos	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rppos_metadata_features_v1.4.txt
+metab-u-rppos	blood	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rppos_metadata_samples_v1.3.txt
+metab-u-rppos	blood	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t02-plasma_metab-u-rppos_metadata_removed-samples_v1.3.txt
+metab-u-hilicpos	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t06-muscle_metab-u-hilicpos_qc-norm_log2_v1.3.txt
+metab-u-hilicpos	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-hilicpos_metadata_features_v1.4.txt
+metab-u-hilicpos	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-hilicpos_metadata_samples_v1.3.txt
+metab-u-hilicpos	muscle	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-hilicpos_metadata_removed-samples_v1.3.txt
+metab-u-ionpneg	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t06-muscle_metab-u-ionpneg_qc-norm_log2_v1.3.txt
+metab-u-ionpneg	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-ionpneg_metadata_features_v1.4.txt
+metab-u-ionpneg	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-ionpneg_metadata_samples_v1.3.txt
+metab-u-ionpneg	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-rpneg	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t06-muscle_metab-u-rpneg_qc-norm_log2_v1.3.txt
+metab-u-rpneg	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-rpneg_metadata_features_v1.4.txt
+metab-u-rpneg	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-rpneg_metadata_samples_v1.3.txt
+metab-u-rpneg	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-rppos	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t06-muscle_metab-u-rppos_qc-norm_log2_v1.3.txt
+metab-u-rppos	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-rppos_metadata_features_v1.4.txt
+metab-u-rppos	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t06-muscle_metab-u-rppos_metadata_samples_v1.3.txt
+metab-u-rppos	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-lrpneg	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-u-lrpneg_qc-norm_log2_v1.3.txt
+metab-u-lrpneg	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrpneg_metadata_features_v1.4.txt
+metab-u-lrpneg	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrpneg_metadata_samples_v1.3.txt
+metab-u-lrpneg	muscle	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrpneg_metadata_removed-samples_v1.3.txt
+metab-u-lrppos	muscle	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t10-muscle_metab-u-lrppos_qc-norm_log2_v1.3.txt
+metab-u-lrppos	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrppos_metadata_features_v1.4.txt
+metab-u-lrppos	muscle	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrppos_metadata_samples_v1.3.txt
+metab-u-lrppos	muscle	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t10-muscle_metab-u-lrppos_metadata_removed-samples_v1.3.txt
+metab-u-hilicpos	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-hilicpos_qc-norm_log2_v1.3.txt
+metab-u-hilicpos	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-hilicpos_metadata_features_v1.4.txt
+metab-u-hilicpos	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-hilicpos_metadata_samples_v1.3.txt
+metab-u-hilicpos	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-ionpneg	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-ionpneg_qc-norm_log2_v1.3.txt
+metab-u-ionpneg	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-ionpneg_metadata_features_v1.4.txt
+metab-u-ionpneg	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-ionpneg_metadata_samples_v1.3.txt
+metab-u-ionpneg	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-lrpneg	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-lrpneg_qc-norm_log2_v1.3.txt
+metab-u-lrpneg	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrpneg_metadata_features_v1.4.txt
+metab-u-lrpneg	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrpneg_metadata_samples_v1.3.txt
+metab-u-lrpneg	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrpneg_metadata_removed-samples_v1.3.txt
+metab-u-lrppos	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-lrppos_qc-norm_log2_v1.3.txt
+metab-u-lrppos	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrppos_metadata_features_v1.4.txt
+metab-u-lrppos	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrppos_metadata_samples_v1.3.txt
+metab-u-lrppos	adipose	metadata	removed-samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-lrppos_metadata_removed-samples_v1.3.txt
+metab-u-rpneg	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-rpneg_qc-norm_log2_v1.3.txt
+metab-u-rpneg	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-rpneg_metadata_features_v1.4.txt
+metab-u-rpneg	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-rpneg_metadata_samples_v1.3.txt
+metab-u-rpneg	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+metab-u-rppos	adipose	qc-norm	log2	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/qc-norm/human-precovid-sed-adu_t11-adipose_metab-u-rppos_qc-norm_log2_v1.3.txt
+metab-u-rppos	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-rppos_metadata_features_v1.4.txt
+metab-u-rppos	adipose	metadata	samples	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/metabolomics-untargeted/metadata/human-precovid-sed-adu_t11-adipose_metab-u-rppos_metadata_samples_v1.3.txt
+metab-u-rppos	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+prot-ol	blood	qc-norm	log2	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/qc-norm/human-precovid-sed-adu_t02-plasma_prot-ol_qc-norm_log2_v1.2.txt
+prot-ol	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t02-plasma_prot-ol_metadata_features_v1.4.txt
+prot-ol	blood	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t02-plasma_prot-ol_metadata_samples_v1.2.txt
+prot-ol	blood	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t02-plasma_prot-ol_metadata_removed-samples_v1.2.txt
+prot-ol	blood	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/da/human-precovid-sed-adu_t02-plasma_prot-ol_da_dream-acute_v1.2.txt
+prot-ph	adipose	qc-norm	log2-mn	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/qc-norm/human-precovid-sed-adu_t07-adipose_prot-ph_imputed_log2-mn_v1.2.txt
+prot-ph	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-ph_metadata_features_v1.4.txt
+prot-ph	adipose	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-ph_metadata_samples_v1.2.txt
+prot-ph	adipose	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-ph_metadata_removed-samples_v1.2.txt
+prot-ph	adipose	da	dream-acute	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/proteomics/da/human-precovid-sed-adu_t07-adipose_prot-ph_da_dream-acute_v1.3.txt
+prot-pr	adipose	qc-norm	log2-mn	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/qc-norm/human-precovid-sed-adu_t07-adipose_prot-pr_imputed_log2-mn_v1.2.txt
+prot-pr	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-pr_metadata_features_v1.4.txt
+prot-pr	adipose	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-pr_metadata_samples_v1.2.txt
+prot-pr	adipose	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t07-adipose_prot-pr_metadata_removed-samples_v1.2.txt
+prot-pr	adipose	da	dream-acute	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/proteomics/da/human-precovid-sed-adu_t07-adipose_prot-pr_da_dream-acute_v1.3.txt
+prot-ph	muscle	qc-norm	log2-mn	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/qc-norm/human-precovid-sed-adu_t10-muscle_prot-ph_imputed_log2-mn_v1.2.txt
+prot-ph	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t10-muscle_prot-ph_metadata_features_v1.4.txt
+prot-ph	muscle	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t10-muscle_prot-ph_metadata_samples_v1.2.txt
+prot-ph	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+prot-ph	muscle	da	dream-acute	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/proteomics/da/human-precovid-sed-adu_t10-muscle_prot-ph_da_dream-acute_v1.3.txt
+prot-pr	muscle	qc-norm	log2-mn	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/qc-norm/human-precovid-sed-adu_t10-muscle_prot-pr_imputed_log2-mn_v1.2.txt
+prot-pr	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t10-muscle_prot-pr_metadata_features_v1.4.txt
+prot-pr	muscle	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/proteomics/metadata/human-precovid-sed-adu_t10-muscle_prot-pr_metadata_samples_v1.2.txt
+prot-pr	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+prot-pr	muscle	da	dream-acute	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/proteomics/da/human-precovid-sed-adu_t10-muscle_prot-pr_da_dream-acute_v1.3.txt
+transcript-rna-seq	blood	qc-norm	log-cpm	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/qc-norm/human-precovid-sed-adu_t04-blood-rna_transcript-rna-seq_qc-norm_log-cpm_v1.2.txt
+transcript-rna-seq	blood	metadata	features	FAIL	missing cols: assay	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t04-blood-rna_transcript-rna-seq_metadata_features_v1.4.txt
+transcript-rna-seq	blood	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t04-blood-rna_transcript-rna-seq_metadata_samples_v1.2.txt
+transcript-rna-seq	blood	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t04-blood-rna_transcript-rna-seq_metadata_removed-samples_v1.2.txt
+transcript-rna-seq	blood	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/da/human-precovid-sed-adu_t04-blood-rna_transcript-rna-seq_da_dream-acute_v1.2.txt
+transcript-rna-seq	muscle	qc-norm	log-cpm	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/qc-norm/human-precovid-sed-adu_t06-muscle_transcript-rna-seq_qc-norm_log-cpm_v1.2.txt
+transcript-rna-seq	muscle	metadata	features	FAIL	missing cols: assay	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t06-muscle_transcript-rna-seq_metadata_features_v1.4.txt
+transcript-rna-seq	muscle	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t06-muscle_transcript-rna-seq_metadata_samples_v1.2.txt
+transcript-rna-seq	muscle	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t06-muscle_transcript-rna-seq_metadata_removed-samples_v1.2.txt
+transcript-rna-seq	muscle	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/da/human-precovid-sed-adu_t06-muscle_transcript-rna-seq_da_dream-acute_v1.2.txt
+transcript-rna-seq	adipose	qc-norm	log-cpm	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/qc-norm/human-precovid-sed-adu_t11-adipose_transcript-rna-seq_qc-norm_log-cpm_v1.2.txt
+transcript-rna-seq	adipose	metadata	features	FAIL	missing cols: assay	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t11-adipose_transcript-rna-seq_metadata_features_v1.4.txt
+transcript-rna-seq	adipose	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t11-adipose_transcript-rna-seq_metadata_samples_v1.2.txt
+transcript-rna-seq	adipose	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/metadata/human-precovid-sed-adu_t11-adipose_transcript-rna-seq_metadata_removed-samples_v1.2.txt
+transcript-rna-seq	adipose	da	dream-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/transcriptomics/da/human-precovid-sed-adu_t11-adipose_transcript-rna-seq_da_dream-acute_v1.2.txt
+epigen-methylcap-seq	blood	qc-norm	beta-values	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/qc-norm/human-precovid-sed-adu_t03-edta_epigen-methylcap-seq_qc-norm_beta-values_v1.2.txt
+epigen-methylcap-seq	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t03-edta_epigen-methylcap-seq_metadata_features_v1.4.txt
+epigen-methylcap-seq	blood	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t03-edta_epigen-methylcap-seq_metadata_samples_v1.2.txt
+epigen-methylcap-seq	blood	metadata	removed-samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t03-edta_epigen-methylcap-seq_metadata_removed-samples_v1.2.txt
+epigen-methylcap-seq	blood	da	malax-glmm-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/da/human-precovid-sed-adu_t03-edta_epigen-methylcap-seq_da_malax-glmm-acute_v1.2.txt
+epigen-methylcap-seq	muscle	qc-norm	beta-values	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/qc-norm/human-precovid-sed-adu_t06-muscle_epigen-methylcap-seq_qc-norm_beta-values_v1.2.txt
+epigen-methylcap-seq	muscle	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t06-muscle_epigen-methylcap-seq_metadata_features_v1.4.txt
+epigen-methylcap-seq	muscle	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t06-muscle_epigen-methylcap-seq_metadata_samples_v1.2.txt
+epigen-methylcap-seq	muscle	metadata	removed-samples	PASS	No file — no removed samples	NA
+epigen-methylcap-seq	muscle	da	malax-glmm-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/da/human-precovid-sed-adu_t06-muscle_epigen-methylcap-seq_da_malax-glmm-acute_v1.2.txt
+epigen-methylcap-seq	adipose	qc-norm	beta-values	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/qc-norm/human-precovid-sed-adu_t11-adipose_epigen-methylcap-seq_qc-norm_beta-values_v1.2.txt
+epigen-methylcap-seq	adipose	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t11-adipose_epigen-methylcap-seq_metadata_features_v1.4.txt
+epigen-methylcap-seq	adipose	metadata	samples	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/metadata/human-precovid-sed-adu_t11-adipose_epigen-methylcap-seq_metadata_samples_v1.2.txt
+epigen-methylcap-seq	adipose	metadata	removed-samples	PASS	No file — no removed samples	NA
+epigen-methylcap-seq	adipose	da	malax-glmm-acute	PASS	File found at v1.2	gs://pre-cawg/staging_20260511/epigenomics/da/human-precovid-sed-adu_t11-adipose_epigen-methylcap-seq_da_malax-glmm-acute_v1.2.txt
+clinical-chemistry	blood	qc-norm	log2-transformed	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/clinical-chemistry/qc-norm/human-precovid-sed-adu_t02-plasma_clinical-chemistry_qc-norm_log2-transformed_v1.4.txt
+clinical-chemistry	blood	metadata	features	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/clinical-chemistry/metadata/human-precovid-sed-adu_t02-plasma_clinical-chemistry_metadata_features_v1.4.txt
+clinical-chemistry	blood	metadata	samples	PASS	File found at v1.4	gs://pre-cawg/staging_20260511/clinical-chemistry/metadata/human-precovid-sed-adu_t02-plasma_clinical-chemistry_metadata_samples_v1.4.txt
+clinical-chemistry	blood	metadata	removed-samples	PASS	No file — no removed samples	NA
+clinical-chemistry	blood	da	dream-acute	PASS	File found at v1.3	gs://pre-cawg/staging_20260511/clinical-chemistry/da/human-precovid-sed-adu_t02-plasma_clinical-chemistry_da_dream-acute_v1.3.txt
+
+# QC reports
+WARN: No HTML QC report found in metabolomics-targeted
+WARN: No HTML QC report found in metabolomics-untargeted
+WARN: No HTML QC report found in clinical_chemistry
+
+# Value checks
+=== epigen-atac-seq ===
+-- qc_norm features and samples --
+blood features: identical (n=251054)
+blood samples: identical (n=133)
+muscle features: identical (n=255319)
+muscle samples: identical (n=117)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+All tissues: feature_id identical across pkg and regen
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood: all shared column values are identical
+muscle: all shared column values are identical
+=== metab-t-amines ===
+-- qc_norm features and samples --
+blood features: identical (n=37)
+blood samples: identical (n=1032)
+muscle features: identical (n=34)
+muscle samples: identical (n=426)
+adipose features: identical (n=32)
+adipose samples: identical (n=377)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 37 only in regen, 0 shared
+  only in regen: 1-Methylhistidine, 3-Methylhistidine, Alanine, alpha-Aminoadipic-acid, alpha-Amino-N-butyric-acid ... +32 more
+muscle: 0 only in pkg, 34 only in regen, 0 shared
+  only in regen: 3-Methylhistidine, Alanine, alpha-Aminoadipic-acid, alpha-Amino-N-butyric-acid, Anserine ... +29 more
+adipose: 0 only in pkg, 32 only in regen, 0 shared
+  only in regen: Alanine, alpha-Aminoadipic-acid, alpha-Amino-N-butyric-acid, Arginine, Asparagine ... +27 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1032 of 1032 values differ
+blood [study]: 1032 of 1032 values differ
+blood [days_visit_pcaa]: 5 of 1032 values differ
+blood [t_strtprerst_pcaa]: 1032 of 1032 values differ
+blood [t_strt24rst_pcab]: 547 of 1032 values differ
+blood [collForm_days_visit]: 5 of 1032 values differ
+blood [collected]: 91 of 1032 values differ
+blood [dffcltdraw]: 1 of 1032 values differ
+blood [t_syrstrt]: 1032 of 1032 values differ
+blood [t_syrstp]: 1032 of 1032 values differ
+blood [sampletime]: 1 of 1032 values differ
+blood [sampletypecode]: 1032 of 1032 values differ
+blood [t_blospin]: 1032 of 1032 values differ
+blood [t_blofreeze]: 1032 of 1032 values differ
+blood [spintime]: 1 of 1032 values differ
+blood [t_liedown]: 401 of 1032 values differ
+blood [BMI]: 992 of 1032 values differ
+blood [BMI_groups]: 1032 of 1032 values differ
+muscle [protocol]: 426 of 426 values differ
+muscle [study]: 426 of 426 values differ
+muscle [days_visit_pcaa]: 2 of 426 values differ
+muscle [t_strtprerst_pcaa]: 426 of 426 values differ
+muscle [t_strt24rst_pcab]: 235 of 426 values differ
+muscle [collForm_days_visit]: 4 of 426 values differ
+muscle [collected]: 7 of 426 values differ
+muscle [sampletime]: 2 of 426 values differ
+muscle [sampletypecode]: 426 of 426 values differ
+muscle [t_cannula1]: 426 of 426 values differ
+muscle [secondpass]: 1 of 426 values differ
+muscle [max_t_cannula]: 426 of 426 values differ
+muscle [MUSpass]: 1 of 426 values differ
+muscle [t_MUSfreeze]: 71 of 426 values differ
+muscle [t_cannula2]: 165 of 426 values differ
+muscle [t_liedown]: 78 of 426 values differ
+muscle [BMI]: 411 of 426 values differ
+muscle [BMI_groups]: 426 of 426 values differ
+adipose [protocol]: 377 of 377 values differ
+adipose [t_ADIfreeze]: 14 of 377 values differ
+adipose [study]: 377 of 377 values differ
+adipose [days_visit_pcaa]: 2 of 377 values differ
+adipose [t_strtprerst_pcaa]: 377 of 377 values differ
+adipose [t_strt24rst_pcab]: 178 of 377 values differ
+adipose [collForm_days_visit]: 4 of 377 values differ
+adipose [collected]: 6 of 377 values differ
+adipose [sampletypecode]: 377 of 377 values differ
+adipose [t_cannula1]: 376 of 377 values differ
+adipose [secondpass]: 1 of 377 values differ
+adipose [max_t_cannula]: 376 of 377 values differ
+adipose [t_cannula2]: 119 of 377 values differ
+adipose [BMI]: 361 of 377 values differ
+adipose [BMI_groups]: 377 of 377 values differ
+=== metab-t-conv ===
+-- qc_norm features and samples --
+blood features: identical (n=5)
+blood samples: identical (n=1032)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 5 only in regen, 0 shared
+  only in regen: Glucose, Lactate, Glycerol, NEFA, KET
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1032 of 1032 values differ
+blood [study]: 1032 of 1032 values differ
+blood [days_visit_pcaa]: 5 of 1032 values differ
+blood [t_strtprerst_pcaa]: 1032 of 1032 values differ
+blood [t_strt24rst_pcab]: 547 of 1032 values differ
+blood [collForm_days_visit]: 5 of 1032 values differ
+blood [collected]: 91 of 1032 values differ
+blood [dffcltdraw]: 1 of 1032 values differ
+blood [t_syrstrt]: 1032 of 1032 values differ
+blood [t_syrstp]: 1032 of 1032 values differ
+blood [sampletime]: 1 of 1032 values differ
+blood [sampletypecode]: 1032 of 1032 values differ
+blood [t_blospin]: 1032 of 1032 values differ
+blood [t_blofreeze]: 1032 of 1032 values differ
+blood [spintime]: 1 of 1032 values differ
+blood [t_liedown]: 401 of 1032 values differ
+blood [BMI]: 992 of 1032 values differ
+blood [BMI_groups]: 1032 of 1032 values differ
+=== metab-t-imm-crt ===
+-- qc_norm features and samples --
+blood features: identical (n=1)
+blood samples: identical (n=1031)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 1 only in regen, 0 shared
+  only in regen: Cortisol
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1031 of 1031 values differ
+blood [study]: 1031 of 1031 values differ
+blood [days_visit_pcaa]: 5 of 1031 values differ
+blood [t_strtprerst_pcaa]: 1031 of 1031 values differ
+blood [t_strt24rst_pcab]: 547 of 1031 values differ
+blood [collForm_days_visit]: 5 of 1031 values differ
+blood [collected]: 91 of 1031 values differ
+blood [dffcltdraw]: 1 of 1031 values differ
+blood [t_syrstrt]: 1031 of 1031 values differ
+blood [t_syrstp]: 1031 of 1031 values differ
+blood [sampletime]: 1 of 1031 values differ
+blood [sampletypecode]: 1031 of 1031 values differ
+blood [t_blospin]: 1031 of 1031 values differ
+blood [t_blofreeze]: 1031 of 1031 values differ
+blood [spintime]: 1 of 1031 values differ
+blood [t_liedown]: 400 of 1031 values differ
+blood [BMI]: 991 of 1031 values differ
+blood [BMI_groups]: 1031 of 1031 values differ
+=== metab-t-oxylipneg ===
+-- qc_norm features and samples --
+blood features: identical (n=5)
+blood samples: identical (n=1031)
+muscle features: identical (n=23)
+muscle samples: identical (n=400)
+adipose features: identical (n=14)
+adipose samples: identical (n=393)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 5 only in regen, 0 shared
+  only in regen: 12-HETE, 12(13)-EpMOE, 13-HODE, 9S-HODE, PGE2 thanolamide
+muscle: 0 only in pkg, 23 only in regen, 0 shared
+  only in regen: 12 R-HETE, 12(13)-EpOME, 13-HODE, 13-OxoODE(13-KODE), 14(15)-EET ... +18 more
+adipose: 0 only in pkg, 14 only in regen, 0 shared
+  only in regen: 13 HODE, 13-OxoODE(13-KODE), 20-HETE, 5,6-DiHET, 8(9)-DiHET ... +9 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1031 of 1031 values differ
+blood [study]: 1031 of 1031 values differ
+blood [days_visit_pcaa]: 5 of 1031 values differ
+blood [t_strtprerst_pcaa]: 1031 of 1031 values differ
+blood [t_strt24rst_pcab]: 546 of 1031 values differ
+blood [collForm_days_visit]: 5 of 1031 values differ
+blood [collected]: 91 of 1031 values differ
+blood [dffcltdraw]: 1 of 1031 values differ
+blood [t_syrstrt]: 1031 of 1031 values differ
+blood [t_syrstp]: 1031 of 1031 values differ
+blood [sampletime]: 1 of 1031 values differ
+blood [sampletypecode]: 1031 of 1031 values differ
+blood [t_blospin]: 1031 of 1031 values differ
+blood [t_blofreeze]: 1031 of 1031 values differ
+blood [spintime]: 1 of 1031 values differ
+blood [t_liedown]: 400 of 1031 values differ
+blood [BMI]: 991 of 1031 values differ
+blood [BMI_groups]: 1031 of 1031 values differ
+muscle [protocol]: 400 of 400 values differ
+muscle [study]: 400 of 400 values differ
+muscle [days_visit_pcaa]: 2 of 400 values differ
+muscle [t_strtprerst_pcaa]: 400 of 400 values differ
+muscle [t_strt24rst_pcab]: 222 of 400 values differ
+muscle [collForm_days_visit]: 3 of 400 values differ
+muscle [collected]: 7 of 400 values differ
+muscle [sampletime]: 2 of 400 values differ
+muscle [sampletypecode]: 400 of 400 values differ
+muscle [t_cannula1]: 400 of 400 values differ
+muscle [secondpass]: 1 of 400 values differ
+muscle [max_t_cannula]: 400 of 400 values differ
+muscle [MUSpass]: 1 of 400 values differ
+muscle [t_MUSfreeze]: 67 of 400 values differ
+muscle [t_cannula2]: 155 of 400 values differ
+muscle [t_liedown]: 75 of 400 values differ
+muscle [BMI]: 386 of 400 values differ
+muscle [BMI_groups]: 400 of 400 values differ
+adipose [protocol]: 393 of 393 values differ
+adipose [t_ADIfreeze]: 16 of 393 values differ
+adipose [study]: 393 of 393 values differ
+adipose [days_visit_pcaa]: 2 of 393 values differ
+adipose [t_strtprerst_pcaa]: 393 of 393 values differ
+adipose [t_strt24rst_pcab]: 188 of 393 values differ
+adipose [collForm_days_visit]: 4 of 393 values differ
+adipose [collected]: 6 of 393 values differ
+adipose [sampletypecode]: 393 of 393 values differ
+adipose [t_cannula1]: 392 of 393 values differ
+adipose [secondpass]: 1 of 393 values differ
+adipose [max_t_cannula]: 392 of 393 values differ
+adipose [t_cannula2]: 124 of 393 values differ
+adipose [BMI]: 377 of 393 values differ
+adipose [BMI_groups]: 393 of 393 values differ
+=== metab-t-tca ===
+-- qc_norm features and samples --
+blood features: identical (n=11)
+blood samples: identical (n=1032)
+muscle features: identical (n=11)
+muscle samples: identical (n=426)
+adipose features: identical (n=11)
+adipose samples: identical (n=357)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 11 only in regen, 0 shared
+  only in regen: Lactate, Succinate, Fumarate, Ketoglutarate, Malate ... +6 more
+muscle: 0 only in pkg, 11 only in regen, 0 shared
+  only in regen: Lactate, Succinate, Fumarate, Ketoglutarate, Malate ... +6 more
+adipose: 0 only in pkg, 10 only in regen, 0 shared
+  only in regen: Lactate, Succinate, Fumarate, Malate, Aspartate ... +5 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1032 of 1032 values differ
+blood [study]: 1032 of 1032 values differ
+blood [days_visit_pcaa]: 5 of 1032 values differ
+blood [t_strtprerst_pcaa]: 1032 of 1032 values differ
+blood [t_strt24rst_pcab]: 547 of 1032 values differ
+blood [collForm_days_visit]: 5 of 1032 values differ
+blood [collected]: 91 of 1032 values differ
+blood [dffcltdraw]: 1 of 1032 values differ
+blood [t_syrstrt]: 1032 of 1032 values differ
+blood [t_syrstp]: 1032 of 1032 values differ
+blood [sampletime]: 1 of 1032 values differ
+blood [sampletypecode]: 1032 of 1032 values differ
+blood [t_blospin]: 1032 of 1032 values differ
+blood [t_blofreeze]: 1032 of 1032 values differ
+blood [spintime]: 1 of 1032 values differ
+blood [t_liedown]: 401 of 1032 values differ
+blood [BMI]: 992 of 1032 values differ
+blood [BMI_groups]: 1032 of 1032 values differ
+muscle [protocol]: 426 of 426 values differ
+muscle [study]: 426 of 426 values differ
+muscle [days_visit_pcaa]: 2 of 426 values differ
+muscle [t_strtprerst_pcaa]: 426 of 426 values differ
+muscle [t_strt24rst_pcab]: 235 of 426 values differ
+muscle [collForm_days_visit]: 4 of 426 values differ
+muscle [collected]: 7 of 426 values differ
+muscle [sampletime]: 2 of 426 values differ
+muscle [sampletypecode]: 426 of 426 values differ
+muscle [t_cannula1]: 426 of 426 values differ
+muscle [secondpass]: 1 of 426 values differ
+muscle [max_t_cannula]: 426 of 426 values differ
+muscle [MUSpass]: 1 of 426 values differ
+muscle [t_MUSfreeze]: 71 of 426 values differ
+muscle [t_cannula2]: 165 of 426 values differ
+muscle [t_liedown]: 78 of 426 values differ
+muscle [BMI]: 411 of 426 values differ
+muscle [BMI_groups]: 426 of 426 values differ
+adipose [protocol]: 357 of 357 values differ
+adipose [t_ADIfreeze]: 15 of 357 values differ
+adipose [study]: 357 of 357 values differ
+adipose [days_visit_pcaa]: 2 of 357 values differ
+adipose [t_strtprerst_pcaa]: 357 of 357 values differ
+adipose [t_strt24rst_pcab]: 172 of 357 values differ
+adipose [collForm_days_visit]: 4 of 357 values differ
+adipose [collected]: 6 of 357 values differ
+adipose [sampletypecode]: 357 of 357 values differ
+adipose [t_cannula1]: 356 of 357 values differ
+adipose [secondpass]: 1 of 357 values differ
+adipose [max_t_cannula]: 356 of 357 values differ
+adipose [t_cannula2]: 108 of 357 values differ
+adipose [BMI]: 345 of 357 values differ
+adipose [BMI_groups]: 357 of 357 values differ
+=== metab-t-nuc ===
+-- qc_norm features and samples --
+muscle features: identical (n=27)
+muscle samples: identical (n=438)
+adipose features: identical (n=25)
+adipose samples: identical (n=402)
+-- qc_norm value correlation (shared features x shared samples) --
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+muscle: 0 only in pkg, 27 only in regen, 0 shared
+  only in regen: adenine, ADP, ADP-ribose, AMP, ATP ... +22 more
+adipose: 0 only in pkg, 25 only in regen, 0 shared
+  only in regen: adenosine, ADP, ADP-ribose, AMP, ATP ... +20 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+muscle [protocol]: 438 of 438 values differ
+muscle [study]: 438 of 438 values differ
+muscle [days_visit_pcaa]: 2 of 438 values differ
+muscle [t_strtprerst_pcaa]: 438 of 438 values differ
+muscle [t_strt24rst_pcab]: 242 of 438 values differ
+muscle [collForm_days_visit]: 4 of 438 values differ
+muscle [collected]: 7 of 438 values differ
+muscle [sampletime]: 2 of 438 values differ
+muscle [sampletypecode]: 438 of 438 values differ
+muscle [t_cannula1]: 438 of 438 values differ
+muscle [secondpass]: 1 of 438 values differ
+muscle [max_t_cannula]: 438 of 438 values differ
+muscle [MUSpass]: 1 of 438 values differ
+muscle [t_MUSfreeze]: 74 of 438 values differ
+muscle [t_cannula2]: 166 of 438 values differ
+muscle [t_liedown]: 79 of 438 values differ
+muscle [BMI]: 423 of 438 values differ
+muscle [BMI_groups]: 438 of 438 values differ
+adipose [protocol]: 402 of 402 values differ
+adipose [t_ADIfreeze]: 16 of 402 values differ
+adipose [study]: 402 of 402 values differ
+adipose [days_visit_pcaa]: 2 of 402 values differ
+adipose [t_strtprerst_pcaa]: 402 of 402 values differ
+adipose [t_strt24rst_pcab]: 191 of 402 values differ
+adipose [collForm_days_visit]: 4 of 402 values differ
+adipose [collected]: 6 of 402 values differ
+adipose [sampletypecode]: 402 of 402 values differ
+adipose [t_cannula1]: 401 of 402 values differ
+adipose [secondpass]: 1 of 402 values differ
+adipose [max_t_cannula]: 401 of 402 values differ
+adipose [t_cannula2]: 127 of 402 values differ
+adipose [BMI]: 386 of 402 values differ
+adipose [BMI_groups]: 402 of 402 values differ
+=== metab-t-acoa ===
+-- qc_norm features and samples --
+adipose features: identical (n=35)
+adipose samples: identical (n=375)
+-- qc_norm value correlation (shared features x shared samples) --
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+adipose: 0 only in pkg, 35 only in regen, 0 shared
+  only in regen: coenzyme A, CoA(2:0), CoA(3:0), CoA(4:1), CoA(4:0) ... +30 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+adipose [protocol]: 375 of 375 values differ
+adipose [t_ADIfreeze]: 20 of 375 values differ
+adipose [study]: 375 of 375 values differ
+adipose [days_visit_pcaa]: 2 of 375 values differ
+adipose [t_strtprerst_pcaa]: 375 of 375 values differ
+adipose [t_strt24rst_pcab]: 179 of 375 values differ
+adipose [collForm_days_visit]: 4 of 375 values differ
+adipose [collected]: 6 of 375 values differ
+adipose [sampletypecode]: 375 of 375 values differ
+adipose [t_cannula1]: 374 of 375 values differ
+adipose [secondpass]: 1 of 375 values differ
+adipose [max_t_cannula]: 374 of 375 values differ
+adipose [t_cannula2]: 113 of 375 values differ
+adipose [BMI]: 360 of 375 values differ
+adipose [BMI_groups]: 375 of 375 values differ
+=== metab-t-ka ===
+-- qc_norm features and samples --
+adipose features: identical (n=3)
+adipose samples: identical (n=393)
+-- qc_norm value correlation (shared features x shared samples) --
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+adipose: 0 only in pkg, 3 only in regen, 0 shared
+  only in regen: ketoisovalerate, ketoleucine, 3-methyl-2-oxovalerate
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+adipose [protocol]: 393 of 393 values differ
+adipose [t_ADIfreeze]: 16 of 393 values differ
+adipose [study]: 393 of 393 values differ
+adipose [days_visit_pcaa]: 2 of 393 values differ
+adipose [t_strtprerst_pcaa]: 393 of 393 values differ
+adipose [t_strt24rst_pcab]: 187 of 393 values differ
+adipose [collForm_days_visit]: 4 of 393 values differ
+adipose [collected]: 6 of 393 values differ
+adipose [sampletypecode]: 393 of 393 values differ
+adipose [t_cannula1]: 392 of 393 values differ
+adipose [secondpass]: 1 of 393 values differ
+adipose [max_t_cannula]: 392 of 393 values differ
+adipose [t_cannula2]: 121 of 393 values differ
+adipose [BMI]: 377 of 393 values differ
+adipose [BMI_groups]: 393 of 393 values differ
+=== metab-u-hilicpos ===
+-- qc_norm features and samples --
+blood features: identical (n=2860)
+blood samples: identical (n=1032)
+muscle features: identical (n=5720)
+muscle samples: identical (n=480)
+adipose features: identical (n=3060)
+adipose samples: identical (n=404)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 2860 only in regen, 0 shared
+  only in regen: (E,E)-Trichostachine, 1-DeoxyCer 18:0;O2/24:1, 1-Methyl nicotinamide, 1-Methyladenosine, 1-Methylguanine ... +2855 more
+muscle: 0 only in pkg, 5720 only in regen, 0 shared
+  only in regen: (E,E)-Trichostachine, 1-DeoxyCer 18:0;O2/24:1, 1-Methyl nicotinamide, 1-Methyladenosine, 1-Methylguanine ... +5715 more
+adipose: 0 only in pkg, 3060 only in regen, 0 shared
+  only in regen: 1-DeoxyCer 18:0;O2/24:1, 1-Methyl nicotinamide, 1-Methyladenosine, 1H-Indole-3-acetamide, 5-Hydroxytryptophol ... +3055 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1032 of 1032 values differ
+blood [study]: 1032 of 1032 values differ
+blood [days_visit_pcaa]: 5 of 1032 values differ
+blood [t_strtprerst_pcaa]: 1032 of 1032 values differ
+blood [t_strt24rst_pcab]: 547 of 1032 values differ
+blood [collForm_days_visit]: 5 of 1032 values differ
+blood [collected]: 91 of 1032 values differ
+blood [dffcltdraw]: 1 of 1032 values differ
+blood [t_syrstrt]: 1032 of 1032 values differ
+blood [t_syrstp]: 1032 of 1032 values differ
+blood [sampletime]: 1 of 1032 values differ
+blood [sampletypecode]: 1032 of 1032 values differ
+blood [t_blospin]: 1032 of 1032 values differ
+blood [t_blofreeze]: 1032 of 1032 values differ
+blood [spintime]: 1 of 1032 values differ
+blood [t_liedown]: 401 of 1032 values differ
+blood [BMI]: 992 of 1032 values differ
+blood [BMI_groups]: 1032 of 1032 values differ
+muscle [protocol]: 480 of 480 values differ
+muscle [study]: 480 of 480 values differ
+muscle [days_visit_pcaa]: 2 of 480 values differ
+muscle [t_strtprerst_pcaa]: 480 of 480 values differ
+muscle [t_strt24rst_pcab]: 267 of 480 values differ
+muscle [collForm_days_visit]: 4 of 480 values differ
+muscle [collected]: 10 of 480 values differ
+muscle [sampletime]: 2 of 480 values differ
+muscle [sampletypecode]: 480 of 480 values differ
+muscle [t_cannula1]: 480 of 480 values differ
+muscle [secondpass]: 1 of 480 values differ
+muscle [max_t_cannula]: 480 of 480 values differ
+muscle [MUSlastpiece]: 1 of 480 values differ
+muscle [t_MUSfreeze]: 221 of 480 values differ
+muscle [t_cannula2]: 178 of 480 values differ
+muscle [t_liedown]: 92 of 480 values differ
+muscle [BMI]: 462 of 480 values differ
+muscle [BMI_groups]: 480 of 480 values differ
+adipose [protocol]: 404 of 404 values differ
+adipose [t_ADIfreeze]: 16 of 404 values differ
+adipose [study]: 404 of 404 values differ
+adipose [days_visit_pcaa]: 2 of 404 values differ
+adipose [t_strtprerst_pcaa]: 404 of 404 values differ
+adipose [t_strt24rst_pcab]: 192 of 404 values differ
+adipose [collForm_days_visit]: 4 of 404 values differ
+adipose [collected]: 6 of 404 values differ
+adipose [sampletypecode]: 404 of 404 values differ
+adipose [t_cannula1]: 403 of 404 values differ
+adipose [secondpass]: 1 of 404 values differ
+adipose [max_t_cannula]: 403 of 404 values differ
+adipose [t_cannula2]: 130 of 404 values differ
+adipose [ADIpass]: 1 of 404 values differ
+adipose [BMI]: 388 of 404 values differ
+adipose [BMI_groups]: 404 of 404 values differ
+=== metab-u-ionpneg ===
+-- qc_norm features and samples --
+blood features: identical (n=1369)
+blood samples: identical (n=1014)
+muscle features: identical (n=2212)
+muscle samples: identical (n=475)
+adipose features: identical (n=1800)
+adipose samples: identical (n=391)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 1369 only in regen, 0 shared
+  only in regen: 100.0762_13.008, 100.988_9.562, 101.0243_8.86, 101.0244_1.342, 101.0244_7.204 ... +1364 more
+muscle: 0 only in pkg, 2212 only in regen, 0 shared
+  only in regen: 100.0762_11.708, 100.0762_13.016, 1000.3494_15.514, 1004.6475_7.264, 1006.8363_1.127 ... +2207 more
+adipose: 0 only in pkg, 1800 only in regen, 0 shared
+  only in regen: 100.0763_11.326, 100.0763_11.548, 100.0764_13.085, 100.0765_10.38, 1002.0493_1.135 ... +1795 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1014 of 1014 values differ
+blood [study]: 1014 of 1014 values differ
+blood [days_visit_pcaa]: 5 of 1014 values differ
+blood [t_strtprerst_pcaa]: 1014 of 1014 values differ
+blood [t_strt24rst_pcab]: 541 of 1014 values differ
+blood [collForm_days_visit]: 5 of 1014 values differ
+blood [collected]: 90 of 1014 values differ
+blood [dffcltdraw]: 1 of 1014 values differ
+blood [t_syrstrt]: 1014 of 1014 values differ
+blood [t_syrstp]: 1014 of 1014 values differ
+blood [sampletime]: 1 of 1014 values differ
+blood [sampletypecode]: 1014 of 1014 values differ
+blood [t_blospin]: 1014 of 1014 values differ
+blood [t_blofreeze]: 1014 of 1014 values differ
+blood [spintime]: 1 of 1014 values differ
+blood [t_liedown]: 393 of 1014 values differ
+blood [BMI]: 975 of 1014 values differ
+blood [BMI_groups]: 1014 of 1014 values differ
+muscle [protocol]: 475 of 475 values differ
+muscle [study]: 475 of 475 values differ
+muscle [days_visit_pcaa]: 2 of 475 values differ
+muscle [t_strtprerst_pcaa]: 475 of 475 values differ
+muscle [t_strt24rst_pcab]: 263 of 475 values differ
+muscle [collForm_days_visit]: 4 of 475 values differ
+muscle [collected]: 10 of 475 values differ
+muscle [sampletime]: 2 of 475 values differ
+muscle [sampletypecode]: 475 of 475 values differ
+muscle [t_cannula1]: 475 of 475 values differ
+muscle [secondpass]: 1 of 475 values differ
+muscle [max_t_cannula]: 475 of 475 values differ
+muscle [MUSlastpiece]: 1 of 475 values differ
+muscle [t_MUSfreeze]: 216 of 475 values differ
+muscle [t_cannula2]: 177 of 475 values differ
+muscle [t_liedown]: 89 of 475 values differ
+muscle [BMI]: 457 of 475 values differ
+muscle [BMI_groups]: 475 of 475 values differ
+adipose [protocol]: 391 of 391 values differ
+adipose [t_ADIfreeze]: 15 of 391 values differ
+adipose [study]: 391 of 391 values differ
+adipose [days_visit_pcaa]: 2 of 391 values differ
+adipose [t_strtprerst_pcaa]: 391 of 391 values differ
+adipose [t_strt24rst_pcab]: 187 of 391 values differ
+adipose [collForm_days_visit]: 4 of 391 values differ
+adipose [collected]: 6 of 391 values differ
+adipose [sampletypecode]: 391 of 391 values differ
+adipose [t_cannula1]: 390 of 391 values differ
+adipose [secondpass]: 1 of 391 values differ
+adipose [max_t_cannula]: 390 of 391 values differ
+adipose [t_cannula2]: 123 of 391 values differ
+adipose [BMI]: 375 of 391 values differ
+adipose [BMI_groups]: 391 of 391 values differ
+=== metab-u-lrpneg ===
+-- qc_norm features and samples --
+blood features: identical (n=5967)
+blood samples: identical (n=1031)
+muscle features: identical (n=1254)
+muscle samples: identical (n=451)
+adipose features: identical (n=1287)
+adipose samples: identical (n=403)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 5967 only in regen, 0 shared
+  only in regen: 1000.62044_1000.62, 1000.8991_1000.9, 1000.98256_1000.98, 1000.98288_1000.98, 1000.9829_1000.98 ... +5962 more
+muscle: 0 only in pkg, 1254 only in regen, 0 shared
+  only in regen: 1002.59445_5.08, 1007.66473_6.44, 1012.53991_4.66, 1017.67908_6.89, 1018.55711_4.65 ... +1249 more
+adipose: 0 only in pkg, 1287 only in regen, 0 shared
+  only in regen: 1001.87628_9.78, 1002.59674_5.67, 1003.66473_6.9, 1003.84751_9.75, 1003.84755_9.82 ... +1282 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1031 of 1031 values differ
+blood [study]: 1031 of 1031 values differ
+blood [days_visit_pcaa]: 5 of 1031 values differ
+blood [t_strtprerst_pcaa]: 1031 of 1031 values differ
+blood [t_strt24rst_pcab]: 547 of 1031 values differ
+blood [collForm_days_visit]: 5 of 1031 values differ
+blood [collected]: 91 of 1031 values differ
+blood [dffcltdraw]: 1 of 1031 values differ
+blood [t_syrstrt]: 1031 of 1031 values differ
+blood [t_syrstp]: 1031 of 1031 values differ
+blood [sampletime]: 1 of 1031 values differ
+blood [sampletypecode]: 1031 of 1031 values differ
+blood [t_blospin]: 1031 of 1031 values differ
+blood [t_blofreeze]: 1031 of 1031 values differ
+blood [spintime]: 1 of 1031 values differ
+blood [t_liedown]: 401 of 1031 values differ
+blood [BMI]: 991 of 1031 values differ
+blood [BMI_groups]: 1031 of 1031 values differ
+muscle [protocol]: 451 of 451 values differ
+muscle [study]: 451 of 451 values differ
+muscle [days_visit_pcaa]: 2 of 451 values differ
+muscle [t_strtprerst_pcaa]: 451 of 451 values differ
+muscle [t_strt24rst_pcab]: 250 of 451 values differ
+muscle [collForm_days_visit]: 4 of 451 values differ
+muscle [collected]: 8 of 451 values differ
+muscle [sampletime]: 2 of 451 values differ
+muscle [sampletypecode]: 451 of 451 values differ
+muscle [t_cannula1]: 451 of 451 values differ
+muscle [secondpass]: 1 of 451 values differ
+muscle [max_t_cannula]: 451 of 451 values differ
+muscle [MUSpass]: 1 of 451 values differ
+muscle [t_MUSfreeze]: 80 of 451 values differ
+muscle [t_cannula2]: 170 of 451 values differ
+muscle [t_liedown]: 84 of 451 values differ
+muscle [BMI]: 434 of 451 values differ
+muscle [BMI_groups]: 451 of 451 values differ
+adipose [protocol]: 403 of 403 values differ
+adipose [t_ADIfreeze]: 16 of 403 values differ
+adipose [study]: 403 of 403 values differ
+adipose [days_visit_pcaa]: 2 of 403 values differ
+adipose [t_strtprerst_pcaa]: 403 of 403 values differ
+adipose [t_strt24rst_pcab]: 192 of 403 values differ
+adipose [collForm_days_visit]: 4 of 403 values differ
+adipose [collected]: 6 of 403 values differ
+adipose [sampletypecode]: 403 of 403 values differ
+adipose [t_cannula1]: 402 of 403 values differ
+adipose [secondpass]: 1 of 403 values differ
+adipose [max_t_cannula]: 402 of 403 values differ
+adipose [t_cannula2]: 128 of 403 values differ
+adipose [BMI]: 387 of 403 values differ
+adipose [BMI_groups]: 403 of 403 values differ
+=== metab-u-lrppos ===
+-- qc_norm features and samples --
+blood features: identical (n=2715)
+blood samples: identical (n=1030)
+muscle features: identical (n=1874)
+muscle samples: identical (n=450)
+adipose features: identical (n=985)
+adipose samples: identical (n=404)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 2715 only in regen, 0 shared
+  only in regen: 1000.92889_9.38, 1000.92964_9.35, 1001.65753_1.82, 1002.65764_2.04, 1002.85091_7.72 ... +2710 more
+muscle: 0 only in pkg, 1874 only in regen, 0 shared
+  only in regen: 1000.92464_9.44, 1000.92527_9.31, 1002.94085_9.63, 1002.94125_9.55, 1004.8615_8.16 ... +1869 more
+adipose: 0 only in pkg, 985 only in regen, 0 shared
+  only in regen: 1000.92674_9.53, 1000.92709_9.45, 1000.92839_9.36, 1002.94283_9.65, 1002.94392_9.57 ... +980 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1030 of 1030 values differ
+blood [study]: 1030 of 1030 values differ
+blood [days_visit_pcaa]: 5 of 1030 values differ
+blood [t_strtprerst_pcaa]: 1030 of 1030 values differ
+blood [t_strt24rst_pcab]: 546 of 1030 values differ
+blood [collForm_days_visit]: 5 of 1030 values differ
+blood [collected]: 91 of 1030 values differ
+blood [dffcltdraw]: 1 of 1030 values differ
+blood [t_syrstrt]: 1030 of 1030 values differ
+blood [t_syrstp]: 1030 of 1030 values differ
+blood [sampletime]: 1 of 1030 values differ
+blood [sampletypecode]: 1030 of 1030 values differ
+blood [t_blospin]: 1030 of 1030 values differ
+blood [t_blofreeze]: 1030 of 1030 values differ
+blood [spintime]: 1 of 1030 values differ
+blood [t_liedown]: 401 of 1030 values differ
+blood [BMI]: 990 of 1030 values differ
+blood [BMI_groups]: 1030 of 1030 values differ
+muscle [protocol]: 450 of 450 values differ
+muscle [study]: 450 of 450 values differ
+muscle [days_visit_pcaa]: 2 of 450 values differ
+muscle [t_strtprerst_pcaa]: 450 of 450 values differ
+muscle [t_strt24rst_pcab]: 249 of 450 values differ
+muscle [collForm_days_visit]: 4 of 450 values differ
+muscle [collected]: 8 of 450 values differ
+muscle [sampletime]: 2 of 450 values differ
+muscle [sampletypecode]: 450 of 450 values differ
+muscle [t_cannula1]: 450 of 450 values differ
+muscle [secondpass]: 1 of 450 values differ
+muscle [max_t_cannula]: 450 of 450 values differ
+muscle [MUSpass]: 1 of 450 values differ
+muscle [t_MUSfreeze]: 80 of 450 values differ
+muscle [t_cannula2]: 170 of 450 values differ
+muscle [t_liedown]: 84 of 450 values differ
+muscle [BMI]: 433 of 450 values differ
+muscle [BMI_groups]: 450 of 450 values differ
+adipose [protocol]: 404 of 404 values differ
+adipose [t_ADIfreeze]: 16 of 404 values differ
+adipose [study]: 404 of 404 values differ
+adipose [days_visit_pcaa]: 2 of 404 values differ
+adipose [t_strtprerst_pcaa]: 404 of 404 values differ
+adipose [t_strt24rst_pcab]: 192 of 404 values differ
+adipose [collForm_days_visit]: 4 of 404 values differ
+adipose [collected]: 6 of 404 values differ
+adipose [sampletypecode]: 404 of 404 values differ
+adipose [t_cannula1]: 403 of 404 values differ
+adipose [secondpass]: 1 of 404 values differ
+adipose [max_t_cannula]: 403 of 404 values differ
+adipose [t_cannula2]: 129 of 404 values differ
+adipose [BMI]: 388 of 404 values differ
+adipose [BMI_groups]: 404 of 404 values differ
+=== metab-u-rpneg ===
+-- qc_norm features and samples --
+blood features: identical (n=2531)
+blood samples: identical (n=1018)
+muscle features: identical (n=2458)
+muscle samples: identical (n=475)
+adipose features: identical (n=1655)
+adipose samples: identical (n=384)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 2531 only in regen, 0 shared
+  only in regen: 1-Methylxanthine, 1,3-Dimethyluric acid, 1003.6721_11.476, 1004.6749_13.717, 1005.6876_9.866 ... +2526 more
+muscle: 0 only in pkg, 2458 only in regen, 0 shared
+  only in regen: 1-Methylxanthine, 1000.3764_0.641, 1001.5622_10.892, 1001.5625_10.986, 1002.3848_0.697 ... +2453 more
+adipose: 0 only in pkg, 1655 only in regen, 0 shared
+  only in regen: 1000.5032_13.263, 1001.524_13.398, 1001.5627_10.831, 1002.5171_13.685, 1006.5203_13.29 ... +1650 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1018 of 1018 values differ
+blood [study]: 1018 of 1018 values differ
+blood [days_visit_pcaa]: 5 of 1018 values differ
+blood [t_strtprerst_pcaa]: 1018 of 1018 values differ
+blood [t_strt24rst_pcab]: 536 of 1018 values differ
+blood [collForm_days_visit]: 5 of 1018 values differ
+blood [collected]: 90 of 1018 values differ
+blood [dffcltdraw]: 1 of 1018 values differ
+blood [t_syrstrt]: 1018 of 1018 values differ
+blood [t_syrstp]: 1018 of 1018 values differ
+blood [sampletime]: 1 of 1018 values differ
+blood [sampletypecode]: 1018 of 1018 values differ
+blood [t_blospin]: 1018 of 1018 values differ
+blood [t_blofreeze]: 1018 of 1018 values differ
+blood [spintime]: 1 of 1018 values differ
+blood [t_liedown]: 396 of 1018 values differ
+blood [BMI]: 978 of 1018 values differ
+blood [BMI_groups]: 1018 of 1018 values differ
+muscle [protocol]: 475 of 475 values differ
+muscle [study]: 475 of 475 values differ
+muscle [days_visit_pcaa]: 2 of 475 values differ
+muscle [t_strtprerst_pcaa]: 475 of 475 values differ
+muscle [t_strt24rst_pcab]: 262 of 475 values differ
+muscle [collForm_days_visit]: 4 of 475 values differ
+muscle [collected]: 10 of 475 values differ
+muscle [sampletime]: 2 of 475 values differ
+muscle [sampletypecode]: 475 of 475 values differ
+muscle [t_cannula1]: 475 of 475 values differ
+muscle [secondpass]: 1 of 475 values differ
+muscle [max_t_cannula]: 475 of 475 values differ
+muscle [MUSlastpiece]: 1 of 475 values differ
+muscle [t_MUSfreeze]: 215 of 475 values differ
+muscle [t_cannula2]: 177 of 475 values differ
+muscle [t_liedown]: 88 of 475 values differ
+muscle [BMI]: 457 of 475 values differ
+muscle [BMI_groups]: 475 of 475 values differ
+adipose [protocol]: 384 of 384 values differ
+adipose [t_ADIfreeze]: 15 of 384 values differ
+adipose [study]: 384 of 384 values differ
+adipose [days_visit_pcaa]: 2 of 384 values differ
+adipose [t_strtprerst_pcaa]: 384 of 384 values differ
+adipose [t_strt24rst_pcab]: 181 of 384 values differ
+adipose [collForm_days_visit]: 4 of 384 values differ
+adipose [collected]: 6 of 384 values differ
+adipose [sampletypecode]: 384 of 384 values differ
+adipose [t_cannula1]: 383 of 384 values differ
+adipose [max_t_cannula]: 383 of 384 values differ
+adipose [t_cannula2]: 122 of 384 values differ
+adipose [BMI]: 368 of 384 values differ
+adipose [BMI_groups]: 384 of 384 values differ
+=== metab-u-rppos ===
+-- qc_norm features and samples --
+blood features: identical (n=1899)
+blood samples: identical (n=1018)
+muscle features: identical (n=3818)
+muscle samples: identical (n=475)
+adipose features: identical (n=2848)
+adipose samples: identical (n=384)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 1899 only in regen, 0 shared
+  only in regen: 1-Methyladenosine, 1-Methyluric acid, 1017.7913_8.483, 1018.6273_12.263, 1024.6776_12.665 ... +1894 more
+muscle: 0 only in pkg, 3818 only in regen, 0 shared
+  only in regen: 1-Methyladenosine, 100.0757_3.037, 100.1123_2.705, 1001.5601_10.889, 1001.5601_10.986 ... +3813 more
+adipose: 0 only in pkg, 2848 only in regen, 0 shared
+  only in regen: 100.0774_2.616, 1002.8007_0.551, 1003.1352_0.552, 1003.3674_10.298, 1003.5753_11.729 ... +2843 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [protocol]: 1018 of 1018 values differ
+blood [study]: 1018 of 1018 values differ
+blood [days_visit_pcaa]: 5 of 1018 values differ
+blood [t_strtprerst_pcaa]: 1018 of 1018 values differ
+blood [t_strt24rst_pcab]: 536 of 1018 values differ
+blood [collForm_days_visit]: 5 of 1018 values differ
+blood [collected]: 90 of 1018 values differ
+blood [dffcltdraw]: 1 of 1018 values differ
+blood [t_syrstrt]: 1018 of 1018 values differ
+blood [t_syrstp]: 1018 of 1018 values differ
+blood [sampletime]: 1 of 1018 values differ
+blood [sampletypecode]: 1018 of 1018 values differ
+blood [t_blospin]: 1018 of 1018 values differ
+blood [t_blofreeze]: 1018 of 1018 values differ
+blood [spintime]: 1 of 1018 values differ
+blood [t_liedown]: 394 of 1018 values differ
+blood [BMI]: 979 of 1018 values differ
+blood [BMI_groups]: 1018 of 1018 values differ
+muscle [protocol]: 475 of 475 values differ
+muscle [study]: 475 of 475 values differ
+muscle [days_visit_pcaa]: 2 of 475 values differ
+muscle [t_strtprerst_pcaa]: 475 of 475 values differ
+muscle [t_strt24rst_pcab]: 262 of 475 values differ
+muscle [collForm_days_visit]: 4 of 475 values differ
+muscle [collected]: 10 of 475 values differ
+muscle [sampletime]: 2 of 475 values differ
+muscle [sampletypecode]: 475 of 475 values differ
+muscle [t_cannula1]: 475 of 475 values differ
+muscle [secondpass]: 1 of 475 values differ
+muscle [max_t_cannula]: 475 of 475 values differ
+muscle [MUSlastpiece]: 1 of 475 values differ
+muscle [t_MUSfreeze]: 215 of 475 values differ
+muscle [t_cannula2]: 177 of 475 values differ
+muscle [t_liedown]: 88 of 475 values differ
+muscle [BMI]: 457 of 475 values differ
+muscle [BMI_groups]: 475 of 475 values differ
+adipose [protocol]: 384 of 384 values differ
+adipose [t_ADIfreeze]: 15 of 384 values differ
+adipose [study]: 384 of 384 values differ
+adipose [days_visit_pcaa]: 2 of 384 values differ
+adipose [t_strtprerst_pcaa]: 384 of 384 values differ
+adipose [t_strt24rst_pcab]: 182 of 384 values differ
+adipose [collForm_days_visit]: 4 of 384 values differ
+adipose [collected]: 6 of 384 values differ
+adipose [sampletypecode]: 384 of 384 values differ
+adipose [t_cannula1]: 383 of 384 values differ
+adipose [max_t_cannula]: 383 of 384 values differ
+adipose [t_cannula2]: 122 of 384 values differ
+adipose [BMI]: 368 of 384 values differ
+adipose [BMI_groups]: 384 of 384 values differ
+=== prot-ol ===
+-- qc_norm features and samples --
+blood features: identical (n=1417)
+blood samples: identical (n=374)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+-- feature_metadata (protein_id) --
+blood: 0 only in pkg, 1417 only in regen, 0 shared
+  only in regen: OID20051, OID20052, OID20055, OID20056, OID20057 ... +1412 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood: all shared column values are identical
+=== prot-ph ===
+-- qc_norm features and samples --
+adipose features: 8678 only in pkg, 0 only in regen, 12344 shared
+  only in pkg: A0A0U1RRK4_S41s, A0FGR8-2_S665sS676sT677t, A0FGR8-2_S665sT677t, A0FGR8-2_S676sT677t, A0FGR8-2_S683s ... +8673 more
+adipose samples: identical (n=42)
+muscle features: 9015 only in pkg, 0 only in regen, 9326 shared
+  only in pkg: A0A0B4J2D5_Y250y, A0A2R8Y4L2_S154s, A0A2R8Y4L2_S266s, A0A2R8Y4L2_S268s, A0AVT1_S36s ... +9010 more
+muscle samples: identical (n=452)
+-- qc_norm value correlation (shared features x shared samples) --
+adipose: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+-- feature_metadata (protein_id) --
+adipose: 6030 only in pkg, 21022 only in regen, 0 shared
+  only in pkg: A0A0B4J2D5, A0A0B4J2F2, A0A0U1RRK4, A0A1B0GTU1, A0A3B3IS91 ... +6025 more
+  only in regen: A0A0B4J2F2_S575s, A0A0B4J2F2_T473t, A0A0U1RRK4_S41s, A0A1B0GTU1_S495s, A0AVT1_S36s ... +21017 more
+muscle: 6871 only in pkg, 18341 only in regen, 0 shared
+  only in pkg: A0A075B6N2, A0A0A6YYL3, A0A0B4J2D5, A0A0B4J2F2, A0A2R8Y4L2 ... +6866 more
+  only in regen: A0A0B4J2D5_Y250y, A0A2R8Y4L2_S154s, A0A2R8Y4L2_S266s, A0A2R8Y4L2_S267s, A0A2R8Y4L2_S268s ... +18336 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+adipose: all shared column values are identical
+muscle: all shared column values are identical
+=== prot-pr ===
+-- qc_norm features and samples --
+adipose features: 406 only in pkg, 0 only in regen, 7352 shared
+  only in pkg: A0A075B6H7, A0A075B6K0, A0A087WW87, A0A096LP01, A0A0C4DH39 ... +401 more
+adipose samples: identical (n=42)
+muscle features: 851 only in pkg, 0 only in regen, 5373 shared
+  only in pkg: A0A075B6K0, A0A075B6K2, A0A075B6Q5, A0A0A0MS14, A0A0A0MT36 ... +846 more
+muscle samples: identical (n=452)
+-- qc_norm value correlation (shared features x shared samples) --
+adipose: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+-- feature_metadata (protein_id) --
+All tissues: protein_id identical across pkg and regen
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+adipose: all shared column values are identical
+muscle: all shared column values are identical
+  [transcript-rna-seq/blood] note: no feature_metadata cached, feature_id check will be skipped
+  [transcript-rna-seq/muscle] note: no feature_metadata cached, feature_id check will be skipped
+  [transcript-rna-seq/adipose] note: no feature_metadata cached, feature_id check will be skipped
+=== transcript-rna-seq ===
+-- qc_norm features and samples --
+blood features: identical (n=20526)
+blood samples: identical (n=951)
+muscle features: identical (n=16509)
+muscle samples: identical (n=485)
+adipose features: identical (n=20090)
+adipose samples: identical (n=406)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 20526 only in pkg, 0 only in regen, 0 shared
+  only in pkg: ENSG00000000419.14, ENSG00000000457.14, ENSG00000000460.17, ENSG00000000938.13, ENSG00000000971.16 ... +20521 more
+muscle: 16502 only in pkg, 0 only in regen, 0 shared
+  only in pkg: ENSG00000000003.15, ENSG00000000419.14, ENSG00000000457.14, ENSG00000000460.17, ENSG00000000938.13 ... +16497 more
+adipose: 20090 only in pkg, 0 only in regen, 0 shared
+  only in pkg: ENSG00000000003.15, ENSG00000000005.6, ENSG00000000419.14, ENSG00000000457.14, ENSG00000000460.17 ... +20085 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood: all shared column values are identical
+muscle: all shared column values are identical
+adipose: all shared column values are identical
+=== epigen-methylcap-seq ===
+-- qc_norm features and samples --
+blood features: identical (n=464359)
+blood samples: identical (n=122)
+muscle features: identical (n=1097702)
+muscle samples: identical (n=87)
+adipose features: identical (n=1326299)
+adipose samples: identical (n=69)
+-- qc_norm value correlation (shared features x shared samples) --
+blood: perfectly correlated (r=1)
+muscle: perfectly correlated (r=1)
+adipose: perfectly correlated (r=1)
+-- feature_metadata (feature_id) --
+blood: 0 only in pkg, 464359 only in regen, 0 shared
+  only in regen: chr10:100010333-100010333, chr10:100010346-100010346, chr10:100010373-100010373, chr10:100010407-100010407, chr10:100013978-100013978 ... +464354 more
+muscle: 0 only in pkg, 1097702 only in regen, 0 shared
+  only in regen: chr10:100010277-100010277, chr10:100010333-100010333, chr10:100010346-100010346, chr10:100010373-100010373, chr10:100010407-100010407 ... +1097697 more
+adipose: 0 only in pkg, 1326299 only in regen, 0 shared
+  only in regen: chr10:100010333-100010333, chr10:100010346-100010346, chr10:100010373-100010373, chr10:100010407-100010407, chr10:100010417-100010417 ... +1326294 more
+-- sample_metadata vialLabels --
+All tissues: vialLabels identical across pkg and regen
+-- sample_metadata column values (shared columns, shared samples) --
+blood [study]: 122 of 122 values differ
+blood [t_strtprerst_pcaa]: 122 of 122 values differ
+blood [t_strt24rst_pcab]: 99 of 122 values differ
+blood [t_syrstrt]: 122 of 122 values differ
+blood [t_syrstp]: 122 of 122 values differ
+blood [sampletypecode]: 122 of 122 values differ
+blood [t_blospin]: 122 of 122 values differ
+blood [t_blofreeze]: 122 of 122 values differ
+blood [t_liedown]: 35 of 122 values differ
+blood [BMI]: 119 of 122 values differ
+blood [BMI_groups]: 122 of 122 values differ
+muscle [study]: 87 of 87 values differ
+muscle [t_strtprerst_pcaa]: 87 of 87 values differ
+muscle [t_strt24rst_pcab]: 72 of 87 values differ
+muscle [sampletypecode]: 87 of 87 values differ
+muscle [t_cannula1]: 87 of 87 values differ
+muscle [max_t_cannula]: 87 of 87 values differ
+muscle [t_MUSfreeze]: 48 of 87 values differ
+muscle [t_cannula2]: 19 of 87 values differ
+muscle [BMI]: 85 of 87 values differ
+muscle [BMI_groups]: 87 of 87 values differ
+adipose [study]: 69 of 69 values differ
+adipose [t_strtprerst_pcaa]: 69 of 69 values differ
+adipose [t_strt24rst_pcab]: 51 of 69 values differ
+adipose [sampletypecode]: 69 of 69 values differ
+adipose [t_cannula1]: 69 of 69 values differ
+adipose [max_t_cannula]: 69 of 69 values differ
+adipose [t_cannula2]: 18 of 69 values differ
+adipose [BMI]: 67 of 69 values differ
+adipose [BMI_groups]: 69 of 69 values differ
+=== clinical-chemistry ===
+-- qc_norm features and samples --
+blood features: 0 only in pkg, 9 only in regen, 0 shared
+  only in regen: CK, Glucose, Lactate, Glycerol, NEFA ... +4 more
+blood samples: 0 only in pkg, 1032 only in regen, 0 shared
+  only in regen: 11001010213, 11001020213, 11001030213, 11001040213, 11001050213 ... +1027 more
+-- qc_norm value correlation (shared features x shared samples) --

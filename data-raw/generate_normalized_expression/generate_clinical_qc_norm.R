@@ -22,14 +22,15 @@
 #' @author christopher jin
 
 generate_clinical_qc_norm = function(config_file = "~/config.json"){
+  require("stringr")
 
   if(!file.exists(config_file))
     stop(config_file, " not found. This function requires a config file to locate precovid_repo_path.")
 
   config = jsonlite::fromJSON(config_file)
   repo_local_dir = config$precovid_repo_path
-  metadata_output = file.path(repo_local_dir, "data", "tmp", "freeze", "clinical_chemistry", "metadata")
-  qc_output = file.path(repo_local_dir, "data", "tmp", "freeze", "clinical_chemistry", "qc-norm")
+  metadata_output = file.path(repo_local_dir, "data", "tmp", "freeze", "clinical-chemistry", "metadata")
+  qc_output = file.path(repo_local_dir, "data", "tmp", "freeze", "clinical-chemistry", "qc-norm")
 
   dir.create(metadata_output, recursive = TRUE, showWarnings = FALSE)
   dir.create(qc_output, recursive = TRUE, showWarnings = FALSE)
@@ -58,8 +59,8 @@ generate_clinical_qc_norm = function(config_file = "~/config.json"){
   all_file_header = "human-precovid-sed-adu" #this is the base structure for all files within the phase.
   tissue_code = "t02-plasma"
 
-  file_name = paste(all_file_header, tissue_code, "clinical_chemistry", "qc-norm", "log2-transformed", sep = "_")
-  file_name = paste0(qc_output, "/", file_name, "_v", "1.3", file_type)
+  file_name = paste(all_file_header, tissue_code, "clinical-chemistry", "qc-norm", "log2-transformed", sep = "_")
+  file_name = paste0(qc_output, "/", file_name, "_v", "1.4", file_type)
   write.table(log_cln_out, file = file_name, row.names = F, sep = '\t', quote = F)
 
   # as we get ready to annotate this, there are some clinical features that are proteins
@@ -74,11 +75,19 @@ generate_clinical_qc_norm = function(config_file = "~/config.json"){
 
   feature_metadata = log_cln_out %>%
     dplyr::select(feature_id) %>%
-    dplyr::left_join(all_annotation, by = "feature_id")
+    dplyr::left_join(all_annotation, by = "feature_id") %>%
+    dplyr::select(assay, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot,
+                  refmet_name, refmet_id, kegg_id)
 
-  feature_metadata_file = paste(all_file_header, tissue_code, "clinical_chemistry", "metadata", "features", sep = "_")
-  feature_metadata_file = paste0(metadata_output, "/", feature_metadata_file, "_v", "1.3", file_type)
+  feature_metadata_file = paste(all_file_header, tissue_code, "clinical-chemistry", "metadata", "features", sep = "_")
+  feature_metadata_file = paste0(metadata_output, "/", feature_metadata_file, "_v", "1.4", file_type)
   write.table(feature_metadata, file = feature_metadata_file, row.names = F, sep = '\t', quote = F)
+
+  #metadata
+  full_metadata = MotrpacHumanPreSuspensionData::pheno$data %>% filter(vialLabel %in% colnames(log_cln_out))
+  file_name = paste(all_file_header, tissue_code, "clinical-chemistry", "metadata", "samples", sep = "_")
+  file_name = paste0(metadata_output, "/", file_name, "_v", "1.4", file_type)
+  write.table(full_metadata, file = file_name, row.names = FALSE, sep = '\t', quote = F)
 }
 
 .annotate_clinical_prot = function(prot_analyte_names){
@@ -99,7 +108,7 @@ generate_clinical_qc_norm = function(config_file = "~/config.json"){
                   entrez_gene = as.character(entrezgene_id),
                   gene_symbol = external_gene_name,
                   feature_id = names(prot_analyte_to_gene)[match(external_gene_name, prot_analyte_to_gene)]) %>%
-    dplyr::select(feature_id, gene_symbol, ensembl_gene, entrez_gene, uniprot = uniprotswissprot)
+    dplyr::select(feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot = uniprotswissprot)
 
   return(biomart_anno)
 }

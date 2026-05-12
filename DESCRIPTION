@@ -41,7 +41,6 @@ URL: https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 4.4)
 LazyData: true
@@ -85,3 +84,4 @@ Remotes:
     bioc::Mfuzz,
     bioc::TMSig,
     bioc::variancePartition
+Config/roxygen2/version: 8.0.0
