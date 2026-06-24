@@ -54,6 +54,7 @@
 #' @author christopher jin
 
 generate_transcriptomics_qc_norm = function(repo_local_dir){
+  require("biomaRt")
   desired_ome = 'transcript-rna-seq'
   tissue_types = c('muscle', 'blood', 'adipose')
   local_path = repo_local_dir
@@ -91,7 +92,7 @@ generate_transcriptomics_qc_norm = function(repo_local_dir){
 
     #-----here we filter lowly expressed genes and transform into logcpm
     raw_dge = edgeR::DGEList(counts = raw_counts_input)
-    keep = rowSums(cpm(raw_dge) > 0.5) >= round(length(raw_counts_input)*0.1)
+    keep = rowSums(edgeR::cpm(raw_dge) > 0.5) >= round(length(raw_counts_input)*0.1)
     filt_dge = raw_dge[keep, , keep.lib.sizes=FALSE]
     dge = edgeR::calcNormFactors(filt_dge, method="TMM")
     norm_counts = edgeR::cpm(dge,log=TRUE)
@@ -101,19 +102,50 @@ generate_transcriptomics_qc_norm = function(repo_local_dir){
     message(tissue," technical: ", technical_cov, " design: ", design_cov)
     #---here we perform batch correction:: ONLY for visualization/clustering/etc. Use raw counts for DA
     batch_corrected = limma::removeBatchEffect(norm_counts,
-                                               covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
-                                               design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
+                                               covariates = stats::model.matrix(stats::as.formula(paste("~ ", technical_cov)), data = meta),
+                                               design = stats::model.matrix(stats::as.formula(paste("~ ", design_cov)), data = meta))
     batch_corrected = as.data.frame(batch_corrected)
     batch_corrected$feature_id = rownames(batch_corrected)
     batch_corrected = batch_corrected %>%
       dplyr::select(feature_id, everything())
 
-    #for RNA, ATAC, we just want to generate only the list of the features that actually exist so the features in each ome can be easily referenced
     only_features = batch_corrected %>% dplyr::select(feature_id)
+    #next we add the gene annotations to the features for the feature metadata
+    rna_gene_anno = .annotate_rna_features(only_features)
 
     write_with_path_name(tissue_metadata, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
     write_with_path_name(batch_corrected, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log-cpm')
-    write_with_path_name(only_features, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+    #version 1.4 adds the gene symbols directly to the metadata-features.
+    write_with_path_name(rna_gene_anno, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features', version = "1.4")
   }
 }
+# Connect to the appropriate BioMart database NOTE THIS REQUIRES dbplyr version 2.3.4 due to an issue:
+# https://stackoverflow.com/questions/77370659/error-failed-to-collect-lazy-table-caused-by-error-in-db-collect-using
+.annotate_rna_features = function(only_features){
 
+  rna_features <- only_features %>%
+    dplyr::mutate(ensembl_gene_id = stringr::str_remove(feature_id, "\\..*")) %>%
+    dplyr::distinct()
+  ensembl <- biomaRt::useEnsembl(biomart = "ensembl", dataset = "hsapiens_gene_ensembl", version = 105)
+
+  # RNA Query BioMart
+  attributes <- c("ensembl_gene_id", "entrezgene_id", "external_gene_name")
+  rna_lookup_df <- biomaRt::getBM(attributes = attributes,
+                                  filters = "ensembl_gene_id",
+                                  values = rna_features$ensembl_gene_id,
+                                  mart = ensembl) %>%
+    dplyr::full_join(rna_features, by = "ensembl_gene_id", relationship = "many-to-many") %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
+    dplyr::select(feature_id,
+                  entrez_gene = entrezgene_id,
+                  gene_symbol,
+                  ensembl_gene = ensembl_gene_id) %>%
+    dplyr::group_by(feature_id) %>%
+    dplyr::slice(match(min(entrez_gene), entrez_gene)) %>%
+    dplyr::mutate(entrez_gene = as.character(entrez_gene),
+                  assay = "transcript-rna-seq") %>%
+    dplyr::relocate(assay) %>%
+    dplyr::distinct()
+
+  return(rna_lookup_df)
+}

@@ -1,7 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 0.2.1
-Date: Mar 5, 2026
+Version: 0.2.3
+Date: June 22nd, 2026
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -36,12 +36,13 @@ Authors@R: c(
           role = c("aut"),
           comment = c(ORCID = "0000-0001-7237-8502"))
  )
-Description: What the package does (one paragraph).
+Description: This package distributes summary-level results from the MoTrPAC human
+    pre-COVID sedentary adult cohort and helpful functions used in the MoTrPAC
+    analysis.
 URL: https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends: 
     R (>= 4.4)
 LazyData: true
@@ -75,7 +76,11 @@ Suggests:
     roxygen2,
     table.glue,
     testthat (>= 3.0.0),
-    variancePartition
+    variancePartition,
+    RColorBrewer,
+    doParallel,
+    parallel,
+    randomForest
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Remotes:
@@ -85,3 +90,4 @@ Remotes:
     bioc::Mfuzz,
     bioc::TMSig,
     bioc::variancePartition
+Config/roxygen2/version: 8.0.0

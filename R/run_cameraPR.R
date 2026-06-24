@@ -105,9 +105,7 @@
 #'
 #' @author Tyler Sagendorf
 #'
-#' @import MotrpacHumanPreSuspensionAnalysis
-#' @importFrom dplyr %>% any_of bind_rows everything left_join mutate select
-#'   rename across
+#' @importFrom dplyr %>% any_of bind_rows everything left_join mutate select rename across
 #' @importFrom stats p.adjust
 #' @importFrom utils modifyList
 #'
@@ -250,11 +248,9 @@ run_cameraPR <- function(DA_list = NULL,
 #'
 #' @author Tyler Sagendorf
 #'
-#' @importFrom dplyr %>% bind_rows mutate left_join filter select arrange across
-#'   where
+#' @importFrom dplyr %>% bind_rows mutate left_join filter select arrange across where
 #' @importFrom tibble column_to_rownames
 #' @importFrom tidyr pivot_wider unnest
-#' @importFrom MotrpacHumanPreSuspensionAnalysis load_differential_analysis
 #'
 #' @noRd
 
@@ -485,8 +481,7 @@ run_cameraPR <- function(DA_list = NULL,
 #' @author Tyler Sagendorf
 #'
 #' @importFrom data.table data.table :=
-#' @importFrom dplyr %>% mutate arrange desc across contains filter n select
-#'   pull bind_rows everything where right_join
+#' @importFrom dplyr %>% mutate arrange desc across contains filter n select pull bind_rows everything where right_join
 #' @importFrom tidyr pivot_wider unnest
 #'
 #' @noRd

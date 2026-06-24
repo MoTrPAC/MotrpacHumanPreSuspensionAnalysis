@@ -5,7 +5,7 @@
 \alias{CLIN_CHEMISTRY_DA}
 \title{Clinical Chemistry Differential analysis}
 \format{
-An object of class \code{data.frame} with 297 rows and 20 columns.
+A \code{data.frame} with 297 rows and 20 columns.
 }
 \usage{
 CLIN_CHEMISTRY_DA

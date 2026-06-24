@@ -43,15 +43,16 @@
 #' @author christopher jin
 
 generate_prot_ol_qc_norm = function(repo_local_dir){
+  library(stringr)
   desired_ome = 'prot-ol'; tissue = 'blood'
-  local_path = file.path(repo_local_dir, "data", "tmp/")
+  local_path = file.path(repo_local_dir)
   olink_data_path = "gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_results_v1.0.txt"
   olink_data = MotrpacBicQC::dl_read_gcp(olink_data_path, tmpdir = local_path, check_first = T)
   sample_metadata = MotrpacBicQC::dl_read_gcp('gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_metadata-samples_v1.0.txt',
-                                tmpdir = local_path, check_first = T) %>%
+                                              tmpdir = local_path, check_first = T) %>%
     dplyr::rename(vialLabel = sample_id)
   protein_metadata = MotrpacBicQC::dl_read_gcp('gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_metadata-proteins_v1.0.txt',
-                                 tmpdir = local_path, check_first = T ) %>%
+                                               tmpdir = local_path, check_first = T ) %>%
     dplyr::rename(OlinkID = olink_id)
 
   metadata_path = paste0(local_path, "freeze/proteomics/metadata/")
@@ -67,7 +68,7 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
   colnames(t_dat) = t_dat[1,] #set colnames then remove the first row
   t_dat = t_dat[-1,]
 
-  t_dat = t_dat %>% rename(vialLabel = olink_id) %>% dplyr::mutate_at(vars(starts_with('OID')), as.numeric)
+  t_dat = t_dat %>% dplyr::rename(vialLabel = olink_id) %>% dplyr::mutate_at(vars(starts_with('OID')), as.numeric)
   raw_olink = t_dat %>% tidyr::pivot_longer(cols=-vialLabel, names_to = 'OlinkID', values_to = 'NPX')
   raw_olink = raw_olink %>% dplyr::left_join(sample_metadata, by='vialLabel')
   raw_olink = raw_olink %>% dplyr::left_join(protein_metadata, by='OlinkID')
@@ -80,7 +81,7 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
 
   #here we remove outliers
   outliers_data = OUTLIERS$vialLabel
-  pheno_data_parsed = load_pheno(repo_local_dir, load_acute_only = FALSE)$pheno_data
+  pheno_data_parsed = load_pheno(load_acute_only = FALSE)$pheno_data
 
   raw_olink_wide_manifest <- dplyr::left_join(raw_olink_wide, pheno_data_parsed, by='vialLabel') %>%
     dplyr::select(pid, visitcode, plate_id, vialLabel, BMI, calculatedAge, Timepoint,study, sex_psca,starts_with('OID'))
@@ -95,9 +96,6 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
     dplyr::mutate(across(starts_with('1'), ~as.numeric(.)) )
 
   sample_metadata_output = sample_metadata[sample_metadata$vialLabel %in% colnames(new_norm_table),]
-  protein_metadata_output = protein_metadata %>%
-    dplyr::rename(feature_id = OlinkID) %>%
-    dplyr::filter(feature_id %in% rownames(new_norm_table))
 
   wider_metadata = merge(sample_metadata_output, pheno_data_parsed, by = 'vialLabel')
   process_metadata = process_covariates(meta = wider_metadata,
@@ -109,16 +107,60 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
   message(tissue, ";", desired_ome, ";technical: ", technical_cov, ";design: ", design_cov)
 
   new_norm_table = limma::removeBatchEffect(new_norm_table,
-                                     covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
-                                     design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
+                                            covariates = model.matrix(as.formula(paste("~ ", technical_cov)), data = meta),
+                                            design = model.matrix(as.formula(paste("~ ", design_cov)), data = meta))
 
   oids <- rownames(new_norm_table)
   new_norm_table <- as.data.frame(new_norm_table)
   new_norm_table$feature_id <- oids
   new_norm_table <- new_norm_table %>% dplyr::select(feature_id, everything()) #set feature_id as first col
 
+  protein_metadata_output = .annotate_olink(protein_metadata) %>%
+    dplyr::filter(feature_id %in% rownames(new_norm_table))
+
   write_with_path_name(sample_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
   write_with_path_name(new_norm_table, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log2')
-  write_with_path_name(protein_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+  write_with_path_name(protein_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features', version = "1.4")
 }
+
+
+
+.annotate_olink = function(protein_metadata){
+
+  #olink reshape, we leave the gene target that olink provided in the column "assay" as a check later on, but rename it generically
+  olink = protein_metadata %>%
+    dplyr::mutate(len_UP = stringr::str_count(uniprot_entry)) %>%
+    tidyr::separate(uniprot_entry, into = c("uniprot", "redundant_ids"), sep = "_") %>%
+    dplyr::mutate(gene_platform = stringr::str_remove(assay, pattern = "_.*")) %>%
+    dplyr::select(feature_id = OlinkID, uniprot, gene_platform, redundant_ids) %>%
+    dplyr::mutate(platform = "prot-ol")
+
+  ensembl = biomaRt::useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name", "uniprotswissprot")
+
+  prot_lookup_df = biomaRt::getBM(attributes = attributes,
+                                  filters = "uniprotswissprot",
+                                  values = olink$uniprot,
+                                  mart = ensembl) %>%
+    dplyr::distinct() %>%
+    dplyr::full_join(olink, by = c("uniprotswissprot" = "uniprot"))  %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
+    dplyr::rename(ensembl_gene = ensembl_gene_id,
+                  entrez_gene = entrezgene_id,
+                  uniprot = uniprotswissprot) %>%
+    #and rearrange to make it ready for the human feature to gene file.
+    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot) %>%
+    dplyr::group_by(feature_id) %>%
+    dplyr::slice(match(min(entrez_gene), entrez_gene))
+
+  #these are a few incorrect gene names that are manually corrected. Not sure how Dan singled out these specific features.
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "HECD4"] <- "HECTD4"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "WASH6"] <- "WASH6P"
+  # anyNA(prot_lookup_df) no missing values.
+
+  return(prot_lookup_df)
+
+}
+
 

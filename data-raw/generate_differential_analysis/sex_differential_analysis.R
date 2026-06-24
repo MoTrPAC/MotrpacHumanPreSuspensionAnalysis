@@ -64,20 +64,28 @@ qc_norm_counts = lapply(seq_len(nrow(samples_per_plat)), function(row) {
   select(tissue, assay, randomGroupCode, Sex, Timepoint, n)
 
 qualifying_omes_tissues = qc_norm_counts %>%
+  dplyr::filter(randomGroupCode != "ADUControl") %>%
   group_by(tissue, assay) %>%
   mutate(flag_low_n = any(n < 3)) %>%
   filter(!flag_low_n) %>%
   distinct(tissue, assay)
 
+# If we don't include controls - see filter just above. we CAN do adipose.
+# If we require >3 for EVERY cell, this limits our conclusions that we can make.
+
 #--------------------------------
+config = jsonlite::fromJSON("~/config.json")
+repo_local_dir = paste0(config$precovid_repo_path, "data/tmp/")
 
 for(row in seq(nrow(qualifying_omes_tissues))){
-  if(grepl("prot|transcript", qualifying_omes_tissues$assay[row])) next
-  generate_DA_inputs(repo_local_dir = "~/Downloads/",
+  if(grepl("metab", qualifying_omes_tissues$assay[row])) next
+  if(grepl("prot", qualifying_omes_tissues$assay[row])) next
+  generate_DA_inputs(repo_local_dir = file.path(repo_local_dir, "sex_differences_outputs"),
                      model_type = "sex_differences",
                      selected_omes = qualifying_omes_tissues$assay[row],
                      selected_tissues = qualifying_omes_tissues$tissue[row],
                      epigen = FALSE,
                      parallel = FALSE)
 }
+
 

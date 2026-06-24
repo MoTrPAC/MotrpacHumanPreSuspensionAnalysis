@@ -227,14 +227,11 @@ load_differential_analysis <- function(selected_omes = "all",
 #' @returns A modified version of \code{DA_list} where each list element is a
 #'   keyed \code{data.table}. The object will use significantly less memory.
 #'
-#' @importFrom data.table setDT setkeyv
-#' @importFrom dplyr %>% left_join select arrange mutate across any_of relocate
-#'   everything
+#' @importFrom dplyr %>% left_join select arrange mutate across any_of relocate everything
+#' @importFrom data.table as.data.table := setcolorder setorderv setkeyv copy setDT
 #'
 #' @author Tyler Sagendorf Christopher Jin
 #'
-#' @importFrom data.table as.data.table := setcolorder setorderv setkeyv copy
-#'   setDT
 #'
 #' @noRd
 

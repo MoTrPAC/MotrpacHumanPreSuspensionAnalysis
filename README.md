@@ -4,7 +4,6 @@
 # MotrpacHumanPreSuspensionAnalysis
 
 <!-- badges: start -->
-
 <!-- badges: end -->
 
 ## Overview
@@ -83,14 +82,15 @@ the wrong Bioconductor version will cause dependency failures.
 |-----------|----------------------|
 | R 4.4.x   | 3.20                 |
 | R 4.5.x   | 3.22                 |
+| R 4.6.x   | 3.23                 |
 
 **For R 4.4:**
 
 ``` r
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(version = "3.20")
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
-                         build_vignettes = TRUE)
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 ```
 
 **For R 4.5:**
@@ -98,8 +98,17 @@ devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
 ``` r
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(version = "3.22")
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
-                         build_vignettes = TRUE)
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
+```
+
+**For R 4.6:**
+
+``` r
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.23")
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 ```
 
 You can check your R version with `R.version.string` and your

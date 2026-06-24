@@ -47,15 +47,14 @@
 #' @author christopher jin
 
 generate_prot_ph_qc_norm = function(repo_local_dir){
-  check_package_installation(pkg = "cmapR") #needed for GCT
+  local_path = repo_local_dir
 
   desired_ome = 'prot-ph'; tissue_types = c('muscle', 'adipose')
-  local_path = paste0(repo_local_dir, "data/tmp/")
   ome_vial_meta = list()
   ome_vial_meta[["muscle"]] = "gs://motrpac-data-hub/human-precovid/results/proteomics-untargeted/t10-muscle/prot-ph/motrpac_human-precovid_t10-muscle_prot-ph_vial-metadata_v1.0-pnbi.txt"
   ome_vial_meta[["adipose"]] = "gs://motrpac-data-hub/human-precovid/results/proteomics-untargeted/t07-adipose/prot-ph/motrpac_human-precovid_t07-adipose_prot-ph_vial-metadata_v1.0.txt"
 
-  pheno_data_parsed = load_pheno(repo_local_dir, load_acute_only = FALSE)$pheno_data
+  pheno_data_parsed = load_pheno(load_acute_only = FALSE)$pheno_data
   metadata_path = paste0(local_path, "freeze/proteomics/metadata/")
   qc_norm_path = paste0(local_path, "freeze/proteomics/qc-norm/")
   dir.create(metadata_path, recursive = TRUE, showWarnings = FALSE)
@@ -92,7 +91,7 @@ generate_prot_ph_qc_norm = function(repo_local_dir){
                                   cdesc=meta_merge,
                                   rid =rownames(mat),
                                   cid = colnames(mat))
-    phospho_nonnorm <- cmapR::subset_gct(phospho_nonnorm, cid = which(phospho_nonnorm@cdesc$protocol == "01")) #remove HA participants
+    phospho_nonnorm <- cmapR::subset_gct(phospho_nonnorm, cid = which(phospho_nonnorm@cdesc$study == "01")) #remove HA participants
     #This is non-batch effect corrected, median-normalized dataset
     phospho_mednorm <- .median_mad_norm(phospho_nonnorm, mad = F)
 
@@ -152,8 +151,48 @@ generate_prot_ph_qc_norm = function(repo_local_dir){
 
     sample_metadata_output = PH@cdesc %>% dplyr::select(c("vialLabel", "tmt_plex", "tmt16_channel"))
 
+    feature_metadata_output = PH@rdesc %>%
+      dplyr::rename(feature_id = ptm_id) %>%
+      dplyr::select(feature_id, everything()) %>%
+      dplyr::filter(feature_id %in% rownames(phospho_output)) %>%
+      .annotate_prot_ph()
+
     write_with_path_name(sample_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'samples')
     write_with_path_name(phospho_output, local_path = qc_norm_path, ome = desired_ome, tissue = tissue, data_category = 'qc-norm', data_details = 'log2-mn')
-    write_with_path_name(rdesc, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features')
+    write_with_path_name(feature_metadata_output, local_path = metadata_path, ome = desired_ome, tissue = tissue, data_category = 'metadata', data_details = 'features', version = "1.4")
   }
+}
+
+.annotate_prot_ph = function(feature_metadata_output){
+
+  #feature_id is the ptm_id; protein_id is the UniProt accession taken directly from the
+  #file. Strip isoform suffixes (e.g. P12345-2) for the BioMart match.
+  prot_ph = feature_metadata_output %>%
+    dplyr::mutate(platform = "prot-ph",
+                  uniprot = protein_id,
+                  uniprot_lookup = stringr::str_remove(uniprot, "-.*"))
+
+  ensembl = biomaRt::useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+  attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name", "uniprotswissprot")
+
+  prot_lookup_df = biomaRt::getBM(attributes = attributes,
+                                   filters = "uniprotswissprot",
+                                   values = prot_ph$uniprot_lookup,
+                                   mart = ensembl) %>%
+    dplyr::distinct() %>%
+    dplyr::full_join(prot_ph, by = c("uniprotswissprot" = "uniprot_lookup")) %>%
+    dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
+    dplyr::rename(ensembl_gene = ensembl_gene_id,
+                  entrez_gene = entrezgene_id) %>%
+    #and rearrange to make it ready for the human feature to gene file.
+    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot, flanking_sequence) %>%
+    dplyr::group_by(feature_id) %>%
+    dplyr::slice(match(min(entrez_gene), entrez_gene))
+
+  #these are a few incorrect gene names that are manually corrected. Not sure how Dan singled out these specific features.
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "HECD4"] <- "HECTD4"
+  prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "WASH6"] <- "WASH6P"
+
+  return(prot_lookup_df)
 }

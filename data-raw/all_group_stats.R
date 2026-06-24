@@ -6,7 +6,7 @@ library(tidyr)
 library(tibble)
 library(here)
 
-repo_local_dir = "~/Downloads"
+repo_local_dir = ""
 qc_data = MotrpacHumanPreSuspensionData::load_qc(selected_omes = metab_only_list(),
                                                  epigen = FALSE,
                                                  repo_local_dir = repo_local_dir)
@@ -25,8 +25,8 @@ metab_metadata = MotrpacHumanPreSuspensionData::load_pheno(load_acute_only = FAL
 clin_da = MotrpacHumanPreSuspensionAnalysis::CLIN_CHEMISTRY_DA %>%
   mutate(platform = "")
 
-qc_data[["blood"]][["clinical_chemistry"]][["qc_norm"]] = clin_chemistry
-qc_data[["blood"]][["clinical_chemistry"]][["sample_metadata"]] = metab_metadata
+qc_data[["blood"]][["clinical-chemistry"]][["qc_norm"]] = clin_chemistry
+qc_data[["blood"]][["clinical-chemistry"]][["sample_metadata"]] = metab_metadata
 da_data = rbind(da_data, clin_da)
 #----------include clinical chemistry to summary stats by merging----------
 
@@ -43,7 +43,7 @@ da_data = rbind(da_data, clin_da)
 
 for(tissue in names(qc_data)){
   # for(assay in names(qc_data[[tissue]])){
-  for(assay in c("clinical_chemistry")){
+  for(assay in c("clinical-chemistry")){
     curr_data = qc_data[[tissue]][[assay]][["qc_norm"]]
     if(is.null(curr_data) || nrow(curr_data) == 0) next
     #match to only those that are in the differential analysis

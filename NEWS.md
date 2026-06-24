@@ -1,6 +1,33 @@
+
+# MotrpacHumanPreSuspensionAnalysis 0.2.2
+
+
+## Backend: Feature metadata gene annotation (data-raw)
+
+These changes will only make functional differences for analysts with sample level data from `MotrpacHumanPreSuspensionData`
+
+- Added gene-level annotation to feature_metadata outputs for all proteomics omes. Previously,
+  feature_metadata for Prot-PR, Prot-PH, and Prot-OL contained only raw provenance columns (UniProt
+  accessions, PTM identifiers, redundant IDs) with no standardized gene symbol or Ensembl mapping.
+  Feature metadata files now include `gene_symbol`, `ensembl_gene`, and `entrez_gene` columns
+  derived from a three-round BioMart lookup strategy.
+- Added `.annotate_olink()` to `generate_prot_ol_qc_norm.R`: resolves Olink protein metadata
+  (UniProt accession from `uniprot_entry`) to gene symbols and Ensembl IDs. Lookup proceeds via
+  UniProt → gene symbol → Entrez ID, with three progressive BioMart passes to maximize coverage.
+- Added `.annotate_prot_pr()` to `generate_prot_pr_qc_norm.R`: extends the per-tissue
+  `feature_metadata_output` from `PR@rdesc` with gene annotations. Uses `feature_id` (= `protein_id`,
+  a UniProt accession) taken directly from the file as the BioMart lookup key.
+- Added `.annotate_prot_ph()` to `generate_prot_ph_qc_norm.R`: same annotation for
+  phosphoproteomics. Uses `protein_id` (not `feature_id`, which is the PTM site identifier) taken
+  directly from the file as the UniProt lookup key, preserving the full PTM `feature_id` in the output.
+- Prot-PR and Prot-PH annotation now resolves UniProt accessions to genes via a single BioMart
+  `getBM` lookup (mirroring the Olink `.annotate_olink()` implementation), using the UniProt
+  accession read directly from the source files rather than a downloaded UniProt ID mapping table.
+
+
 # MotrpacHumanPreSuspensionAnalysis 0.2.1
 
--Added clinical chemistry differential analysis using the same structure as the molecular differential analysis
+- Added clinical chemistry differential analysis using the same structure as the molecular differential analysis;
   see: `CLIN_CHEMISTRY_DA`
 
 # MotrpacHumanPreSuspensionAnalysis 0.2.0
