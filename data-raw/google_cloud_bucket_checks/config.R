@@ -37,6 +37,15 @@ for (d in c(SNAPSHOT_DIR, DIFF_DIR, LOG_DIR)) {
   dir.create(d, recursive = TRUE, showWarnings = FALSE)
 }
 
+# ---- Validation flags --------------------------------------------------------
+
+# When TRUE, the value-check step (05_validate_structure.R) skips any tissue that
+# was loaded from the staging cache but is not present in the installed data
+# package (existing_pkg[[tissue]][[ome]] is NULL). This avoids spurious "only in
+# regen" diffs when a new ome/tissue exists in staging but hasn't been built into
+# the installed package yet. Set to FALSE to force the comparison anyway.
+SKIP_TISSUE_NOT_IN_PKG = TRUE
+
 # ---- gsutil ------------------------------------------------------------------
 
 GSUTIL = "gsutil"

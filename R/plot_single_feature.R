@@ -113,6 +113,16 @@ plot_single_feature = function(feature,
     single_matrix = TRUE,
     epigen = epigen
   )
+  # the platform column only exists when metabolomics results are included, so only
+  # apply the metab-specific filter when that column is present (non-metab single-ome
+  # requests like transcript-only have no platform column).
+  if ("platform" %in% colnames(da_object)) {
+    da_object = da_object %>%
+      dplyr::filter(platform != "metab-t-conv")
+  }
+  # the conventional metabolites have been reorganized by the BIC in assay codes so this
+  # format no longer works properly. will remove and add to eventual todo to fix. - Chris June 22nd.
+
   if(verbose){
     message("DA is loaded automatically using requested settings.
               If any metab platform was requested, the metab features will default to
@@ -163,7 +173,8 @@ plot_single_feature = function(feature,
                                                                         single_matrix = TRUE) %>%
     dplyr::filter(feature_id %in% feature_specific_da$feature_id) %>%
     dplyr::mutate(SE = SD/sqrt(Count),
-                  CI_95 = qt((1 + 0.95)/2, Count - 1))
+                  CI_95 = qt((1 + 0.95)/2, Count - 1))  %>%
+    dplyr::filter(assay != "metab-t-conv")
   #this code is now matching the previous `mean_cl_normal` implementation, see: `Hmisc::smean.cl.normal`
   #where instead of using a strict wald CI, the SE multiplier is estimated from a t-distribution
   #makes the bounds slightly larger in most cases. Bigger diff with smaller n
@@ -186,7 +197,7 @@ plot_single_feature = function(feature,
     dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::left_join(assay_names_table,by = c("assay" = "assay_code")) %>%
     dplyr::mutate(
-      assay_short_text = dplyr::if_else(assay == "clinical_chemistry", "Clin. Chem.", assay_short_text),
+      assay_short_text = dplyr::if_else(assay == "clinical-chemistry", "Clin. Chem.", assay_short_text),
       tissue = stringr::str_to_sentence(tissue),
       Timepoint = dplyr::recode(Timepoint,
                                 "pre_exercise" = "Pre",
@@ -209,7 +220,7 @@ plot_single_feature = function(feature,
   )
 
   y_label = if (!is.na(clin_chem_id)) {
-    "Absolute scale. Statistical modeling done in log2 space"
+    "Clinical chemistry features are presented in absolute scale. Others are log2(normalized value)"
   } else {
     "log2(normalized value)"
   }

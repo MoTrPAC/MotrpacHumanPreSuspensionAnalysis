@@ -16,13 +16,13 @@ These changes will only make functional differences for analysts with sample lev
   UniProt → gene symbol → Entrez ID, with three progressive BioMart passes to maximize coverage.
 - Added `.annotate_prot_pr()` to `generate_prot_pr_qc_norm.R`: extends the per-tissue
   `feature_metadata_output` from `PR@rdesc` with gene annotations. Uses `feature_id` (= `protein_id`,
-  a UniProt accession) as the lookup key.
-- Added `.annotate_prot_ph()` to `generate_prot_ph_qc_norm.R`: same three-round annotation for
-  phosphoproteomics. Uses `protein_id` (not `feature_id`, which is the PTM site identifier) as the
-  UniProt lookup key, preserving the full PTM `feature_id` in the output.
-- Added `.get_uniprot_mapping()` helper to `generate_prot_ol_qc_norm.R`: downloads the UniProt
-  human ID mapping table to `tempdir()` (cached within the session) and returns the four columns
-  needed for annotation (`UniProtKB-AC`, `Ensembl`, `UniProtKB-ID`, `GeneID (EntrezGene)`).
+  a UniProt accession) taken directly from the file as the BioMart lookup key.
+- Added `.annotate_prot_ph()` to `generate_prot_ph_qc_norm.R`: same annotation for
+  phosphoproteomics. Uses `protein_id` (not `feature_id`, which is the PTM site identifier) taken
+  directly from the file as the UniProt lookup key, preserving the full PTM `feature_id` in the output.
+- Prot-PR and Prot-PH annotation now resolves UniProt accessions to genes via a single BioMart
+  `getBM` lookup (mirroring the Olink `.annotate_olink()` implementation), using the UniProt
+  accession read directly from the source files rather than a downloaded UniProt ID mapping table.
 
 
 # MotrpacHumanPreSuspensionAnalysis 0.2.1

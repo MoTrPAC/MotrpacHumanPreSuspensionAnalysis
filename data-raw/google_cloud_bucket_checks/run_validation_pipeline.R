@@ -15,8 +15,9 @@ step_files = c(
   "01_snapshot_production.R",
   "02_copy_to_staging.R",
   "03_diff_local_vs_staging.R",
-  "04_upload_to_staging.R" #,
-  # "05_validate_structure.R"
+  "04_upload_to_staging.R",
+  "05_validate_structure.R"
+  #5 takes a long time
 )
 
 for (step in step_files) {

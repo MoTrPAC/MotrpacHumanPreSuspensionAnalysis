@@ -68,7 +68,8 @@ load_regenerated_qc = function(ome, qc_norm_path, metadata_path,
 #'   "feature_id" for transcriptomics/ATAC, "protein_id" for proteomics
 compare_qc_norm = function(ome, existing_pkg, regenerated,
                           tissues = c("muscle", "blood", "adipose"),
-                          feature_key = "feature_id") {
+                          feature_key = "feature_id",
+                          pheno_cols = character(0)) {
   message("=== ", ome, " ===")
 
   # 1. qc_norm: feature and sample set overlap
@@ -185,12 +186,17 @@ compare_qc_norm = function(ome, existing_pkg, regenerated,
   if (all_samp_same) message("All tissues: vialLabels identical across pkg and regen")
 
   message("-- sample_metadata column values (shared columns, shared samples) --")
+  if (length(pheno_cols) > 0)
+    message("  (columns sourced from the pheno object are excluded from value comparison)")
   for (tissue in tissues) {
     pkg_sm = existing_pkg[[tissue]][[ome]]$sample_metadata
     regen_sm = regenerated[[tissue]]$sample_metadata
 
     shared_samples = intersect(pkg_sm$vialLabel, regen_sm$vialLabel)
-    shared_cols = setdiff(intersect(colnames(pkg_sm), colnames(regen_sm)), "vialLabel")
+    # exclude vialLabel (the join key) and any column that comes from the pheno
+    # object: those are sourced upstream and should not be reported as differences
+    shared_cols = setdiff(intersect(colnames(pkg_sm), colnames(regen_sm)),
+                          c("vialLabel", pheno_cols))
 
     pkg_sub = pkg_sm[pkg_sm$vialLabel %in% shared_samples, shared_cols, drop = FALSE]
     regen_sub = regen_sm[regen_sm$vialLabel %in% shared_samples, shared_cols, drop = FALSE]

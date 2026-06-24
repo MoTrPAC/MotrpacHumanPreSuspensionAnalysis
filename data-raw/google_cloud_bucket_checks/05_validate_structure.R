@@ -184,6 +184,10 @@ existing_pkg = MotrpacHumanPreSuspensionData::load_qc(epigen = TRUE,
                                                       remove_redundant_metab = FALSE,
                                                       load_acute_only = FALSE)
 
+# Columns sourced from the pheno object are managed upstream; exclude them from
+# the sample_metadata value comparison so they are never reported as differences.
+pheno_cols = colnames(MotrpacHumanPreSuspensionData::load_pheno(load_acute_only = FALSE)[["pheno_data"]])
+
 qc_ome_tissues = required_structure %>%
   dplyr::filter(data_category == "qc-norm") %>%
   dplyr::select(ome, tissue) %>%
@@ -203,6 +207,10 @@ withCallingHandlers({
         message("  [", ome_i, "/", tissue_i, "] skipping value check: qc_norm or sample_metadata missing from cache")
         next
       }
+      if (SKIP_TISSUE_NOT_IN_PKG && is.null(existing_pkg[[tissue_i]][[ome_i]])) {
+        message("  [", ome_i, "/", tissue_i, "] skipping value check: loaded from cache but not present in installed package")
+        next
+      }
       if (is.null(fm)) {
         message("  [", ome_i, "/", tissue_i, "] note: no feature_metadata cached, feature_id check will be skipped")
       }
@@ -213,7 +221,8 @@ withCallingHandlers({
       next
     }
     fkey = if (ome_i %in% PROTEOMICS_OMES) "protein_id" else "feature_id"
-    compare_qc_norm(ome_i, existing_pkg, regen, tissues = names(regen), feature_key = fkey)
+    compare_qc_norm(ome_i, existing_pkg, regen, tissues = names(regen), feature_key = fkey,
+                    pheno_cols = pheno_cols)
   }
 }, message = function(m) {
   value_check_messages <<- c(value_check_messages, conditionMessage(m))

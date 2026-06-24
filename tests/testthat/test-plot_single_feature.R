@@ -9,6 +9,26 @@ test_that("plot_single_feature returns ggplot for a known gene", {
   expect_s3_class(res, "ggplot")
 })
 
+test_that("plot_single_feature returns ggplot for a known metabolite", {
+  res <- plot_single_feature(
+    feature = "CAR 10:0",
+    selected_omes = "metab",
+    verbose = FALSE
+  )
+  expect_s3_class(res, "gg")
+  expect_s3_class(res, "ggplot")
+})
+
+test_that("plot_single_feature returns ggplot for a clinical analyte", {
+  res <- plot_single_feature(
+    feature = "Glucose",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_s3_class(res, "gg")
+  expect_s3_class(res, "ggplot")
+})
+
 test_that("plot_single_feature rejects invalid tissue", {
   expect_error(
     plot_single_feature(

@@ -202,50 +202,34 @@ generate_prot_pr_qc_norm = function(repo_local_dir){
 
 .annotate_prot_pr = function(feature_metadata_output){
 
-  #feature_id is the protein_id (UniProt accession); use it directly as the uniprot key
+  #feature_id is the protein_id (UniProt accession); use it directly from the file as the
+  #uniprot key. Strip isoform suffixes (e.g. P12345-2) for the BioMart match.
   prot_pr = feature_metadata_output %>%
     dplyr::mutate(platform = "prot-pr",
-                  uniprot = feature_id)
-
-  # human UniProt database download
-  uniprot_db = .get_uniprot_mapping()
-
-  ####compile prot-pr and annotate####
-  prot_features = prot_pr %>%
-    dplyr::mutate(uniprot_lookup = str_remove(uniprot, "-.*")) %>%
-    dplyr::left_join(uniprot_db, by = c("uniprot_lookup" = "UniProtKB-AC")) %>%
-    dplyr::mutate(ensg_lookup = str_remove(Ensembl, "\\..*"))
+                  uniprot = feature_id,
+                  uniprot_lookup = stringr::str_remove(uniprot, "-.*"))
 
   ensembl = biomaRt::useMart("ensembl", dataset = "hsapiens_gene_ensembl")
   attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name", "uniprotswissprot")
 
   prot_lookup_df = biomaRt::getBM(attributes = attributes,
                                    filters = "uniprotswissprot",
-                                   values = prot_features$uniprot_lookup,
+                                   values = prot_pr$uniprot_lookup,
                                    mart = ensembl) %>%
     dplyr::distinct() %>%
-    dplyr::full_join(prot_features, by = c("uniprotswissprot" = "uniprot_lookup")) %>%
+    dplyr::full_join(prot_pr, by = c("uniprotswissprot" = "uniprot_lookup")) %>%
     dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
-    dplyr::mutate(ensembl_gene = dplyr::if_else(is.na(ensembl_gene_id),
-                                                 str_remove(Ensembl, "\\..*"),
-                                                 ensembl_gene_id)) %>%
-    dplyr::mutate(entrez_gene = dplyr::if_else(is.na(entrezgene_id),
-                                               `GeneID (EntrezGene)`,
-                                               as.character(entrezgene_id))) %>%
-    dplyr::mutate(gene_symbol = dplyr::if_else(is.na(gene_symbol),
-                                               str_remove(`UniProtKB-ID`, "_HUMAN"),
-                                               gene_symbol)) %>%
-    dplyr::select(entrez_gene, feature_id, gene_symbol, uniprot, ensembl_gene, platform) %>%
+    dplyr::rename(ensembl_gene = ensembl_gene_id,
+                  entrez_gene = entrezgene_id) %>%
+    #and rearrange to make it ready for the human feature to gene file.
+    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot) %>%
     dplyr::group_by(feature_id) %>%
     dplyr::slice(match(min(entrez_gene), entrez_gene))
 
-  #these are a few incorrect gene names that are manually corrected
+  #these are a few incorrect gene names that are manually corrected. Not sure how Dan singled out these specific features.
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "HECD4"] <- "HECTD4"
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "WASH6"] <- "WASH6P"
-
-  prot_lookup_df = prot_lookup_df %>%
-    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot)
 
   return(prot_lookup_df)
 }

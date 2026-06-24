@@ -173,6 +173,8 @@ generate_DA_inputs = function(repo_local_dir = NULL,
                   voom = voom,
                   parallel = parallel)
 
+  # saveRDS(fit, file = file.path(da_path, paste0(tissue, "_", ome, "_", model_type, "_da_fit.rds")))
+
   if(model_type == "acute") relevant_formula = process_metadata[["full_formula"]]
   if(model_type == "training") relevant_formula = process_metadata[["training_formula"]]
   if(model_type == "sex_differences") relevant_formula = process_metadata[["sex_differences_formula"]]

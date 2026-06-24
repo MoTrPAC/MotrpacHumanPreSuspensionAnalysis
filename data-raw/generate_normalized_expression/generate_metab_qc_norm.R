@@ -66,6 +66,26 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
     metabolomics_parsed_datasets[[currname]]$sample_meta$site = "duke"
   }
 
+  # Sanity check: across the named parsed datasets, does any metabolite_name carry
+  # more than one distinct refmet_name? Pull metabolite_name -> refmet_name from each
+  # named dataset's row_annot and flag any metabolite_name with >1 refmet mapping.
+  # named_refmet = names(metabolomics_parsed_datasets) %>%
+  #   grep(",named", ., value = TRUE) %>%
+  #   purrr::map_dfr(function(currname) {
+  #     metabolomics_parsed_datasets[[currname]]$row_annot %>%
+  #       as.data.frame() %>%
+  #       dplyr::select(dplyr::any_of(c("metabolite_name", "refmet_name"))) %>%
+  #       dplyr::mutate(dataset = currname,
+  #                     site = paste(sort(unique(metabolomics_parsed_datasets[[currname]]$sample_meta$site)), collapse = ";"))
+  #   })
+  #
+  # metabolite_name_refmet_conflicts = named_refmet %>%
+  #   dplyr::distinct(metabolite_name, refmet_name, dataset, site) %>%
+  #   dplyr::group_by(metabolite_name) %>%
+  #   dplyr::filter(dplyr::n_distinct(refmet_name) > 1) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::arrange(metabolite_name, refmet_name, dataset, site)
+
   pheno_data = MotrpacHumanPreSuspensionData::load_pheno(load_acute_only = FALSE)
   outliers = MotrpacHumanPreSuspensionAnalysis::OUTLIERS
   outliers$vialLabel = as.character(outliers$vialLabel)
@@ -511,7 +531,10 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
     mutate(
       refmet_name = case_when(
         feature_id == "13-HODE" ~ "13-HODE",
-        feature_id == "13 HODE" ~ "13-HODE",
+        feature_id == "13 HODE" ~ "13-HODE", #new for 1.4
+        feature_id == "FA(20:1)" ~ "Eicosenoic acid", #new for 1.4
+        feature_id == "FA(18:2)" ~ "Linoleic acid", #new for 1.4
+        feature_id == "FA(22:6)" ~ "Docosahexaenoic acid", #new for 1.4
         TRUE ~ refmet_name
       )
     )
@@ -524,7 +547,7 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
     "12(13)-EpMOE"                     = "12(13)-EpOME",
     "Docosatetraenoic aicd"            = "Docosatetraenoic acid",
     "Tetracosenoic aicd"               = "Tetracosenoic acid",
-    "Prostagladin"                     = "Prostaglandin",
+    "Prostagladin"                     = "Prostaglandin", #new for 1.4
 
     "Chenodeoxycholic acid\\Deoxycholic acid"   = "Deoxycholic acid",
     "Glycocholic acid\\Glycohyocholic acid"     = "Glycocholic acid",

@@ -69,7 +69,7 @@
 # Now that these are not exported functions, make sure to load all of the data-raw relevant functions:
 # config = jsonlite::fromJSON("~/config.json")
 # repo_local_dir = paste0(config$precovid_repo_path, "data/tmp/")
-#
+# library(MotrpacHumanPreSuspensionData)
 # source(file.path(here(), "data-raw", "gsutil_path_parsing.R"))
 # source(file.path(here(), "data-raw", "generate_differential_analysis", "generate_differential_modeling_functions.R"))
 #

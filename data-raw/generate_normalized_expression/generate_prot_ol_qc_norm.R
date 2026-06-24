@@ -43,6 +43,7 @@
 #' @author christopher jin
 
 generate_prot_ol_qc_norm = function(repo_local_dir){
+  library(stringr)
   desired_ome = 'prot-ol'; tissue = 'blood'
   local_path = file.path(repo_local_dir)
   olink_data_path = "gs://motrpac-data-hub/human-precovid/results/proteomics-targeted/t02-plasma/prot-ol/motrpac_human-precovid_t02-plasma_prot-ol_results_v1.0.txt"
@@ -67,7 +68,7 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
   colnames(t_dat) = t_dat[1,] #set colnames then remove the first row
   t_dat = t_dat[-1,]
 
-  t_dat = t_dat %>% rename(vialLabel = olink_id) %>% dplyr::mutate_at(vars(starts_with('OID')), as.numeric)
+  t_dat = t_dat %>% dplyr::rename(vialLabel = olink_id) %>% dplyr::mutate_at(vars(starts_with('OID')), as.numeric)
   raw_olink = t_dat %>% tidyr::pivot_longer(cols=-vialLabel, names_to = 'OlinkID', values_to = 'NPX')
   raw_olink = raw_olink %>% dplyr::left_join(sample_metadata, by='vialLabel')
   raw_olink = raw_olink %>% dplyr::left_join(protein_metadata, by='OlinkID')
@@ -128,93 +129,38 @@ generate_prot_ol_qc_norm = function(repo_local_dir){
 
   #olink reshape, we leave the gene target that olink provided in the column "assay" as a check later on, but rename it generically
   olink = protein_metadata %>%
-    dplyr::mutate(len_UP = str_count(uniprot_entry)) %>%
+    dplyr::mutate(len_UP = stringr::str_count(uniprot_entry)) %>%
     tidyr::separate(uniprot_entry, into = c("uniprot", "redundant_ids"), sep = "_") %>%
-    dplyr::mutate(gene_platform = str_remove(assay, pattern = "_.*")) %>%
+    dplyr::mutate(gene_platform = stringr::str_remove(assay, pattern = "_.*")) %>%
     dplyr::select(feature_id = OlinkID, uniprot, gene_platform, redundant_ids) %>%
     dplyr::mutate(platform = "prot-ol")
-
-  # human UniProt database download
-  uniprot_db = .get_uniprot_mapping()
-
-  ####compile olink and annotate####
-  olink_features = olink %>%
-    dplyr::mutate(uniprot_lookup = str_remove(uniprot, "-.*")) %>%
-    dplyr::left_join(uniprot_db, by = c("uniprot_lookup" = "UniProtKB-AC")) %>%
-    dplyr::mutate(ensg_lookup = str_remove(Ensembl, "\\..*"))
 
   ensembl = biomaRt::useMart("ensembl", dataset = "hsapiens_gene_ensembl")
   attributes = c("ensembl_gene_id", "entrezgene_id", "external_gene_name", "uniprotswissprot")
 
   prot_lookup_df = biomaRt::getBM(attributes = attributes,
                                   filters = "uniprotswissprot",
-                                  values = olink_features$uniprot_lookup,
+                                  values = olink$uniprot,
                                   mart = ensembl) %>%
     dplyr::distinct() %>%
-    dplyr::full_join(olink_features, by = c("uniprotswissprot" = "uniprot_lookup")) %>%
+    dplyr::full_join(olink, by = c("uniprotswissprot" = "uniprot"))  %>%
     dplyr::mutate(gene_symbol = dplyr::if_else(external_gene_name == "", NA, external_gene_name)) %>%
-    dplyr::mutate(ensembl_gene = dplyr::if_else(is.na(ensembl_gene_id),
-                                                str_remove(Ensembl, "\\..*"),
-                                                ensembl_gene_id)) %>%
-    dplyr::mutate(entrez_gene = dplyr::if_else(is.na(entrezgene_id),
-                                               `GeneID (EntrezGene)`,
-                                               as.character(entrezgene_id))) %>%
-    dplyr::mutate(gene_symbol = dplyr::if_else(is.na(gene_symbol),
-                                               str_remove(`UniProtKB-ID`, "_HUMAN"),
-                                               gene_symbol)) %>%
-    dplyr::select(entrez_gene, feature_id, gene_symbol, uniprot, ensembl_gene, platform) %>%
+    dplyr::rename(ensembl_gene = ensembl_gene_id,
+                  entrez_gene = entrezgene_id,
+                  uniprot = uniprotswissprot) %>%
+    #and rearrange to make it ready for the human feature to gene file.
+    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot) %>%
     dplyr::group_by(feature_id) %>%
     dplyr::slice(match(min(entrez_gene), entrez_gene))
 
-  #these are a few incorrect gene names that are manually corrected
+  #these are a few incorrect gene names that are manually corrected. Not sure how Dan singled out these specific features.
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "HECD4"] <- "HECTD4"
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "WASH6"] <- "WASH6P"
-
   # anyNA(prot_lookup_df) no missing values.
-
-  #and finally rearrange to make it ready for the human feature to gene file.
-  prot_lookup_df  = prot_lookup_df %>%
-    dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot)
 
   return(prot_lookup_df)
 
 }
 
-
-.get_uniprot_mapping = function(){
-  url <- "https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/idmapping/by_organism/HUMAN_9606_idmapping_selected.tab.gz"
-  destfile = file.path(tempdir(), "HUMAN_9606_idmapping_selected.tab.gz")
-  if (file.exists(destfile) == FALSE) {
-    download.file(url, destfile = destfile)
-  }
-  uniprot_db_full = read_tsv(destfile)
-  colnames(uniprot_db_full) = c('UniProtKB-AC',
-                                'UniProtKB-ID',
-                                'GeneID (EntrezGene)',
-                                'RefSeq',
-                                'GI',
-                                'PDB',
-                                'GO',
-                                'UniRef100',
-                                'UniRef90',
-                                'UniRef50',
-                                'UniParc',
-                                'PIR',
-                                'NCBI-taxon',
-                                'MIM',
-                                'UniGene',
-                                'PubMed',
-                                'EMBL',
-                                'EMBL-CDS',
-                                'Ensembl',
-                                'Ensembl_TRS',
-                                'Ensembl_PRO',
-                                'Additional PubMed')
-
-  uniprot_db = uniprot_db_full %>%
-    dplyr::select('UniProtKB-AC', 'Ensembl', 'UniProtKB-ID', 'GeneID (EntrezGene)')
-
-  return(uniprot_db)
-}
 
