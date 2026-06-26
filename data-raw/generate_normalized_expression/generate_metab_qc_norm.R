@@ -267,8 +267,9 @@ generate_metab_qc_norm = function(config_file = "~/config.json",
       } else {
         curr_data_use = curr_norm_data$raw
         for(i in 1:nrow(curr_data_use)) {
-          if(sum(is.na(curr_data_use[i,])) != 0) {
-            curr_data_use[is.na(curr_data_use)] = min(curr_data_use[i,], na.rm = TRUE) / 2
+          na_cols = is.na(curr_data_use[i, ])
+          if(any(na_cols)) {
+            curr_data_use[i, na_cols] = min(curr_data_use[i, ], na.rm = TRUE) / 2
           }
         }
         curr_data_use = log2(1 + curr_data_use)

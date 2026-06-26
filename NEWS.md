@@ -1,4 +1,37 @@
 
+# MotrpacHumanPreSuspensionAnalysis 0.2.3
+
+## User-facing functions
+
+- clinical chemistry is labeled `clinical-chemistry` instead of `clinical_chemistry` 
+- `plot_single_feature()` now clarifies clinical chemistry features correctly; the y-axis
+  label now clarifies that clinical chemistry features are shown on an absolute scale
+  while all other features are shown as `log2(normalized value)`.
+- Updated `HUMAN_FEATURE_TO_GENE` following changes described in 0.2.2., which now maps to the features in qc-norm properly.   
+
+## Internals and package checks
+
+- Namespace hygiene updates - proper imports have been labeled throughout
+- Trimmed `globalVariables()`, consolidated `@importFrom` tags, added the `grid.rect`
+  import, filled in the package `Description`, and added `RColorBrewer`, `doParallel`,
+  `parallel`, and `randomForest` to `Suggests`. 
+
+## Backend: data generation and release tooling (data-raw)
+
+These changes only affect analysts with sample-level data from `MotrpacHumanPreSuspensionData`.
+
+- Added a Google Cloud bucket validation pipeline under
+  `data-raw/google_cloud_bucket_checks/`. The numbered scripts snapshot the production
+  GCS bucket, copy it to an isolated staging folder, diff staging against the local
+  updated files, upload changed files (removing superseded versions), and validate the
+  staging structure and values against the installed package. A `run_validation_pipeline.R`
+  driver orchestrates the steps; see the directory `README.md` for setup.
+- Moved ATAC peak annotation into `generate_atac_qc_norm.R`
+  (`.annotate_atac_features()` / `pre_cawg_get_peak_annotations_hs()`) and refined the
+  gene-mapping logic. Also updated the methylcap, clinical, and metabolomics generation
+  scripts.
+
+
 # MotrpacHumanPreSuspensionAnalysis 0.2.2
 
 
