@@ -224,7 +224,7 @@ generate_prot_pr_qc_norm = function(repo_local_dir){
     #and rearrange to make it ready for the human feature to gene file.
     dplyr::select(assay = platform, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot) %>%
     dplyr::group_by(feature_id) %>%
-    dplyr::slice(match(min(entrez_gene), entrez_gene))
+    dplyr::slice_min(entrez_gene, n = 1, with_ties = FALSE)
 
   #these are a few incorrect gene names that are manually corrected. Not sure how Dan singled out these specific features.
   prot_lookup_df$gene_symbol[prot_lookup_df$gene_symbol == "SHAN3"] <- "SHANK3"
@@ -233,4 +233,3 @@ generate_prot_pr_qc_norm = function(repo_local_dir){
 
   return(prot_lookup_df)
 }
-

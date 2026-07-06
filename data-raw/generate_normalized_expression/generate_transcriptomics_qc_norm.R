@@ -141,7 +141,7 @@ generate_transcriptomics_qc_norm = function(repo_local_dir){
                   gene_symbol,
                   ensembl_gene = ensembl_gene_id) %>%
     dplyr::group_by(feature_id) %>%
-    dplyr::slice(match(min(entrez_gene), entrez_gene)) %>%
+    dplyr::slice_min(entrez_gene, n = 1, with_ties = FALSE) %>%
     dplyr::mutate(entrez_gene = as.character(entrez_gene),
                   assay = "transcript-rna-seq") %>%
     dplyr::relocate(assay) %>%
