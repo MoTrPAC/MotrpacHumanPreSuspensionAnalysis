@@ -49,10 +49,10 @@ plot_precovid_cca = function(data_to_pca,
     interesting_variables #from user inputted info
   )
   form <- reformulate(interesting_variables, response = NULL)
-  c_pca = suppressWarnings(canCorPairs(form, pca_metadata))
+  c_pca = suppressWarnings(variancePartition::canCorPairs(form, pca_metadata))
 
   rownames(c_pca) = colnames(c_pca) = interesting_variables
-  coul <- brewer.pal(9, "Reds")
+  coul <- RColorBrewer::brewer.pal(9, "Reds")
   pcs = paste0("PC", 1:num_pcs)
   pc_labels = paste0(pcs, " (", sprintf("%.1f", var_exp), "%)")
   colnames(c_pca)[match(pcs, colnames(c_pca))] = pc_labels

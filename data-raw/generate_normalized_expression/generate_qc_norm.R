@@ -10,6 +10,8 @@
 #' provides a reproducible, end-to-end mechanism for generating all analysis-ready
 #' inputs used in downstream modeling and visualization workflows.
 #'
+#' NOTE: The Clinical Chemistry object is processed differently. See the `generate_clinical_qc_norm` function for more details.
+#'
 #' @details
 #' Depending on user-specified options, this function may generate:
 #' \itemize{
@@ -62,18 +64,36 @@
 #'
 #' @importFrom MotrpacHumanPreSuspensionData ome_available_list tissue_available_list
 
+
+
+# Now that these are not exported functions, make sure to load all of the data-raw relevant functions:
+# config = jsonlite::fromJSON("~/config.json")
+# repo_local_dir = paste0(config$precovid_repo_path, "data/tmp/")
+# library(MotrpacHumanPreSuspensionData)
+# source(file.path(here(), "data-raw", "gsutil_path_parsing.R"))
+# source(file.path(here(), "data-raw", "generate_differential_analysis", "generate_differential_modeling_functions.R"))
+#
+# invisible(lapply(
+#   list.files(file.path(here::here(), "data-raw", "generate_normalized_expression"),
+#              pattern = "\\.R$", full.names = TRUE),
+#   source
+# )
+# )
+
+
 generate_qc_norm = function(repo_local_dir = NULL,
                             selected_omes = "all",
                             selected_tissues = "all",
-                            epigen = TRUE){
-  if(all(selected_omes == "all")) selected_omes = MotrpacHumanPreSuspensionData::ome_available_list()
-  if(all(selected_tissues == "all")) selected_tissues = MotrpacHumanPreSuspensionData::tissue_available_list()
+                            epigen = TRUE,
+                            config_file = NULL){
+  if(all(selected_omes == "all")) selected_omes = ome_available_list()
+  if(all(selected_tissues == "all")) selected_tissues = tissue_available_list()
 
-  if(!all(selected_omes %in% MotrpacHumanPreSuspensionData::ome_available_list())){
+  if(!all(selected_omes %in% ome_available_list())){
     stop("Invalid ome selection. Try 'ome_available_list()' for a list")
   }
 
-  if(!all(selected_tissues %in% MotrpacHumanPreSuspensionData::tissue_available_list())){
+  if(!all(selected_tissues %in% tissue_available_list())){
     stop("Invalid tissue selection. Try 'tissue_available_list()' for a list")
   }
 
@@ -93,14 +113,17 @@ generate_qc_norm = function(repo_local_dir = NULL,
     generate_prot_pr_imputed(repo_local_dir)
   }
   if(any(grepl("metab", selected_omes))) {
-    message("Refer to the Metabolomics notebook for generation of metabolomics CVs and normalized data")
+    #this function requires a 'config' file because it needs to source files from multiple repositories
+   generate_metab_qc_norm(config_file = config_file)
   }
   if("epigen-atac-seq" %in% selected_omes) generate_atac_qc_norm(repo_local_dir)
   if("epigen-methyl-seq" %in% selected_omes){
     message("Methylation processing requires analysis pipelines not compatible
-            with this generate function. Please reach out to cajin@stanford.edu
+            with this generate function. The existing function will only generate an annotated
+            feature metadata file. Please reach out to cajin@stanford.edu
             or yongchao.ge@mssm.edu if any questions about methylation come up.")
   }
+  message("For information about generation of qc-norm for the clinical chemistry, refer to the data-raw/generate_normalized_expression/generate_clinical_qc_norm.R")
   return("QC Norm Generation Complete")
 }
 

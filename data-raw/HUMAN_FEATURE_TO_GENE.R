@@ -1,43 +1,36 @@
-## This script will be changed in the future. For now, I am just modifying the
-## HUMAN_FEATURE_TO_GENE table from MotrpacHumanPreSuspension.
-
 library(dplyr)
 library(data.table)
+library(MotrpacBicQC)
+library(here)
 
+#updated following the change to version 1.4 in the feature to gene map.
+#see the v1.4 patch notes report for more details
 
-# # Add flanking sequence to HUMAN_FEATURE_TO_GENE ----
-#
-# # Load config file
-# config <- jsonlite::read_json("~/configs/config-nmclark2.json")
-#
-# # Load the table
-# HUMAN_FEATURE_TO_GENE <- HUMAN_FEATURE_TO_GENE %>%
-#   ungroup() %>%
-#   rename(assay = platform) %>%
-#   mutate(assay = ifelse(assay == "metabolomics", "metab", assay),
-#          assay = as.factor(assay))
-#
-# # Obtain the flanking sequences from QC norm data
-# qc <- load_qc(repo_local_dir = config$gitdir,
-#               selected_omes = "prot-ph",
-#               gsutil = config$gsutil)
-#
-# adipose.flanking <-
-#   qc$adipose$`prot-ph`$feature_metadata[, c("id", "flanking_sequence")]
-#
-# muscle.flanking <-
-#   qc$muscle$`prot-ph`$feature_metadata[, c("id", "flanking_sequence")]
-#
-# all.flanking <- rbind(adipose.flanking, muscle.flanking) %>%
-#   unique() %>%
-#   rename(feature_id = id)
-#
-# # Add flanking sequences
-# HUMAN_FEATURE_TO_GENE <- left_join(HUMAN_FEATURE_TO_GENE,
-#                                    all.flanking,
-#                                    by = "feature_id")
+#just for 'write_with_path_name'
+#location for output of file
+config_file = jsonlite::fromJSON("~/config.json")
+PRECOVID_REPO_PATH = config_file$precovid_repo_path
 
-HUMAN_FEATURE_TO_GENE <- MotrpacHumanPreSuspension::HUMAN_FEATURE_TO_GENE
+reference_bucket = "gs://pre-cawg/staging_20260511"
+gsutil_command = "gsutil" #only if you have gsutil in your $PATH$. Otherwise whereever you put it
+all_files = system(command = paste(gsutil_command, "ls -R", reference_bucket), intern = TRUE)
+feature_metadata_files = all_files[grep("metadata_features", all_files)]
+
+all_feat_to_gene = list()
+
+for(file in feature_metadata_files){
+  current_file = MotrpacBicQC::dl_read_gcp(path = file,
+                                           tmpdir = tempdir()) %>%
+    mutate(across(everything(), as.character))
+
+  all_feat_to_gene[[file]] = current_file
+}
+
+HUMAN_FEATURE_TO_GENE = dplyr::bind_rows(all_feat_to_gene) %>%
+  dplyr::arrange(assay, feature_id) %>%
+  dplyr::filter(is_named != "FALSE"| is.na(is_named)) %>%
+  dplyr::select(assay, feature_id, entrez_gene, gene_symbol, ensembl_gene, uniprot, refmet_name, refmet_id, kegg_id) %>%
+  distinct()
 
 setDT(HUMAN_FEATURE_TO_GENE)
 
@@ -53,6 +46,11 @@ setcolorder(x = HUMAN_FEATURE_TO_GENE,
 
 setkeyv(x = HUMAN_FEATURE_TO_GENE,
         cols = c("assay", "feature_id"))
+
+# write.table(HUMAN_FEATURE_TO_GENE,
+#             file = file.path(PRECOVID_REPO_PATH, "data", "tmp", "freeze", "resources", "motrpac-mappings-human-feature-to-gene_v1.4.txt"),
+#             sep = "\t",
+#             row.names = FALSE)
 
 # Save
 usethis::use_data(HUMAN_FEATURE_TO_GENE, overwrite = TRUE,

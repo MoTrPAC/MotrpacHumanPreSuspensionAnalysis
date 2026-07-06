@@ -106,8 +106,8 @@ run_SCION <- function (randomGroupCode = c("ADUResist", "ADUEndur"),
       if(selected_tissue == "adipose" && (selected_ome_mod == "prot-pr" || selected_ome_mod == "prot-ph"))
         stop("Adipose Prot-ph, Prot-pr only have 2 timepoints. We don't recommend using these, it messes with the clustering")
       da_table = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected_omes = selected_ome_mod,
-                                                                           selected_tissues = selected_tissue,
-                                                                           single_matrix = TRUE)
+                                                                               selected_tissues = selected_tissue,
+                                                                               single_matrix = TRUE)
       if(randomGroupCode == "ADUEndur") da_table = da_table %>%
         dplyr::filter(contrast_type == "exercise_with_controls") %>%
         dplyr::filter(contrast_category == "EE-CON")
@@ -425,9 +425,9 @@ RS.Get.Weight.Matrix<- function(target.matrix,
   #parallelize if at least 3 cores, otherwise, don't
   if(num.cores>2){
     clst <- parallel::makeCluster(num.cores-1,type="FORK",outfile="log.txt")
-    registerDoParallel(clst)
-    imList<-parLapply(cl=clst, X=target.names, function(x) RSGWM2(x,num.targets,target.names,input.matrix,target.matrix,trace,mtry,nb.trees,importance.measure,...))
-    stopCluster(cl=clst)
+    doParallel::registerDoParallel(clst)
+    imList<-parallel::parLapply(cl=clst, X=target.names, function(x) RSGWM2(x,num.targets,target.names,input.matrix,target.matrix,trace,mtry,nb.trees,importance.measure,...))
+    parallel::stopCluster(cl=clst)
   }else{
     imList<-lapply(target.names,function(x) RSGWM2(x,num.targets,target.names,input.matrix,target.matrix,trace,mtry,nb.trees,importance.measure,...))
   }
@@ -486,9 +486,9 @@ RSGWM2<-function(target.gene.name,
   #x<-x[incSamp,]
   #y<-y[incSamp]
 
-  rf <- randomForest(x = x, y = y, mtry=mtry, ntree=nb.trees, keep.forest=F, importance=TRUE,...)
+  rf <- randomForest::randomForest(x = x, y = y, mtry=mtry, ntree=nb.trees, keep.forest=F, importance=TRUE,...)
 
-  im <- importance(rf)[,importance.measure]
+  im <- randomForest::importance(rf)[,importance.measure]
 
   #im.names <- names(im)
   return(im)
@@ -513,6 +513,9 @@ RSGWM2<-function(target.gene.name,
   check_package_installation(pkg = "MotrpacHumanPreSuspensionData")
   private_data_ns <- asNamespace("MotrpacHumanPreSuspensionData")
   private_load_qc <- get("load_qc", envir = private_data_ns, inherits = FALSE)
+  private_subset_qc <- get("subset_qc", envir = private_data_ns, inherits = FALSE)
+  private_combine_qc_matrixes <- get("combine_qc_matrixes",
+                                     envir = private_data_ns, inherits = FALSE)
 
   final_combined_matrix = data.frame()
   for(desired_input in desired_matrixes){
@@ -525,27 +528,27 @@ RSGWM2<-function(target.gene.name,
       stop("The syntax for regulators or targets isn't right. Regulators and targets should be in tissue.ome format (e.g blood.transcript-rna-seq)")
 
     desired_qc_norm_single = private_load_qc(selected_omes = desired_ome,
-                         selected_tissues = desired_tissue,
-                         remove_unnamed_metab = TRUE)
+                                             selected_tissues = desired_tissue,
+                                             remove_unnamed_metab = TRUE)
     #-------------------------------------------------------------------------------
     # here we handle parameters and use imputed matrixes for prot-(pr/ph)
     if(any(desired_ome == "prot-ph" | desired_ome == "prot-pr")) #have to add 'any' to handle multiple metab platforms
       desired_qc_norm_single[[desired_tissue]][[desired_ome]][["qc_norm"]] = desired_qc_norm_single[[desired_tissue]][[desired_ome]][["qc_imputed"]]
     #basically just copy over imputed into the name "qc_norm" because then I can just use the combine_qc_matrixes function as usual
-    if(any(desired_ome == "prot-ph") & subset_TFs) desired_qc_norm_single = subset_qc(desired_qc_norm_single,
+    if(any(desired_ome == "prot-ph") & subset_TFs) desired_qc_norm_single = private_subset_qc(desired_qc_norm_single,
                                                                                       desired_features = MotrpacHumanPreSuspensionAnalysis::UTORONTO_TFs$feature_id)
 
     if(subset_DE){
       DE_features = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(selected_omes = desired_ome,
-                                                                              selected_tissues = desired_tissue,
-                                                                              single_matrix = TRUE) %>%
+                                                                                  selected_tissues = desired_tissue,
+                                                                                  single_matrix = TRUE) %>%
         dplyr::filter(contrast_type == "exercise_with_controls",
                       adj_p_value < 0.05) %>%
         dplyr::pull(feature_id)
-      desired_qc_norm_single = subset_qc(desired_qc_norm_single, desired_features = DE_features)
+      desired_qc_norm_single = private_subset_qc(desired_qc_norm_single, desired_features = DE_features)
     }
     #--------------------------------------------------------------------------------
-    participant_format = combine_qc_matrixes(desired_qc_norm_single,
+    participant_format = private_combine_qc_matrixes(desired_qc_norm_single,
                                              make_metab_rownames = TRUE)
     #just make all the metab stuff just = "metab"
 

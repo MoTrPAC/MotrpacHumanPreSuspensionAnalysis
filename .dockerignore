@@ -3,3 +3,9 @@
 *.Rproj
 .Rhistory
 .RData
+
+# Large dev-only material not needed to build/install the package
+sandbox
+vignette_output
+docs
+*.tar.gz

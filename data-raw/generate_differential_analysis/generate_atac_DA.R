@@ -13,14 +13,14 @@
 #' normalization factors computed prior to model fitting.
 #'
 #' Modeling is performed via \code{.run_models} using a voom-based workflow.
-#' No training analysis is performed, even if \code{acute_vs_training} is set
+#' No training analysis is performed, even if \code{model_type} is set
 #' otherwise, as all available training samples are controls.
 #'
 #' @param repo_local_dir
 #' Character scalar specifying the local repository directory used for temporary
 #' storage and downstream processing.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether the analysis is intended for acute or
 #' training comparisons. Only \code{"acute"} is supported for ATAC-seq data.
 #'
@@ -63,7 +63,7 @@
 #' @author christopher jin
 
 .generate_atac_inputs = function(repo_local_dir,
-                                 acute_vs_training,
+                                 model_type,
                                  tissue,
                                  parallel = FALSE){
   check_package_installation("edgeR")
@@ -71,7 +71,7 @@
   desired_ome = 'epigen-atac-seq'
   local_path =  file.path(repo_local_dir, "data/tmp/")
   data_path = .find_path_name(desired_ome = desired_ome, tissue = tissue, data_type = "epigen-atac-seq_counts")
-  if (length(data_path) > 0 & acute_vs_training == "acute") {
+  if (length(data_path) > 0 & model_type == "acute") {
     raw_counts_input = MotrpacBicQC::dl_read_gcp(data_path, sep = '\t', tmpdir = local_path) %>%
       dplyr::mutate(rownames = stringr::str_c(chrom,":",start,"-",end,sep = "")) %>%
       tibble::column_to_rownames("rownames") %>%
@@ -79,8 +79,7 @@
       dplyr::select(-chrom,-start,-end) %>%
       as.data.frame()
 
-    parsed_qc_norm = load_qc(repo_local_dir,
-                             selected_omes = desired_ome,
+    parsed_qc_norm = load_qc(selected_omes = desired_ome,
                              selected_tissues = tissue,
                              epigen = TRUE,
                              load_acute_only = FALSE)
@@ -101,7 +100,7 @@
                                           tissue_input = tissue)
 
     .run_models(repo_local_dir = repo_local_dir,
-                acute_vs_training = acute_vs_training,
+                model_type = model_type,
                 expression_object = pre_dge,
                 process_metadata = process_metadata,
                 tissue = tissue,

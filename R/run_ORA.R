@@ -48,8 +48,7 @@
 #'
 #' @seealso \code{\link{run_cluster_ORA}}, \code{\link{run_cameraPR}}
 #'
-#' @importFrom dplyr %>% mutate across arrange left_join select any_of
-#'   everything
+#' @importFrom dplyr %>% mutate across arrange left_join select any_of everything
 #' @importFrom stats phyper p.adjust
 #'
 #' @export run_ORA

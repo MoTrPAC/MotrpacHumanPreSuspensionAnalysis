@@ -13,7 +13,7 @@
 #' Character scalar specifying the local repository directory used for data access
 #' and output.
 #'
-#' @param acute_vs_training
+#' @param model_type
 #' Character scalar indicating whether the analysis corresponds to
 #' \code{"acute"} or \code{"training"} exercise.
 #'
@@ -49,20 +49,20 @@
 #' @author christopher jin
 
 .generate_prot_ol_inputs = function(repo_local_dir,
-                                    acute_vs_training,
+                                    model_type,
                                     tissue,
                                     parallel = F){
   desired_ome = 'prot-ol'
-  da_path <- paste0(repo_local_dir, "data/tmp/freeze_DA/") #path for output
+
+  da_path = file.path(repo_local_dir, "data", "tmp", "freeze_DA/") #path for output
   dir.create(da_path, recursive = TRUE, showWarnings = FALSE)
 
-  prot_ol_data = load_qc(repo_local_dir,
-                         selected_tissue = tissue,
-                         selected_ome = desired_ome,
-                         load_acute_only = FALSE)
+  prot_ol_data = load_qc(selected_tissues=tissue,
+                         selected_omes=desired_ome,
+                         load_acute_only=FALSE)
   if (length(prot_ol_data) > 0) {
     metadata = prot_ol_data[[tissue]][[desired_ome]][['sample_metadata']]
-    if (acute_vs_training == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
+    if (model_type == "acute") metadata = metadata %>% dplyr::filter(visitcode == 'ADU_BAS')  #filter just to the initial acute bout
     rownames(metadata) = metadata$vialLabel
 
     data_matrix = prot_ol_data[[tissue]][[desired_ome]][['qc_norm']] %>%
@@ -74,7 +74,7 @@
                                           include_technical = F)
 
     .run_models(repo_local_dir = repo_local_dir,
-                acute_vs_training = acute_vs_training,
+                model_type = model_type,
                 expression_object = data_matrix,
                 process_metadata = process_metadata,
                 tissue = tissue,
