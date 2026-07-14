@@ -77,6 +77,42 @@ test_that("load_differential_analysis combine_with_featgene adds gene columns", 
   expect_true("gene_symbol" %in% colnames(dt))
 })
 
+test_that("load_differential_analysis errors when only epigen omes requested and epigen = FALSE", {
+  expect_error(
+    load_differential_analysis(
+      selected_omes = "epigen-atac-seq",
+      selected_tissues = "muscle",
+      epigen = FALSE,
+      verbose = FALSE
+    ),
+    regexp = "epigen"
+  )
+  expect_error(
+    load_differential_analysis(
+      selected_omes = c("epigen-atac-seq", "epigen-methylcap-seq"),
+      selected_tissues = "muscle",
+      epigen = FALSE,
+      verbose = FALSE
+    ),
+    regexp = "epigen"
+  )
+})
+
+test_that("load_differential_analysis messages and skips epigen when mixed with non-epigen omes and epigen = FALSE", {
+  expect_message(
+    res <- load_differential_analysis(
+      selected_omes = c("epigen-atac-seq", "transcript-rna-seq"),
+      selected_tissues = "muscle",
+      epigen = FALSE,
+      verbose = TRUE
+    ),
+    regexp = "epigen"
+  )
+  expect_true("muscle" %in% names(res))
+  expect_true("transcript-rna-seq" %in% names(res[["muscle"]]))
+  expect_false("epigen-atac-seq" %in% names(res[["muscle"]]))
+})
+
 test_that("load_differential_analysis DA tables have expected column types", {
   res <- load_differential_analysis(
     selected_omes = "prot-pr",

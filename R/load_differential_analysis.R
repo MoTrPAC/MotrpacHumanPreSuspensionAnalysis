@@ -107,6 +107,26 @@ load_differential_analysis <- function(selected_omes = "all",
     selected_tissues <- c("adipose", "blood", "muscle")
   }
 
+  # Handle epigen omes requested (explicitly or via "all") while epigen is off
+  epigen_omes <- c("epigen-atac-seq", "epigen-methylcap-seq")
+  requested_epigen <- intersect(selected_omes, epigen_omes)
+  if (!epigen & length(requested_epigen) > 0 &
+      all(selected_omes %in% epigen_omes)) {
+    stop(
+      "You've requested only epigenetic omes (",
+      paste(requested_epigen, collapse = ", "),
+      ") but `epigen = FALSE`. Set `epigen = TRUE` to load epigenetic data."
+    )
+  }
+  if (verbose & !epigen &
+      (length(requested_epigen) > 0 | "all" %in% selected_omes)) {
+    message(
+      "You've requested one or more epigenetic omes (via explicit selection ",
+      "or \"all\") but `epigen = FALSE`, so epigenetic data will be skipped. ",
+      "Set `epigen = TRUE` to load epigenetic data."
+    )
+  }
+
   if ("all" %in% selected_omes) {
     selected_omes <- c(
       "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
