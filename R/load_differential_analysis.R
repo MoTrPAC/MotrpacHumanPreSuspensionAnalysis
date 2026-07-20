@@ -349,120 +349,120 @@ load_differential_analysis <- function(selected_omes = "all",
 #'
 #' @importFrom data.table rbindlist
 #' @importFrom dplyr %>% mutate filter pull arrange left_join
-#' @importFrom MotrpacBicQC dl_read_gcp
+# @importFrom MotrpacBicQC dl_read_gcp
 #' @importFrom stats p.adjust
 #'
 #' @noRd
-
-.load_differential_analysis <- function(repo_local_dir = NULL,
-                                        selected_omes = "all",
-                                        selected_tissues = "all",
-                                        epigen = FALSE,
-                                        gsutil = "gsutil",
-                                        load_acute_only = TRUE,
-                                        remove_redundant_metab = TRUE,
-                                        include_metab_meta_analysis = FALSE)
-{
-
-  if (is.null(repo_local_dir)) {
-    warning(
-      "`repo_local_dir` is not specified, so the current ",
-      "working directory will be used.",
-      immediate. = TRUE
-    )
-
-    repo_local_dir <- getwd()
-  }
-
-  tmpdir <- file.path(repo_local_dir, "data", "tmp")
-  dir.create(tmpdir, recursive = TRUE, showWarnings = FALSE)
-
-  da_gsutil_path <- "gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3"
-
-  # Bottleneck 1
-  gsutil_files <- system(
-    command = paste0(gsutil, " ls -R ", da_gsutil_path),
-    intern = TRUE
-  )
-
-  gsutil_files <- gsutil_files[grep("*\\.txt$", gsutil_files)]
-  gsutil_files <- gsutil_files[grep("_da_", gsutil_files)]
-
-  if (all(selected_omes == "all")) {
-    selected_omes <- ome_available_list()
-  }
-
-  if (!all(selected_omes %in% ome_available_list())) {
-    message(
-      "Invalid ome selection. ",
-      "Try 'ome_available_list()' for a list of valid omes."
-    )
-  }
-
-  if (!epigen) {
-    selected_omes <- setdiff(
-      selected_omes, c("epigen-atac-seq", "epigen-methylcap-seq")
-    )
-  }
-
-  if (!include_metab_meta_analysis) {
-    selected_omes <- setdiff(selected_omes, c("metab-meta-reg"))
-  }
-
-  if (all(selected_tissues == "all")) {
-    selected_tissues <- tissue_available_list(verbose = FALSE)
-  }
-
-  if (!all(selected_tissues %in% tissue_available_list(verbose = FALSE))) {
-    message(
-      "Invalid tissue selection. ",
-      "Try `tissue_available_list()` for a list of valid tissues."
-    )
-  }
-
-  da_results <- list()
-
-  for (file_path in gsutil_files) {
-    tissue <- .find_tissue(file_path)
-
-    if (is.null(tissue) ||
-        !tissue %in% selected_tissues) {
-      next
-    }
-
-    ome <- .find_ome(file_path)
-
-    if (is.null(ome) || !ome %in% selected_omes) {
-      next
-    }
-
-    # Ensure the structure exists
-    if (is.null(da_results[[tissue]])) {
-      da_results[[tissue]] <- list()
-    }
-
-    if (is.null(da_results[[tissue]][[ome]])) {
-      da_results[[tissue]][[ome]] <- list()
-    }
-
-    # Bottleneck 2
-    file_loaded <- MotrpacBicQC::dl_read_gcp(
-      path = file_path,
-      tmpdir = file.path(repo_local_dir, "data", "tmp"),
-      gsutil = gsutil
-    )
-
-    file_loaded$tissue <- tissue
-
-    if (remove_redundant_metab &
-        grepl("metab", ome) &
-        !grepl("metab-meta-reg", ome)) {
-      file_loaded = .prioritize_metab_by_cv_da(file_loaded, tissue, ome)
-    }
-    da_results[[tissue]][[ome]] <- file_loaded
-  }
-  return(da_results)
-}
+#
+# .load_differential_analysis <- function(repo_local_dir = NULL,
+#                                         selected_omes = "all",
+#                                         selected_tissues = "all",
+#                                         epigen = FALSE,
+#                                         gsutil = "gsutil",
+#                                         load_acute_only = TRUE,
+#                                         remove_redundant_metab = TRUE,
+#                                         include_metab_meta_analysis = FALSE)
+# {
+#
+#   if (is.null(repo_local_dir)) {
+#     warning(
+#       "`repo_local_dir` is not specified, so the current ",
+#       "working directory will be used.",
+#       immediate. = TRUE
+#     )
+#
+#     repo_local_dir <- getwd()
+#   }
+#
+#   tmpdir <- file.path(repo_local_dir, "data", "tmp")
+#   dir.create(tmpdir, recursive = TRUE, showWarnings = FALSE)
+#
+#   da_gsutil_path <- "gs://motrpac-data-hub/analysis/human-precovid-sed-adu/v1.3"
+#
+#   # Bottleneck 1
+#   gsutil_files <- system(
+#     command = paste0(gsutil, " ls -R ", da_gsutil_path),
+#     intern = TRUE
+#   )
+#
+#   gsutil_files <- gsutil_files[grep("*\\.txt$", gsutil_files)]
+#   gsutil_files <- gsutil_files[grep("_da_", gsutil_files)]
+#
+#   if (all(selected_omes == "all")) {
+#     selected_omes <- ome_available_list()
+#   }
+#
+#   if (!all(selected_omes %in% ome_available_list())) {
+#     message(
+#       "Invalid ome selection. ",
+#       "Try 'ome_available_list()' for a list of valid omes."
+#     )
+#   }
+#
+#   if (!epigen) {
+#     selected_omes <- setdiff(
+#       selected_omes, c("epigen-atac-seq", "epigen-methylcap-seq")
+#     )
+#   }
+#
+#   if (!include_metab_meta_analysis) {
+#     selected_omes <- setdiff(selected_omes, c("metab-meta-reg"))
+#   }
+#
+#   if (all(selected_tissues == "all")) {
+#     selected_tissues <- tissue_available_list(verbose = FALSE)
+#   }
+#
+#   if (!all(selected_tissues %in% tissue_available_list(verbose = FALSE))) {
+#     message(
+#       "Invalid tissue selection. ",
+#       "Try `tissue_available_list()` for a list of valid tissues."
+#     )
+#   }
+#
+#   da_results <- list()
+#
+#   for (file_path in gsutil_files) {
+#     tissue <- .find_tissue(file_path)
+#
+#     if (is.null(tissue) ||
+#         !tissue %in% selected_tissues) {
+#       next
+#     }
+#
+#     ome <- .find_ome(file_path)
+#
+#     if (is.null(ome) || !ome %in% selected_omes) {
+#       next
+#     }
+#
+#     # Ensure the structure exists
+#     if (is.null(da_results[[tissue]])) {
+#       da_results[[tissue]] <- list()
+#     }
+#
+#     if (is.null(da_results[[tissue]][[ome]])) {
+#       da_results[[tissue]][[ome]] <- list()
+#     }
+#
+#     # Bottleneck 2
+#     file_loaded <- MotrpacBicQC::dl_read_gcp(
+#       path = file_path,
+#       tmpdir = file.path(repo_local_dir, "data", "tmp"),
+#       gsutil = gsutil
+#     )
+#
+#     file_loaded$tissue <- tissue
+#
+#     if (remove_redundant_metab &
+#         grepl("metab", ome) &
+#         !grepl("metab-meta-reg", ome)) {
+#       file_loaded = .prioritize_metab_by_cv_da(file_loaded, tissue, ome)
+#     }
+#     da_results[[tissue]][[ome]] <- file_loaded
+#   }
+#   return(da_results)
+# }
 
 
 

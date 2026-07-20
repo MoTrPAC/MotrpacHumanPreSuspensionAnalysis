@@ -57,7 +57,8 @@ RUN R -e "install.packages(c( \
 
 # Install GitHub Remotes
 RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
-RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC', upgrade='never')"
+# RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC', upgrade='never')"
+# motrpacbic qc is currently not needed and needs to fix a package dependency.
 
 # Copy the package source
 COPY . /tmp/package
