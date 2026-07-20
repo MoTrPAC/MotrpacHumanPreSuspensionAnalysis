@@ -76,23 +76,36 @@ the wrong Bioconductor version will cause dependency failures.
 |-----------|----------------------|
 | R 4.4.x   | 3.20                 |
 | R 4.5.x   | 3.22                 |
+| R 4.6.x   | 3.23                 |
 
 **For R 4.4:**
 
 ``` r
+
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(version = "3.20")
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
-                         build_vignettes = TRUE)
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 ```
 
 **For R 4.5:**
 
 ``` r
+
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(version = "3.22")
-devtools::install_github("MoTrPAC/MotrpacHumanPreSuspensionAnalysis",
-                         build_vignettes = TRUE)
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
+```
+
+**For R 4.6:**
+
+``` r
+
+if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(version = "3.23")
+if (!require("pak", quietly = TRUE)) install.packages("pak")
+pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 ```
 
 You can check your R version with `R.version.string` and your
@@ -124,6 +137,7 @@ looking to view the results are also described here in this README.
 After installation, load the package:
 
 ``` r
+
 library(MotrpacHumanPreSuspensionAnalysis)
 ```
 
@@ -164,6 +178,7 @@ the file sizes are quite a bit larger than the other omes, so setting
 `epigen = TRUE` can be very slow!
 
 ``` r
+
 differential_analysis = load_differential_analysis(
   selected_omes = "all",
   selected_tissues = "all",
@@ -197,6 +212,7 @@ If you would instead like to stack the matrixes more easily, use the
 everything into a data.frame object.
 
 ``` r
+
 single_matrix = load_differential_analysis(single_matrix = TRUE)
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
@@ -227,6 +243,7 @@ controls (“exercise_with_controls”). Make sure you filter to whichever
 category you prefer before continuing with analysis.
 
 ``` r
+
 single_matrix %>% dplyr::pull(contrast_type) %>% unique()
 #> [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist       
 #> [4] baseline               control_only          
@@ -239,6 +256,7 @@ RE-CON would be subsets of the ‘exercise_with_controls’ category from
 above, for example.)
 
 ``` r
+
 single_matrix %>% dplyr::pull(contrast_category) %>% unique()
 #> [1] EE-CON  RE-CON  EE-EE   RE-RE   EE-RE   CON-CON
 #> Levels: EE-CON RE-CON EE-EE RE-RE EE-RE CON-CON
@@ -252,6 +270,7 @@ of the alternative splicing landscape in human tissues” for more
 information.
 
 ``` r
+
 names(SPLICING_DA)
 #> [1] "adipose" "blood"   "muscle"
 head(SPLICING_DA$adipose$`AS-rMATS`, 3)
@@ -283,6 +302,7 @@ See more documentation via
 [`?load_summary_stats`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_summary_stats.md)
 
 ``` r
+
 summary_stats = load_summary_stats(
   selected_omes = "all",
   selected_tissues = "all",
@@ -323,6 +343,7 @@ Again - note that the sample level data is available for researchers
 upon request via the Motrpac Consortium.
 
 ``` r
+
 single_matrix = load_summary_stats(single_matrix = TRUE)
 #> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
 #> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
@@ -346,6 +367,7 @@ included, due to file size limitations.
 ## Enrichment Results
 
 ``` r
+
 colnames(CAMERA_RESULTS)
 #>  [1] "tissue"         "assay"          "contrast_type"  "contrast"      
 #>  [5] "contrast_short" "collection"     "database"       "set_id"        
@@ -366,6 +388,7 @@ results, where all tissues and assays are included in all the analysis.
 ## Feature to gene file
 
 ``` r
+
 head(HUMAN_FEATURE_TO_GENE)
 #> Key: <assay, feature_id>
 #>              assay               feature_id entrez_gene gene_symbol
@@ -472,6 +495,8 @@ e.g.:
 
 - [`CAMERA_RESULTS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CAMERA_RESULTS.md)
   : CAMERA enrichment analysis results
+- [`CLIN_CHEMISTRY_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CLIN_CHEMISTRY_DA.md)
+  : Clinical Chemistry Differential analysis
 - [`CONTRAST_CONVERTER`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CONTRAST_CONVERTER.md)
   : Contrast Converter
 - [`COVARIATES_FILE`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/COVARIATES_FILE.md)
@@ -566,6 +591,8 @@ e.g.:
   : Summary Statistics by Tissue, Assay, and Platform
 - [`UTORONTO_TFs`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/UTORONTO_TFs.md)
   : Pre-specified transcription Factors from the UToronto dataset
+- [`assay_codes`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/assay_codes.md)
+  : Assay code lookup table (vendored copy of MotrpacBicQC::assay_codes)
 - [`check_package_installation()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/check_package_installation.md)
   : Check package installation
 - [`load_DA_from_AWS()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_DA_from_AWS.md)

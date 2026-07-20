@@ -1,6 +1,7 @@
 # MotrpacHumanPreSuspensionAnalysis: Complete Package Overview
 
 ``` r
+
 library(MotrpacHumanPreSuspensionAnalysis)
 #> Warning: no DISPLAY variable so Tk is not available
 ```
@@ -44,6 +45,8 @@ Molecular profiling spanned seven assay types:
 - ATAC-seq (epigen-atac-seq)
 - MethylCap-seq (epigen-methylcap-seq)
 
+There are also key clinical values
+
 ------------------------------------------------------------------------
 
 ## 1. Available Tissues and Omes
@@ -52,12 +55,14 @@ Before loading any data, you can check which tissues and omes are
 available.
 
 ``` r
+
 tissue_available_list()
 #> The available tissues are placed into overarching categories. For example, an assay using PBMCs would be categorized as blood.
 #> [1] "adipose" "blood"   "muscle"
 ```
 
 ``` r
+
 ome_available_list()
 #>  [1] "prot-ol"              "prot-ph"              "prot-pr"             
 #>  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     
@@ -71,6 +76,7 @@ ome_available_list()
 To see only the metabolomics platforms:
 
 ``` r
+
 metab_only_list()
 #>  [1] "metab-u-hilicpos"  "metab-u-ionpneg"   "metab-u-lrpneg"   
 #>  [4] "metab-u-lrppos"    "metab-u-rpneg"     "metab-u-rppos"    
@@ -114,6 +120,7 @@ For a graphical overview of the study design and timepoints, see the
 Design](https://motrpac-data.org/project-overview#acute-exercise).
 
 ``` r
+
 head(CONTRAST_CONVERTER)
 #>    contrast_order
 #>             <int>
@@ -167,13 +174,14 @@ different biological question:
   the manuscript.
 
 - **`Endur_vs_Resist`** (4 contrasts) — Direct comparison of endurance
-  vs. resistance exercise at each post-exercise timepoint (delta-delta
-  design). Identifies modality-specific responses.
+  vs. resistance exercise at each post-exercise timepoint (delta-delta
+  design). Identifies modality-differing responses.
 
 - **`baseline`** (3 contrasts) — Pre-exercise differences between groups
-  (Endurance vs. Resistance, Endurance vs. Control, Resistance
-  vs. Control). Verifies randomization and identifies pre-existing group
-  differences.
+  (Endurance vs. Resistance, Endurance vs. Control, Resistance vs.
+  Control). Verifies randomization and identifies pre-existing group
+  differences. Also evaluates the potential effect of the
+  familiarization protocol.
 
 - **`control_only`** (6 contrasts) — Control group changes over time
   relative to their own pre-exercise baseline. Captures effects of
@@ -182,6 +190,7 @@ different biological question:
 #### Available contrasts by type
 
 ``` r
+
 # Number of contrasts per type
 contrast_counts <- as.data.frame(table(CONTRAST_CONVERTER$contrast_type))
 colnames(contrast_counts) <- c("contrast_type", "n")
@@ -200,6 +209,7 @@ ggplot2::ggplot(contrast_counts,
 ![](package_overview_files/figure-html/contrast-barplot-1.png)
 
 ``` r
+
 # Show the short contrast names grouped by type
 for (ct in unique(CONTRAST_CONVERTER$contrast_type)) {
   cat("**", ct, "**\n\n", sep = "")
@@ -261,6 +271,7 @@ Most downstream analyses focus on `exercise_with_controls`. Make sure to
 filter by `contrast_type` before interpreting results:
 
 ``` r
+
 DA <- load_differential_analysis(single_matrix = TRUE)
 
 # Keep only the primary exercise-vs-control contrasts
@@ -274,6 +285,7 @@ feature IDs to gene symbols, Entrez IDs, Ensembl IDs, UniProt IDs,
 RefMet names, KEGG IDs, and flanking sequences (for phosphoproteomics).
 
 ``` r
+
 str(HUMAN_FEATURE_TO_GENE[1:5, ])
 ```
 
@@ -301,6 +313,7 @@ features, used internally to select the lowest-CV feature when multiple
 features map to the same RefMet metabolite.
 
 ``` r
+
 head(METABOLOMICS_CVS)
 #> # A tibble: 6 × 9
 #>   tissue_assay_sites   tissue_code assay site  feature_id feature_cv refmet_name
@@ -320,6 +333,7 @@ head(METABOLOMICS_CVS)
 enrichment analysis. Available databases include:
 
 ``` r
+
 names(MOLECULAR_SIGNATURES)
 #>  [1] "BIOCARTA"     "KEGG_MEDICUS" "PID"          "REACTOME"     "WP"          
 #>  [6] "GOBP"         "GOCC"         "GOMF"         "MITOCARTA"    "PSP"         
@@ -337,6 +351,7 @@ subclasses (REFMET), PTMSigDB, and CellMarker.
 shortened name for use in figures and enrichment analyses.
 
 ``` r
+
 head(SET_TO_ID)
 #>   collection database set_id                            set
 #> 1         C2 BIOCARTA  00001          BIOCARTA_41BB_PATHWAY
@@ -395,7 +410,9 @@ The primary entry point for accessing DA results is
 ### 3.1 Load all results
 
 ``` r
+
 DA_list <- load_differential_analysis()
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
@@ -406,6 +423,7 @@ This returns a nested list organized by tissue (top level) and ome
 (second level):
 
 ``` r
+
 names(DA_list)
 #> [1] "adipose" "blood"   "muscle"
 lapply(DA_list, names)
@@ -426,6 +444,7 @@ Each element is a `data.table` with standardized columns including
 `z.std`, `p_value`, `adj_p_value`, and more.
 
 ``` r
+
 str(DA_list[["muscle"]][["prot-pr"]])
 #> Classes 'data.table' and 'data.frame':   130137 obs. of  20 variables:
 #>  $ tissue            : chr  "muscle" "muscle" "muscle" "muscle" ...
@@ -448,13 +467,14 @@ str(DA_list[["muscle"]][["prot-pr"]])
 #>  $ z.std             : num  5.66 -4.19 -3.21 3.17 3.14 ...
 #>  $ p_value           : num  1.55e-08 2.74e-05 1.32e-03 1.50e-03 1.72e-03 ...
 #>  $ adj_p_value       : num  9.62e-05 8.50e-02 1.00 1.00 1.00 ...
-#>  - attr(*, ".internal.selfref")=<externalptr> 
+#>  - attr(*, ".internal.selfref")=<pointer: (nil)> 
 #>  - attr(*, "sorted")= chr [1:4] "full_model" "contrast" "p_value" "feature_id"
 ```
 
 ### 3.2 Filter by tissue and ome
 
 ``` r
+
 DA_muscle_rna <- load_differential_analysis(
   selected_tissues = "muscle",
   selected_omes = "transcript-rna-seq"
@@ -466,7 +486,9 @@ DA_muscle_rna <- load_differential_analysis(
 For analyses that prefer a flat data frame:
 
 ``` r
+
 DA_matrix <- load_differential_analysis(single_matrix = TRUE)
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
@@ -480,6 +502,7 @@ dim(DA_matrix)
 Merge DA results with `HUMAN_FEATURE_TO_GENE` in one step:
 
 ``` r
+
 DA_annotated <- load_differential_analysis(
   selected_tissues = "muscle",
   selected_omes = "prot-pr",
@@ -502,6 +525,7 @@ Epigenomics results are not bundled with the package due to file size.
 Setting `epigen = TRUE` downloads them from AWS:
 
 ``` r
+
 DA_list <- load_differential_analysis(epigen = TRUE)
 ```
 
@@ -522,6 +546,7 @@ Differential alternative splicing results (FDR \< 0.05 only) are
 available directly:
 
 ``` r
+
 names(SPLICING_DA)
 #> [1] "adipose" "blood"   "muscle"
 ```
@@ -535,6 +560,7 @@ loads group-level means and standard deviations for normalized
 expression data.
 
 ``` r
+
 ## Load all summary statistics
 sum_stats <- load_summary_stats()
 
@@ -569,6 +595,7 @@ across tissues and omes. Points are highlighted when the adjusted
 p-value falls below a threshold.
 
 ``` r
+
 # Returns a ggplot object that displays inline.
 # Use the optional output_file parameter to save to PDF.
 plot_single_feature(
@@ -613,6 +640,7 @@ generates a ComplexHeatmap for a set of features or a molecular
 signature pathway, showing z-scores across contrasts.
 
 ``` r
+
 # Note: filename is required — the heatmap is saved directly to PDF.
 # Heatmap from a specific pathway (using set_id from SET_TO_ID)
 plot_feature_heatmap(
@@ -651,6 +679,7 @@ creates bubble heatmaps from CAMERA-PR or PTM-SEA results, showing
 enrichment z-scores with significance bubbles.
 
 ``` r
+
 # Note: filename is required — the heatmap is saved directly to PDF.
 # Using pre-computed CAMERA results
 plot_enrich_heatmap(
@@ -680,6 +709,7 @@ to visualize cluster trajectories as line plots colored by membership
 probability.
 
 ``` r
+
 # Note: filename is required — the plot is saved directly to PDF.
 FCM <- run_cmeans(selected_tissues = "adipose")
 
@@ -707,6 +737,7 @@ or
 [`run_cluster_ORA()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_ORA.md)).
 
 ``` r
+
 # Note: filename is required — the heatmap is saved directly to PDF.
 plot_cluster_enrichment(
   x = FCM_CAMERA,
@@ -731,6 +762,7 @@ the DA z-statistics. It tests whether molecular signatures show
 coordinated up- or down-regulation.
 
 ``` r
+
 # Run on muscle global proteomics with GOBP and Reactome databases
 camera_res <- run_cameraPR(
   selected_omes = "prot-pr",
@@ -741,6 +773,7 @@ head(camera_res)
 ```
 
 ``` r
+
 # Run on all omes with all databases (default)
 camera_all <- run_cameraPR()
 ```
@@ -769,12 +802,14 @@ differential analysis, grouping features with similar temporal response
 patterns.
 
 ``` r
+
 # Run with defaults (13 clusters for adipose/blood, 12 for muscle)
 FCM <- run_cmeans()
 names(FCM)  # one element per tissue
 ```
 
 ``` r
+
 # Explore optimal cluster numbers
 FCM_explore <- run_cmeans(
   selected_tissues = "adipose",
@@ -801,6 +836,7 @@ tests whether molecular signatures localize to specific cluster
 centroids using modified signed rank tests.
 
 ``` r
+
 FCM <- run_cmeans()
 cluster_camera <- run_cluster_cameraPR(FCM = FCM)
 head(cluster_camera)
@@ -815,6 +851,7 @@ performs ORA within each cluster, identifying over-represented molecular
 signatures among features with high membership probabilities.
 
 ``` r
+
 FCM <- run_cmeans()
 cluster_ora <- run_cluster_ORA(
   FCM = FCM,
@@ -833,6 +870,7 @@ Below is a typical analysis workflow combining the major package
 functions:
 
 ``` r
+
 # 1. Load differential analysis results
 DA_list <- load_differential_analysis(
   selected_tissues = "muscle",
@@ -895,10 +933,11 @@ plot_cluster_enrichment(
 ## 9. Session Info
 
 ``` r
+
 sessionInfo()
-#> R version 4.5.2 (2025-10-31)
+#> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.3 LTS
+#> Running under: Ubuntu 24.04.4 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -918,43 +957,37 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] MotrpacHumanPreSuspensionAnalysis_0.2.0
-#> [2] DynDoc_1.88.0                          
-#> [3] widgetTools_1.88.0                     
+#> [1] MotrpacHumanPreSuspensionAnalysis_0.2.4
+#> [2] DynDoc_1.90.0                          
+#> [3] widgetTools_1.90.0                     
 #> 
 #> loaded via a namespace (and not attached):
-#>   [1] tidyselect_1.2.1      viridisLite_0.4.3     dplyr_1.2.0          
-#>   [4] farver_2.1.2          viridis_0.6.5         S7_0.2.1             
-#>   [7] latex2exp_0.9.8       fastmap_1.2.0         MotrpacBicQC_1.4.0   
-#>  [10] digest_0.6.39         timechange_0.4.0      lifecycle_1.0.5      
-#>  [13] Mfuzz_2.70.0          cluster_2.1.8.1       magrittr_2.0.4       
-#>  [16] compiler_4.5.2        rlang_1.1.7           tkWidgets_1.88.0     
-#>  [19] sass_0.4.10           progress_1.2.3        tools_4.5.2          
-#>  [22] utf8_1.2.6            yaml_2.3.12           data.table_1.18.2.1  
-#>  [25] knitr_1.51            ggsignif_0.6.4        labeling_0.4.3       
-#>  [28] prettyunits_1.2.0     RColorBrewer_1.1-3    abind_1.4-8          
-#>  [31] withr_3.0.2           purrr_1.2.1           BiocGenerics_0.56.0  
-#>  [34] desc_1.4.3            grid_4.5.2            stats4_4.5.2         
-#>  [37] ggpubr_0.6.3          colorspace_2.1-2      ggplot2_4.0.2        
-#>  [40] scales_1.4.0          iterators_1.0.14      cli_3.6.5            
-#>  [43] rmarkdown_2.30        crayon_1.5.3          ragg_1.5.0           
-#>  [46] generics_0.1.4        httr_1.4.8            tzdb_0.5.0           
-#>  [49] rjson_0.2.23          cachem_1.1.0          stringr_1.6.0        
-#>  [52] parallel_4.5.2        matrixStats_1.5.0     vctrs_0.7.1          
-#>  [55] carData_3.0-6         jsonlite_2.0.0        car_3.1-5            
-#>  [58] naniar_1.1.0          IRanges_2.44.0        hms_1.1.4            
-#>  [61] GetoptLong_1.1.0      S4Vectors_0.48.0      visdat_0.6.0         
-#>  [64] rstatix_0.7.3         Formula_1.2-5         clue_0.3-67          
-#>  [67] systemfonts_1.3.1     foreach_1.5.2         jquerylib_0.1.4      
-#>  [70] tidyr_1.3.2           glue_1.8.0            pkgdown_2.2.0        
-#>  [73] codetools_0.2-20      lubridate_1.9.5       stringi_1.8.7        
-#>  [76] shape_1.4.6.1         gtable_0.3.6          ComplexHeatmap_2.26.1
-#>  [79] tibble_3.3.1          pillar_1.11.1         htmltools_0.5.9      
-#>  [82] ggfittext_0.10.3      circlize_0.4.17       R6_2.6.1             
-#>  [85] textshaping_1.0.4     doParallel_1.0.17     evaluate_1.0.5       
-#>  [88] Biobase_2.70.0        readr_2.2.0           backports_1.5.0      
-#>  [91] png_0.1-8             broom_1.0.12          inspectdf_0.0.12.1   
-#>  [94] bslib_0.10.0          Rcpp_1.1.1            gridExtra_2.3        
-#>  [97] xfun_0.56             fs_1.6.6              forcats_1.0.1        
-#> [100] pkgconfig_2.0.3       GlobalOptions_0.1.3
+#>  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
+#>  [4] rjson_0.2.23          xfun_0.60             bslib_0.11.0         
+#>  [7] ggplot2_4.0.3         GlobalOptions_0.1.4   rstatix_1.0.0        
+#> [10] Biobase_2.72.0        vctrs_0.7.3           tools_4.6.1          
+#> [13] generics_0.1.4        stats4_4.6.1          parallel_4.6.1       
+#> [16] tibble_3.3.1          cluster_2.1.8.2       pkgconfig_2.0.3      
+#> [19] data.table_1.18.4     RColorBrewer_1.1-3    S7_0.2.2             
+#> [22] desc_1.4.3            S4Vectors_0.50.1      lifecycle_1.0.5      
+#> [25] stringr_1.6.0         compiler_4.6.1        farver_2.1.2         
+#> [28] textshaping_1.0.5     codetools_0.2-20      ComplexHeatmap_2.28.0
+#> [31] carData_3.0-6         clue_0.3-68           htmltools_0.5.9      
+#> [34] sass_0.4.10           yaml_2.3.12           Formula_1.2-5        
+#> [37] car_3.1-5             pkgdown_2.2.1         pillar_1.11.1        
+#> [40] ggpubr_1.0.0          crayon_1.5.3          jquerylib_0.1.4      
+#> [43] tidyr_1.3.2           cachem_1.1.0          iterators_1.0.14     
+#> [46] abind_1.4-8           foreach_1.5.2         tidyselect_1.2.1     
+#> [49] digest_0.6.39         stringi_1.8.7         dplyr_1.2.1          
+#> [52] purrr_1.2.2           labeling_0.4.3        latex2exp_0.9.8      
+#> [55] fastmap_1.2.0         grid_4.6.1            colorspace_2.1-3     
+#> [58] cli_3.6.6             magrittr_2.0.5        utf8_1.2.6           
+#> [61] broom_1.0.13          withr_3.0.3           backports_1.5.1      
+#> [64] scales_1.4.0          rmarkdown_2.31        matrixStats_1.5.0    
+#> [67] otel_0.2.0            ggsignif_0.6.4        ragg_1.5.2           
+#> [70] png_0.1-9             GetoptLong_1.1.1      tkWidgets_1.90.0     
+#> [73] evaluate_1.0.5        knitr_1.51            IRanges_2.46.0       
+#> [76] doParallel_1.0.17     rlang_1.3.0           glue_1.8.1           
+#> [79] BiocGenerics_0.58.1   jsonlite_2.0.0        R6_2.6.1             
+#> [82] Mfuzz_2.72.0          systemfonts_1.3.2     fs_2.1.0
 ```

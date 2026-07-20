@@ -1,6 +1,7 @@
 # MotrpacHumanPreSuspensionAnalysis: Differential Analysis
 
 ``` r
+
 library(MotrpacHumanPreSuspensionAnalysis)
 #> Warning: no DISPLAY variable so Tk is not available
 ```
@@ -22,7 +23,9 @@ through MoTrPAC data access procedures.
 ### Basic Usage
 
 ``` r
+
 DA_list <- load_differential_analysis()
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
@@ -36,6 +39,7 @@ assay.
 To inspect a single result table:
 
 ``` r
+
 str(DA_list[["adipose"]][["prot-pr"]])
 #> Classes 'data.table' and 'data.frame':   63504 obs. of  20 variables:
 #>  $ tissue            : chr  "adipose" "adipose" "adipose" "adipose" ...
@@ -58,7 +62,7 @@ str(DA_list[["adipose"]][["prot-pr"]])
 #>  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...
 #>  $ p_value           : num  3.22e-08 7.53e-08 8.96e-08 1.14e-07 4.62e-07 ...
 #>  $ adj_p_value       : num  0.000202 0.000202 0.000202 0.000202 0.000651 ...
-#>  - attr(*, ".internal.selfref")=<externalptr> 
+#>  - attr(*, ".internal.selfref")=<pointer: (nil)> 
 #>  - attr(*, "sorted")= chr [1:4] "full_model" "contrast" "p_value" "feature_id"
 ```
 
@@ -68,6 +72,7 @@ Users can restrict loading to specific tissues and omes to reduce memory
 usage and improve clarity.
 
 ``` r
+
 DA_list <- load_differential_analysis(
   selected_tissues = c("muscle"),
   selected_omes = c("transcript-rna-seq", "prot-pr")
@@ -93,6 +98,7 @@ interest appears to be missing.
 If you forget which syntax is used for omes & tissues:
 
 ``` r
+
 ome_available_list()
 #>  [1] "prot-ol"              "prot-ph"              "prot-pr"             
 #>  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     
@@ -114,6 +120,7 @@ MoTrPAC AWS location, which may take a lot longer than other data
 objects.
 
 ``` r
+
 DA_list <- load_differential_analysis(
   epigen = TRUE
 )
@@ -135,6 +142,7 @@ Study”. Due to file size limitations, only significant (FDR\<0.05)
 results are included as a data object.
 
 ``` r
+
 names(SPLICING_DA)
 #> [1] "adipose" "blood"   "muscle"
 ```
@@ -146,9 +154,11 @@ format, you can choose to display the results in one big matrix format
 instead, if you find that to be easier to work with.
 
 ``` r
+
 DA_matrix <- load_differential_analysis(
   single_matrix = TRUE
 )
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
@@ -162,9 +172,11 @@ Setting `combine_with_featgene = TRUE` merges DA results with the
 where applicable.
 
 ``` r
+
 DA_list <- load_differential_analysis(
   combine_with_featgene = TRUE
 )
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant

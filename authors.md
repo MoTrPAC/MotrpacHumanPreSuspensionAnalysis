@@ -27,13 +27,13 @@
 Jin C, Sagendorf T, Simmons C, Gervais C, Jaeger B, Clark N,
 Jimenez-Morales D, Katz D (2026). *MotrpacHumanPreSuspensionAnalysis:
 Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID
-Suspension Phase*. R package version 0.2.0,
+Suspension Phase*. R package version 0.2.4,
 <https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/>.
 
     @Manual{,
       title = {MotrpacHumanPreSuspensionAnalysis: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase},
       author = {Christopher Jin and Tyler Sagendorf and Courtney Simmons and Catherine Gervais and Byron Jaeger and Natalie Clark and David Jimenez-Morales and Daniel Katz},
       year = {2026},
-      note = {R package version 0.2.0},
+      note = {R package version 0.2.4},
       url = {https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/},
     }

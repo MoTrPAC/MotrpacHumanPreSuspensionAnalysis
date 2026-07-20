@@ -146,6 +146,7 @@ Tyler Sagendorf Christopher Jin
 
 ``` r
 DA_list <- load_differential_analysis() # default behavior
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CV object for the relevant
@@ -174,7 +175,7 @@ str(DA_list[["adipose"]][["prot-pr"]])
 #>  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...
 #>  $ p_value           : num  3.22e-08 7.53e-08 8.96e-08 1.14e-07 4.62e-07 ...
 #>  $ adj_p_value       : num  0.000202 0.000202 0.000202 0.000202 0.000651 ...
-#>  - attr(*, ".internal.selfref")=<externalptr> 
+#>  - attr(*, ".internal.selfref")=<pointer: (nil)> 
 #>  - attr(*, "sorted")= chr [1:4] "full_model" "contrast" "p_value" "feature_id"
 
 # Un-nest list

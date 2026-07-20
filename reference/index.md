@@ -4,6 +4,8 @@
 
 - [`CAMERA_RESULTS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CAMERA_RESULTS.md)
   : CAMERA enrichment analysis results
+- [`CLIN_CHEMISTRY_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CLIN_CHEMISTRY_DA.md)
+  : Clinical Chemistry Differential analysis
 - [`CONTRAST_CONVERTER`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CONTRAST_CONVERTER.md)
   : Contrast Converter
 - [`COVARIATES_FILE`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/COVARIATES_FILE.md)
@@ -98,6 +100,8 @@
   : Summary Statistics by Tissue, Assay, and Platform
 - [`UTORONTO_TFs`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/UTORONTO_TFs.md)
   : Pre-specified transcription Factors from the UToronto dataset
+- [`assay_codes`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/assay_codes.md)
+  : Assay code lookup table (vendored copy of MotrpacBicQC::assay_codes)
 - [`check_package_installation()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/check_package_installation.md)
   : Check package installation
 - [`load_DA_from_AWS()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_DA_from_AWS.md)
