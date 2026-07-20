@@ -156,7 +156,7 @@ plot_single_feature = function(feature,
   }
 
   #assay name conversion table
-  assay_names_table<-MotrpacBicQC::assay_codes %>%
+  assay_names_table<-MotrpacHumanPreSuspensionAnalysis::assay_codes %>%
     dplyr::select(any_of(c('assay_code',
                            'assay_name',
                            'assay_abbreviation',

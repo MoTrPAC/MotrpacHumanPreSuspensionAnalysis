@@ -1,4 +1,12 @@
 
+# MotrpacHumanPreSuspensionAnalysis 0.2.4
+
+This release addresses installation failures on R 4.6 and removes the `Remotes:`
+field that was breaking dependency resolution.
+
+Verified with clean installs on R 4.4 (Bioconductor 3.20), R 4.5 (3.22), and
+R 4.6 (3.23).
+
 # MotrpacHumanPreSuspensionAnalysis 0.2.3
 
 ## User-facing functions
