@@ -91,15 +91,24 @@ load_differential_analysis <- function(selected_omes = "all",
 
   #-----here I basically just make sure that if any metab platform is listed,
   #all metab is loaded, to support differences in platform specific loading
-  if(any(grepl("metab", selected_omes))){
-    selected_omes = selected_omes[-grep("metab", selected_omes)]
-    selected_omes = c(selected_omes, "metab")
+  #
+  # metab-t-clinical is exempt. Differential analysis combines the metabolomics
+  # platforms into one *_METAB_DA table per tissue, but clinical metabolomics is
+  # kept out of it and published separately as BLOOD_METAB_T_CLINICAL_DA. Folding
+  # it into "metab" would quietly return the combined table instead of the one
+  # that was asked for.
+  metab_separate <- "metab-t-clinical"
+  metab_platforms <- grepl("metab", selected_omes) &
+    !selected_omes %in% metab_separate
+  if (any(metab_platforms)) {
+    selected_omes = c(selected_omes[!metab_platforms], "metab")
   }
 
   selected_omes <- match.arg(
     arg = selected_omes,
     choices = c(
-      "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
+      "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
+      "prot-clinical", "metab", "metab-t-clinical",
       "epigen-atac-seq", "epigen-methylcap-seq"
     ),
     several.ok = TRUE
@@ -131,7 +140,8 @@ load_differential_analysis <- function(selected_omes = "all",
 
   if ("all" %in% selected_omes) {
     selected_omes <- c(
-      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
+      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "prot-clinical",
+      "metab", "metab-t-clinical",
       "epigen-atac-seq", "epigen-methylcap-seq"
     )
   }
@@ -163,7 +173,13 @@ load_differential_analysis <- function(selected_omes = "all",
   tissues <- tolower(sub("\\_.*", "", DA_files))
 
   omes <- sub("^[^_]+_(.*)_DA$", "\\1", DA_files)
-  omes <- sub("_", "-", tolower(omes))
+  # gsub, not sub: an ome name carries one underscore per hyphen, so replacing
+  # only the first leaves anything with three or more parts malformed and it
+  # then matches no request. BLOOD_METAB_T_CLINICAL_DA derived as
+  # "metab-t_clinical" rather than "metab-t-clinical" and was unreachable; the
+  # epigen tables had the same defect, masked only because they are split off
+  # above and loaded from AWS. load_summary_stats() and load_qc() already gsub.
+  omes <- gsub("_", "-", tolower(omes))
   omes[omes == "trnscrpt"] <- "transcript-rna-seq"
 
   new_names <- structure(

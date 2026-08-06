@@ -14,6 +14,22 @@ metabolomics platforms.
 A character vector containing the targeted and untargeted
 metabolomics platforms.
 }
+\details{
+Selecting \code{"metab"} expands to this vector in
+\code{load_qc()}, so a platform added here becomes part of what a plain
+metabolomics request returns.
+
+\code{"metab-t-clinical"} is included as of v2.0: it is a targeted
+metabolomics platform and has its own QC and summary-statistic objects.
+Note that it is NOT part of the combined \code{*_METAB_DA} tables the way
+the other platforms are — differential analysis keeps it separate, as
+\code{BLOOD_METAB_T_CLINICAL_DA} — so
+\code{load_differential_analysis()} treats it as an ome in its own right
+rather than folding it into \code{"metab"}.
+}
 \examples{
 metab_only_list()
+}
+\seealso{
+\code{\link[=ome_available_list]{ome_available_list()}}
 }

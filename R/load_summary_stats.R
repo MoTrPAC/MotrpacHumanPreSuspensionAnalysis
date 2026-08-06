@@ -85,6 +85,7 @@ load_summary_stats = function(selected_tissues = "all",
     arg = selected_omes,
     choices = c(
       "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
+      "prot-clinical",
       "epigen-atac-seq", "epigen-methylcap-seq", metab_only_list()
     ),
     several.ok = TRUE
@@ -96,7 +97,7 @@ load_summary_stats = function(selected_tissues = "all",
 
   if ("all" %in% selected_omes) {
     selected_omes <- c(
-      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
+      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "prot-clinical",
       "epigen-atac-seq","epigen-methylcap-seq", metab_only_list()
     )
   }

@@ -3,7 +3,29 @@
 #' @description Return a character vector containing all available omes. These
 #'   are the "full names" for each of the assays.
 #'
+#' @details This vector is the vocabulary every accessor gates on:
+#'   \code{load_qc()}, \code{load_summary_stats()} and
+#'   \code{load_differential_analysis()} all resolve \code{"all"} through it and
+#'   reject anything absent from it, so an ome missing here is an ome no
+#'   accessor can return. It must therefore track what the pipeline actually
+#'   builds, which is recorded in \code{OME_TISSUE_CODE}.
+#'
+#'   Two clinical omes are included as of v2.0. Clinical chemistry was a single
+#'   \code{"clinical-chemistry"} assay in v1.3 and is now split into
+#'   \code{"metab-t-clinical"} and \code{"prot-clinical"}, each with its own QC,
+#'   differential-analysis and summary-statistic objects.
+#'
+#'   \code{"metab-meta-reg"} was removed. It was dropped from the pipeline
+#'   entirely, so no object was ever produced under that name and every accessor
+#'   offered it as a choice that returned nothing.
+#'
+#'   The \code{lab-*} tiers in \code{OME_TISSUE_CODE} are deliberately absent.
+#'   They are the raw clinical laboratory inputs, distributed as the
+#'   \code{cln_chemistry_*} tables rather than as omes.
+#'
 #' @returns A character vector containing all available omes.
+#'
+#' @seealso [metab_only_list()], [tissue_available_list()]
 #'
 #' @export ome_available_list
 #'
@@ -11,12 +33,12 @@
 #' ome_available_list()
 ome_available_list <- function() {
   out <- c(
-    "prot-ol", "prot-ph", "prot-pr", "transcript-rna-seq",
+    "prot-ol", "prot-ph", "prot-pr", "prot-clinical", "transcript-rna-seq",
     "epigen-methylcap-seq", "epigen-atac-seq",
     "metab-u-hilicpos", "metab-u-ionpneg", "metab-u-lrpneg", "metab-u-lrppos",
     "metab-u-rpneg", "metab-u-rppos", "metab-t-amines", "metab-t-conv",
     "metab-t-imm-crt", "metab-t-oxylipneg", "metab-t-tca", "metab-t-nuc",
-    "metab-t-acoa", "metab-t-ka", "metab-meta-reg"
+    "metab-t-acoa", "metab-t-ka", "metab-t-clinical"
   )
 
   return(out)
@@ -28,8 +50,22 @@ ome_available_list <- function() {
 #' @description A character vector containing the targeted and untargeted
 #'   metabolomics platforms.
 #'
+#' @details Selecting \code{"metab"} expands to this vector in
+#'   \code{load_qc()}, so a platform added here becomes part of what a plain
+#'   metabolomics request returns.
+#'
+#'   \code{"metab-t-clinical"} is included as of v2.0: it is a targeted
+#'   metabolomics platform and has its own QC and summary-statistic objects.
+#'   Note that it is NOT part of the combined \code{*_METAB_DA} tables the way
+#'   the other platforms are — differential analysis keeps it separate, as
+#'   \code{BLOOD_METAB_T_CLINICAL_DA} — so
+#'   \code{load_differential_analysis()} treats it as an ome in its own right
+#'   rather than folding it into \code{"metab"}.
+#'
 #' @returns A character vector containing the targeted and untargeted
 #'   metabolomics platforms.
+#'
+#' @seealso [ome_available_list()]
 #'
 #' @export metab_only_list
 #'
@@ -41,7 +77,7 @@ metab_only_list <- function() {
     "metab-u-lrppos", "metab-u-rpneg", "metab-u-rppos",
     "metab-t-amines", "metab-t-conv", "metab-t-imm-crt",
     "metab-t-oxylipneg", "metab-t-tca", "metab-t-nuc", "metab-t-acoa",
-    "metab-t-ka"
+    "metab-t-ka", "metab-t-clinical"
   )
 
   return(out)
