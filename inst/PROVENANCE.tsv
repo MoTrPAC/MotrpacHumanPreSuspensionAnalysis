@@ -20,7 +20,6 @@ ADIPOSE_PROT_PR_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_bu
 ADIPOSE_TRANSCRIPT_RNA_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 ADIPOSE_TRNSCRPT_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
 assay_codes	carried-forward		CARRIED-FORWARD	no manifest node; re-export of MotrpacBicQC::assay_codes
-BLOOD_CLINICAL_CHEMISTRY_SUM_STATS	carried-forward		CARRIED-FORWARD	
 BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats; epigen DA read from the step-09 freeze, restricted to adj_p_value < 0.05
 BLOOD_METAB_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble; 10 metab platforms stacked (metab-t-clinical + metab-t-imm-crt excluded)
 BLOOD_METAB_T_AMINES_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
@@ -42,7 +41,6 @@ BLOOD_PROT_OL_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_buil
 BLOOD_TRANSCRIPT_RNA_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 BLOOD_TRNSCRPT_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
 CAMERA_RESULTS	regenerated	10_build_data	VALUES-DIFFER	built by 12_build_camera_results; cameraPR over 11 tissue x ome and 12 databases (PTMSIGDB excluded, as upstream)
-CLIN_CHEMISTRY_DA	carried-forward		CARRIED-FORWARD	
 CONTRAST_CONVERTER	regenerated	10_build_data	IDENTICAL	built by 10_build_da_assemble from sources/contrast_converter.txt; all.equal to package object
 COVARIATES_FILE	regenerated	00_preflight	VALUES-DIFFER	built by 00_preflight (leaf)
 FCM_CAMERA	regenerated	10_build_data	VALUES-DIFFER	built by 13_build_fcm; cameraPR over cluster membership, 8 tissue x ome and 12 databases

@@ -142,7 +142,15 @@ plot_single_feature = function(feature,
 
 
   if (!is.na(clin_chem_id)) {
-    clin_chem_da_rows = MotrpacHumanPreSuspensionAnalysis::CLIN_CHEMISTRY_DA %>%
+    # the v2.0 split of clinical chemistry replaces CLIN_CHEMISTRY_DA with one object per
+    # assay. The mutate is the same metab-platform normalisation applied to the
+    # main DA frame above, and it is what makes `assay` agree with the summary
+    # statistics these rows are later joined to.
+    clin_chem_da_rows = dplyr::bind_rows(
+        MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_DA,
+        MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_DA
+      ) %>%
+      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform), as.character(assay))) %>%
       dplyr::filter(feature_id == clin_chem_id,
                     contrast_type == "exercise_with_controls",
                     !is.na(Timepoint))
@@ -180,7 +188,10 @@ plot_single_feature = function(feature,
   #makes the bounds slightly larger in most cases. Bigger diff with smaller n
 
   if (!is.na(clin_chem_id)) {
-    clin_chem_sum = MotrpacHumanPreSuspensionAnalysis::BLOOD_CLINICAL_CHEMISTRY_SUM_STATS %>%
+    clin_chem_sum = dplyr::bind_rows(
+        MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS,
+        MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS
+      ) %>%
       dplyr::filter(feature_id == clin_chem_id) %>%
       dplyr::mutate(SE = SD/sqrt(Count),
                     CI_95 = qt((1 + 0.95)/2, Count - 1))
@@ -197,7 +208,9 @@ plot_single_feature = function(feature,
     dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::left_join(assay_names_table,by = c("assay" = "assay_code")) %>%
     dplyr::mutate(
-      assay_short_text = dplyr::if_else(assay == "clinical-chemistry", "Clin. Chem.", assay_short_text),
+      assay_short_text = dplyr::if_else(
+        assay %in% c("clinical-chemistry", "metab-t-clinical", "prot-clinical"),
+        "Clin. Chem.", assay_short_text),
       tissue = stringr::str_to_sentence(tissue),
       Timepoint = dplyr::recode(Timepoint,
                                 "pre_exercise" = "Pre",
@@ -369,7 +382,7 @@ plot_single_feature = function(feature,
 #' Check if a feature is a clinical chemistry analyte
 #'
 #' Case-insensitive lookup of the requested feature against the
-#' \code{feature_id} column of \code{BLOOD_CLINICAL_CHEMISTRY_SUM_STATS}.
+#' \code{feature_id} columns of \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} and \code{BLOOD_PROT_CLINICAL_SUM_STATS}.
 #'
 #' @param feature character; the feature name to look up
 #' @returns The matched \code{feature_id} string (case-correct) if found,
@@ -378,7 +391,8 @@ plot_single_feature = function(feature,
 #' @noRd
 
 .is_clinical_chemistry_feature = function(feature) {
-  ids = MotrpacHumanPreSuspensionAnalysis::BLOOD_CLINICAL_CHEMISTRY_SUM_STATS$feature_id
+  ids = c(MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS$feature_id,
+          MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS$feature_id)
   matched = ids[tolower(ids) == tolower(feature)]
   if (length(matched) > 0) matched[1] else NA_character_
 }

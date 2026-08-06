@@ -1,6 +1,6 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 0.3.0
+Version: 2.0.0
 Date: 2026-08-06
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
