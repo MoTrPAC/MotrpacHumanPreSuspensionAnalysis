@@ -8,9 +8,13 @@
 # DA files all share the same core schema regardless of ome.
 # qc-norm and metadata schemas are ome-specific.
 
+# CI.L/CI.R were dropped for v2.0. variancePartition's topTable computes a dream fit's
+# interval as se * qt(alpha, df = eb$df.total[top]); df.total is a features x contrasts
+# matrix and `top` is a linear index, so every contrast's interval used the first
+# contrast's df. Present upstream through 1.41.5, so the columns are not shipped.
 DA_COLS_CORE = c(
   "feature_id", "contrast", "full_model",
-  "logFC", "CI.L", "CI.R",
+  "logFC",
   "t", "p_value", "adj_p_value"
 )
 
@@ -22,6 +26,11 @@ DA_COLS_METHYL = c(
   "feature_id", "contrast", "full_model",
   "methylation_diff", "p_value", "adj_p_value"
 )
+
+# Dropped for v2.0 and forbidden from here on, so a table built by an older pipeline —
+# or by a topTable call that reverts to confint = TRUE — fails validation instead of
+# shipping intervals computed from the wrong contrast's degrees of freedom.
+DA_COLS_DROPPED = c("CI.L", "CI.R")
 
 QC_NORM_COLS_EXPR = c("feature_id") # + sample ID columns (checked by nrow/ncol)
 
@@ -51,13 +60,13 @@ METADATA_FEATURE_COLS_EPIGEN = c(
 EXPECTED_COLUMNS = list(
 
   # DA schemas
-  "da__transcript-rna-seq"  = list(required = DA_COLS_CORE,  forbidden = character(0)),
-  "da__prot-pr"             = list(required = DA_COLS_PROT,  forbidden = character(0)),
-  "da__prot-ph"             = list(required = DA_COLS_PROT,  forbidden = character(0)),
-  "da__prot-ol"             = list(required = DA_COLS_CORE,  forbidden = character(0)),
-  "da__metab"               = list(required = DA_COLS_METAB, forbidden = character(0)),
-  "da__epigen-methylcap-seq"= list(required = DA_COLS_METHYL,forbidden = character(0)),
-  "da__clinical-chemistry"  = list(required = DA_COLS_CORE,  forbidden = character(0)),
+  "da__transcript-rna-seq"  = list(required = DA_COLS_CORE,  forbidden = DA_COLS_DROPPED),
+  "da__prot-pr"             = list(required = DA_COLS_PROT,  forbidden = DA_COLS_DROPPED),
+  "da__prot-ph"             = list(required = DA_COLS_PROT,  forbidden = DA_COLS_DROPPED),
+  "da__prot-ol"             = list(required = DA_COLS_CORE,  forbidden = DA_COLS_DROPPED),
+  "da__metab"               = list(required = DA_COLS_METAB, forbidden = DA_COLS_DROPPED),
+  "da__epigen-methylcap-seq"= list(required = DA_COLS_METHYL,forbidden = DA_COLS_DROPPED),
+  "da__clinical-chemistry"  = list(required = DA_COLS_CORE,  forbidden = DA_COLS_DROPPED),
 
   # qc-norm schemas (expression matrix: just need feature_id + at least 1 sample col)
   "qc-norm__transcript-rna-seq"   = list(required = QC_NORM_COLS_EXPR, forbidden = character(0)),

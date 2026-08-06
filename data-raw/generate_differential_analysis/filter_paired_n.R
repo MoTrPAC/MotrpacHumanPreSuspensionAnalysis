@@ -95,7 +95,7 @@ filter_paired_n = function(qc_data,
   # - non-pre-exercise values only if there's a valid pre-exercise for that participant/feature/group
   # since the df is long alrdy, we just remove rows that dont qualify (and then they dont get counted)
   curr_data_long_filtered = curr_data_long %>%
-    dplyr::filter((Timepoint != "pre-exercise" & !is.na(Value) &
+    dplyr::filter((Timepoint != "pre_exercise" & !is.na(Value) &
               paste(feature_id, Participant) %in% paste(has_pre_exercise$feature_id, has_pre_exercise$Participant)))
 
   #so this part removes rows for other timepoints if there's no pre-ex for this participant.
