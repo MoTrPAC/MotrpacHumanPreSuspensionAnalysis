@@ -82,7 +82,7 @@ test_that("COVARIATES_FILE exists and is a data.frame", {
 
 test_that("OUTLIERS has expected structure", {
   expect_s3_class(OUTLIERS, "data.frame")
-  expect_equal(nrow(OUTLIERS), 154L)
+  expect_equal(nrow(OUTLIERS), 160L)
   expect_equal(ncol(OUTLIERS), 4L)
 })
 

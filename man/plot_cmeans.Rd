@@ -35,7 +35,8 @@ the same y-axis limits.}
 The number of rows is determined automatically.}
 
 \item{dpi}{Plot resolution. Also accepts a string input: "retina" (320),
-"print" (300), or "screen" (72). Applies only to raster output types.}
+"print" (300), or "screen" (72). Only applies when converting pixel units,
+as is typical for raster output types.}
 
 \item{modality}{character; which exercise modalities should be used for
 plotting? One of \code{"both"}, \code{"Endur"}, or \code{"Resist"}.}

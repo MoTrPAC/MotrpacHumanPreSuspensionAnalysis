@@ -52,9 +52,11 @@ covariates.}
 phosphosites, transcripts, metabolites/lipids, peaks, or GpGs).}
 \item{logFC}{numeric; difference between the group means in the
 contrast.}
-\item{CI.L}{numeric; lower confidence limit.}
-\item{CI.R}{numeric; upper confidence limit.}
-\item{degrees_of_freedom}{numeric; degrees of freedom.}
+\item{degrees_of_freedom}{numeric; the per-feature residual degrees of
+freedom used to shrink that feature's variance. Note this is NOT the
+degrees of freedom the p-value was computed from, which is the
+per-contrast Satterthwaite value plus the prior; p-values cannot be
+recomputed from this column.}
 \item{logLik}{numeric; log likelihood of differential expression.}
 \item{AveExpr}{numeric; mean of all sample-level values for that
 feature.}

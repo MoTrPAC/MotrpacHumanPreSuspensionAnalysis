@@ -532,8 +532,15 @@ RSGWM2<-function(target.gene.name,
                                              remove_unnamed_metab = TRUE)
     #-------------------------------------------------------------------------------
     # here we handle parameters and use imputed matrixes for prot-(pr/ph)
-    if(any(desired_ome == "prot-ph" | desired_ome == "prot-pr")) #have to add 'any' to handle multiple metab platforms
+    if(any(desired_ome == "prot-ph" | desired_ome == "prot-pr")) { #have to add 'any' to handle multiple metab platforms
+      # This release no longer ships qc_imputed for prot-ph/prot-pr. Assigning an
+      # absent element would delete qc_norm rather than replace it, so stop here.
+      if (!"qc_imputed" %in% names(desired_qc_norm_single[[desired_tissue]][[desired_ome]]))
+        stop("run_SCION() needs the multiply-imputed matrix for ", desired_ome,
+             ", but this release no longer ships an imputed matrix for prot-ph/prot-pr. ",
+             "Rebuild it with run_mice(), or run SCION on an ome that does not require imputation.")
       desired_qc_norm_single[[desired_tissue]][[desired_ome]][["qc_norm"]] = desired_qc_norm_single[[desired_tissue]][[desired_ome]][["qc_imputed"]]
+    }
     #basically just copy over imputed into the name "qc_norm" because then I can just use the combine_qc_matrixes function as usual
     if(any(desired_ome == "prot-ph") & subset_TFs) desired_qc_norm_single = private_subset_qc(desired_qc_norm_single,
                                                                                       desired_features = MotrpacHumanPreSuspensionAnalysis::UTORONTO_TFs$feature_id)

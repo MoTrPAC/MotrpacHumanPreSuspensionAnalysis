@@ -14,6 +14,8 @@
 \alias{MUSCLE_PROT_PH_DA}
 \alias{MUSCLE_PROT_PR_DA}
 \alias{MUSCLE_TRNSCRPT_DA}
+\alias{BLOOD_METAB_T_CLINICAL_DA}
+\alias{BLOOD_PROT_CLINICAL_DA}
 \title{Differential Analysis Results}
 \format{
 These objects are not to be used directly. See
@@ -27,6 +29,8 @@ ADIPOSE_TRNSCRPT_DA
 
 BLOOD_METAB_DA
 BLOOD_PROT_OL_DA
+BLOOD_METAB_T_CLINICAL_DA
+BLOOD_PROT_CLINICAL_DA
 BLOOD_TRNSCRPT_DA
 
 MUSCLE_METAB_DA
