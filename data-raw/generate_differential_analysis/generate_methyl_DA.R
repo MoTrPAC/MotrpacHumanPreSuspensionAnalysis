@@ -1,6 +1,14 @@
-#' Briefly, methylcap is processed separately using a different pipeline and so there is no function in this package to generate the "QC-Norm" dataset.
-#' Differential analysis is performed with a GLMM to account for both the measured methylated and unmethylated counts.
+# Retired: precovid-repro builds this now.
+#
+#   precovid-repro/scripts/10_build_data/09_build_da/generate_methylcap_da.R
+#
+# The objects this script used to write into data/ are produced by the
+# pipeline and carried in by its Stage 3 (30_update_relevant_packages), so
+# running anything here would write a second, unversioned copy from inputs
+# the release no longer reads. The code is removed rather than left runnable
+# beside the thing that replaced it: two live generators for one object is
+# how a package ends up shipping data nobody can trace.
+#
+# inst/PROVENANCE.tsv records, per object, which pipeline step built it and
+# whether it was regenerated or staged verbatim.
 
-.generate_methyl_inputs = function(){
-  message("Generating a methylcap DA requires a seperate pipeline, see QC Notebook on the precovid-analyses repo for more info")
-}
