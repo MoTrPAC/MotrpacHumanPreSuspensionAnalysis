@@ -36,6 +36,13 @@
 #'
 #' @param verbose logical; toggle verbosity.
 #'
+#' @param load_clinical logical; whether to include the clinical chemistry omes
+#'   (\code{clinical_ome_list()}: \code{"prot-clinical"} and
+#'   \code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+#'   returns the research omes and nothing changes for callers written before
+#'   v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+#'   are dropped even when named unless it is set.
+#'
 #' @returns
 #' If \code{single_matrix = FALSE}, a nested list of \code{data.frame} objects.
 #' The top-level names correspond to tissues, and the second-level names
@@ -67,7 +74,8 @@
 load_summary_stats = function(selected_tissues = "all",
                               selected_omes = "all",
                               single_matrix = FALSE,
-                              verbose = TRUE){
+                              verbose = TRUE,
+                              load_clinical = FALSE){
 
   selected_tissues <- match.arg(
     arg = selected_tissues,
@@ -75,9 +83,15 @@ load_summary_stats = function(selected_tissues = "all",
     several.ok = TRUE
   )
 
-  if(any(grepl("metab", selected_omes))){
-    selected_omes = selected_omes[-grep("metab", selected_omes)]
-    selected_omes = c(selected_omes, metab_only_list())
+  # Asking for one metabolomics platform loads them all. metab-t-clinical is
+  # exempt: expanding it would return fourteen research platforms nobody asked
+  # for and drop the one that was requested. It reaches selected_omes only when
+  # named, or through "all", and the load_clinical gate below decides whether it
+  # survives either way.
+  metab_platforms <- grepl("metab", selected_omes) &
+    !selected_omes %in% clinical_ome_list()
+  if (any(metab_platforms)) {
+    selected_omes = c(selected_omes[!metab_platforms], metab_only_list())
     if(verbose) message("By default, if any metab platform is loaded, all of them are loaded")
   }
 
@@ -85,8 +99,8 @@ load_summary_stats = function(selected_tissues = "all",
     arg = selected_omes,
     choices = c(
       "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
-      "prot-clinical",
-      "epigen-atac-seq", "epigen-methylcap-seq", metab_only_list()
+      "epigen-atac-seq", "epigen-methylcap-seq", metab_only_list(),
+      clinical_ome_list()
     ),
     several.ok = TRUE
   )
@@ -97,9 +111,31 @@ load_summary_stats = function(selected_tissues = "all",
 
   if ("all" %in% selected_omes) {
     selected_omes <- c(
-      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "prot-clinical",
-      "epigen-atac-seq","epigen-methylcap-seq", metab_only_list()
+      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
+      "epigen-atac-seq","epigen-methylcap-seq", metab_only_list(),
+      clinical_ome_list()
     )
+  }
+
+  # Clinical chemistry is opt-in, the same way epigenomics is. Applied after
+  # both expansions so it governs "all" and a named request alike.
+  if (!load_clinical) {
+    dropped <- base::intersect(selected_omes, clinical_ome_list())
+    remaining <- base::setdiff(selected_omes, clinical_ome_list())
+    # Asking only for what the gate removes leaves nothing to load, and an empty
+    # selection surfaces further down as an error about a missing column. Say
+    # what actually happened.
+    if (length(dropped) && !length(remaining)) {
+      stop("You've requested only clinical omes (",
+           paste(dropped, collapse = ", "),
+           ") but `load_clinical = FALSE`. Set `load_clinical = TRUE` to load ",
+           "clinical chemistry.")
+    }
+    selected_omes <- remaining
+    if (length(dropped) && verbose) {
+      message("Clinical omes (", paste(dropped, collapse = ", "),
+              ") are skipped; set `load_clinical = TRUE` to include them.")
+    }
   }
 
   if("prot-ph" %in% selected_omes & verbose){

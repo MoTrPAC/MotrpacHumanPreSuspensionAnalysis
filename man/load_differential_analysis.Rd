@@ -10,7 +10,8 @@ load_differential_analysis(
   single_matrix = FALSE,
   epigen = FALSE,
   combine_with_featgene = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  load_clinical = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,13 @@ load_differential_analysis(
 \code{HUMAN_FEATURE_TO_GENE} in the output.}
 
 \item{verbose}{logical; whether or not to display messages for some warnings.}
+
+\item{load_clinical}{logical; whether to include the clinical chemistry omes
+(\code{clinical_ome_list()}: \code{"prot-clinical"} and
+\code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+are dropped even when named unless it is set.}
 }
 \value{
 A nested list of \code{data.table} objects. The top level names are

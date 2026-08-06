@@ -3,6 +3,7 @@
 export("%>%")
 export(.find_shared_scion_matrixes)
 export(.load_scion_matrixes)
+export(clinical_ome_list)
 export(load_differential_analysis)
 export(load_summary_stats)
 export(metab_only_list)

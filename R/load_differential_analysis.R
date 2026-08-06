@@ -11,6 +11,13 @@
 #'   \code{HUMAN_FEATURE_TO_GENE} in the output.
 #' @param verbose logical; whether or not to display messages for some warnings.
 #'
+#' @param load_clinical logical; whether to include the clinical chemistry omes
+#'   (\code{clinical_ome_list()}: \code{"prot-clinical"} and
+#'   \code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+#'   returns the research omes and nothing changes for callers written before
+#'   v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+#'   are dropped even when named unless it is set.
+#'
 #' @returns A nested list of \code{data.table} objects. The top level names are
 #'   the tissues, while the second level names are the omes. Each table may
 #'   possess the following columns:
@@ -82,7 +89,8 @@ load_differential_analysis <- function(selected_omes = "all",
                                        single_matrix = FALSE,
                                        epigen = FALSE,
                                        combine_with_featgene = FALSE,
-                                       verbose = TRUE) {
+                                       verbose = TRUE,
+                                       load_clinical = FALSE) {
   selected_tissues <- match.arg(
     arg = selected_tissues,
     choices = c("all", "adipose", "blood", "muscle"),
@@ -97,9 +105,8 @@ load_differential_analysis <- function(selected_omes = "all",
   # kept out of it and published separately as BLOOD_METAB_T_CLINICAL_DA. Folding
   # it into "metab" would quietly return the combined table instead of the one
   # that was asked for.
-  metab_separate <- "metab-t-clinical"
   metab_platforms <- grepl("metab", selected_omes) &
-    !selected_omes %in% metab_separate
+    !selected_omes %in% clinical_ome_list()
   if (any(metab_platforms)) {
     selected_omes = c(selected_omes[!metab_platforms], "metab")
   }
@@ -108,8 +115,8 @@ load_differential_analysis <- function(selected_omes = "all",
     arg = selected_omes,
     choices = c(
       "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
-      "prot-clinical", "metab", "metab-t-clinical",
-      "epigen-atac-seq", "epigen-methylcap-seq"
+      "metab", "epigen-atac-seq", "epigen-methylcap-seq",
+      clinical_ome_list()
     ),
     several.ok = TRUE
   )
@@ -140,10 +147,31 @@ load_differential_analysis <- function(selected_omes = "all",
 
   if ("all" %in% selected_omes) {
     selected_omes <- c(
-      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "prot-clinical",
-      "metab", "metab-t-clinical",
-      "epigen-atac-seq", "epigen-methylcap-seq"
+      "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
+      "epigen-atac-seq", "epigen-methylcap-seq",
+      clinical_ome_list()
     )
+  }
+
+  # Clinical chemistry is opt-in, the same way epigenomics is. Applied after
+  # both expansions so it governs "all" and a named request alike.
+  if (!load_clinical) {
+    dropped <- base::intersect(selected_omes, clinical_ome_list())
+    remaining <- base::setdiff(selected_omes, clinical_ome_list())
+    # Asking only for what the gate removes leaves nothing to load, and an empty
+    # selection surfaces further down as a data.table error about a missing
+    # column. Say what actually happened.
+    if (length(dropped) && !length(remaining)) {
+      stop("You've requested only clinical omes (",
+           paste(dropped, collapse = ", "),
+           ") but `load_clinical = FALSE`. Set `load_clinical = TRUE` to load ",
+           "clinical chemistry.")
+    }
+    selected_omes <- remaining
+    if (length(dropped) && verbose) {
+      message("Clinical omes (", paste(dropped, collapse = ", "),
+              ") are skipped; set `load_clinical = TRUE` to include them.")
+    }
   }
 
   if (epigen) {
@@ -195,7 +223,25 @@ load_differential_analysis <- function(selected_omes = "all",
   names(out) <- as.character(new_names)
 
   for (i in seq_along(new_names)) {
-    out[[i]] <- eval(parse(text = names(new_names[i])))
+    obj <- eval(parse(text = names(new_names[i])))
+
+    # BLOOD_METAB_T_CLINICAL_DA labels its rows assay = "metab", the same string
+    # the combined BLOOD_METAB_DA uses, with the real platform carried in a
+    # separate `platform` column. Two different tables then claim the same
+    # (tissue, assay, feature_id), and five analytes — Cortisol, Glycerol, KET,
+    # NEFA and Glucose — appear in both, so any caller keying on those columns
+    # gets duplicate rows rather than an error. pivot_wider() answers that by
+    # returning list-columns, and the failure surfaces much later as an
+    # arithmetic error on a list.
+    #
+    # The summary-statistic side already labels the same assay "metab-t-clinical".
+    # Relabel on read so the two tiers agree and the object identifies itself.
+    ome_i <- sub("^[^.]+[.]", "", names(out)[i])
+    if (identical(ome_i, "metab-t-clinical") && "assay" %in% names(obj)) {
+      obj$assay <- "metab-t-clinical"
+    }
+
+    out[[i]] <- obj
   }
 
   if (epigen) {

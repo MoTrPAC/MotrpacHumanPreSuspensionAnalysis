@@ -57,10 +57,87 @@ test_that("every ome this package ships is reachable through ome_available_list"
 test_that("metab_only_list returns correct character vector", {
   res <- metab_only_list()
   expect_type(res, "character")
-  expect_length(res, 15L)
+  expect_length(res, 14L)
   expect_true(all(grepl("^metab-", res)))
   expect_false("transcript-rna-seq" %in% res)
   expect_false(any(duplicated(res)))
+})
+
+test_that("clinical_ome_list names the two v2.0 clinical omes", {
+  res <- clinical_ome_list()
+  expect_setequal(res, c("prot-clinical", "metab-t-clinical"))
+  expect_true(all(res %in% ome_available_list()))
+  # They are gated, not folded into the research platforms.
+  expect_false("metab-t-clinical" %in% metab_only_list())
+})
+
+test_that("every loader takes load_clinical and defaults it to FALSE", {
+  for (f in list(load_differential_analysis, load_summary_stats)) {
+    expect_true("load_clinical" %in% names(formals(f)))
+    expect_false(eval(formals(f)$load_clinical))
+  }
+})
+
+test_that("load_clinical = FALSE keeps clinical chemistry out of 'all'", {
+  # The regression this pins: adding the clinical omes to "all" silently changed
+  # what every pre-v2.0 caller got. Four acute-repro panels failed on it — the
+  # clinical DA rows overlap the combined metabolomics table on five analytes,
+  # so a pivot keyed on (tissue, assay, feature_id) got duplicates.
+  da <- suppressMessages(load_differential_analysis(
+    selected_omes = "all", selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE))
+  expect_length(base::intersect(unique(da$assay), clinical_ome_list()), 0L)
+
+  ss <- suppressMessages(load_summary_stats(
+    selected_tissues = "blood", selected_omes = "all",
+    single_matrix = TRUE, verbose = FALSE))
+  expect_length(base::intersect(unique(ss$assay), clinical_ome_list()), 0L)
+})
+
+test_that("asking only for clinical with load_clinical = FALSE errors clearly", {
+  # Without this the gate empties selected_omes and the failure surfaces much
+  # later as a data.table error about a missing "contrast" column.
+  expect_error(
+    suppressMessages(load_differential_analysis(
+      selected_omes = "prot-clinical", selected_tissues = "blood",
+      single_matrix = TRUE, verbose = FALSE)),
+    "load_clinical"
+  )
+  expect_error(
+    suppressMessages(load_summary_stats(
+      selected_tissues = "blood", selected_omes = "prot-clinical",
+      single_matrix = TRUE, verbose = FALSE)),
+    "load_clinical"
+  )
+})
+
+test_that("load_clinical = FALSE drops clinical but keeps the rest", {
+  da <- suppressMessages(load_differential_analysis(
+    selected_omes = c("prot-ol", "prot-clinical"), selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE))
+  expect_equal(unique(da$assay), "prot-ol")
+})
+
+test_that("load_clinical = TRUE returns the clinical omes", {
+  da <- suppressMessages(load_differential_analysis(
+    selected_omes = "prot-clinical", selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
+  expect_equal(unique(da$assay), "prot-clinical")
+
+  ss <- suppressMessages(load_summary_stats(
+    selected_tissues = "blood", selected_omes = "prot-clinical",
+    single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
+  expect_equal(unique(ss$assay), "prot-clinical")
+})
+
+test_that("clinical metabolomics DA identifies itself rather than borrowing 'metab'", {
+  # BLOOD_METAB_T_CLINICAL_DA stores assay = "metab", the same string the
+  # combined table uses, which makes the two indistinguishable by
+  # (tissue, assay, feature_id). The loader relabels on read.
+  da <- suppressMessages(load_differential_analysis(
+    selected_omes = "metab-t-clinical", selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
+  expect_equal(unique(da$assay), "metab-t-clinical")
 })
 
 test_that("metab_only_list is a subset of ome_available_list", {

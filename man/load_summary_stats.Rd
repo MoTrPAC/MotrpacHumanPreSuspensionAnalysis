@@ -8,7 +8,8 @@ load_summary_stats(
   selected_tissues = "all",
   selected_omes = "all",
   single_matrix = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  load_clinical = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,13 @@ Selecting \code{"metab"} loads all metabolomics platforms.}
 (default), returns a nested list.}
 
 \item{verbose}{logical; toggle verbosity.}
+
+\item{load_clinical}{logical; whether to include the clinical chemistry omes
+(\code{clinical_ome_list()}: \code{"prot-clinical"} and
+\code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+are dropped even when named unless it is set.}
 }
 \value{
 If \code{single_matrix = FALSE}, a nested list of \code{data.frame} objects.
