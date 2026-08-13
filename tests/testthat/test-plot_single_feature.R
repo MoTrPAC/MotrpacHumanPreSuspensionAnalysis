@@ -29,6 +29,86 @@ test_that("plot_single_feature returns ggplot for a clinical analyte", {
   expect_s3_class(res, "ggplot")
 })
 
+test_that("clinical chemistry is plotted only when a clinical ome is requested", {
+  by_name <- plot_single_feature(
+    feature = "Glucose",
+    selected_omes = "metab-t-clinical",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_equal(unique(as.character(by_name$data$assay)), "metab-t-clinical")
+
+  via_all <- plot_single_feature(
+    feature = "Glucose",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_true("metab-t-clinical" %in% via_all$data$assay)
+
+  # requesting another ome must not return clinical chemistry alongside it, and the
+  # error has to name the ome that would have worked
+  expect_error(plot_single_feature(feature = "Glucose",
+                                   selected_omes = "transcript-rna-seq",
+                                   selected_tissues = "blood",
+                                   verbose = FALSE),
+               "measured by clinical chemistry \\(metab-t-clinical\\)")
+
+  # "metab" is the research platforms, and does not imply the clinical one
+  expect_error(plot_single_feature(feature = "Glucose",
+                                   selected_omes = "metab",
+                                   selected_tissues = "blood",
+                                   verbose = FALSE),
+               "measured by clinical chemistry \\(metab-t-clinical\\)")
+
+  # the clinical omes are separate from each other too
+  expect_error(plot_single_feature(feature = "Glucose",
+                                   selected_omes = "prot-clinical",
+                                   selected_tissues = "blood",
+                                   verbose = FALSE),
+               "measured by clinical chemistry \\(metab-t-clinical\\)")
+
+  # a feature that genuinely is not in the data keeps the original error
+  expect_error(plot_single_feature(feature = "VEGFA",
+                                   selected_omes = "metab-t-clinical",
+                                   selected_tissues = "blood",
+                                   verbose = FALSE),
+               "No differential analysis corresponds")
+})
+
+test_that("clinical prot analytes follow the same gate", {
+  res <- plot_single_feature(
+    feature = "Insulin",
+    selected_omes = "prot-clinical",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_equal(unique(as.character(res$data$assay)), "prot-clinical")
+
+  expect_error(plot_single_feature(feature = "Insulin",
+                                   selected_omes = "prot-ol",
+                                   selected_tissues = "blood",
+                                   verbose = FALSE),
+               "measured by clinical chemistry \\(prot-clinical\\)")
+})
+
+test_that("an analyte measured clinically and on a research platform splits by ome", {
+  both <- plot_single_feature(
+    feature = "Cortisol",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_true(all(c("metab-t-clinical", "metab-u-hilicpos") %in% both$data$assay))
+
+  research_only <- plot_single_feature(
+    feature = "Cortisol",
+    selected_omes = "metab",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_false("metab-t-clinical" %in% research_only$data$assay)
+  expect_true("metab-u-hilicpos" %in% research_only$data$assay)
+})
+
 test_that("plot_single_feature rejects invalid tissue", {
   expect_error(
     plot_single_feature(
