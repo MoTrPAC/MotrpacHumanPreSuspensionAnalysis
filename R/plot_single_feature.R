@@ -240,9 +240,17 @@ plot_single_feature = function(feature,
 
   sc = scale_factor * 0.7
   # bounds = ""
+  # `show.legend = TRUE` on every layer that contributes a key, together with the
+  # fixed key sets on the two discrete scales below, makes the legend depend only on
+  # the scale and not on which levels a given tissue happens to contain. Without it a
+  # tissue with no significant timepoints draws a legend that differs from one that
+  # has them, and `patchwork::plot_layout(guides = "collect")` only merges guides that
+  # are identical, so it stacks the two variants instead of collecting them into one.
   g2 = ggplot(local_feature_data, aes(x = Timepoint, color = randomGroupCode))+
-    geom_line(aes(y = Mean, group = randomGroupCode), linewidth = 0.5 * sc) +
-    geom_point(aes(y = Mean, group = randomGroupCode),size = 1.8 * sc) +
+    geom_line(aes(y = Mean, group = randomGroupCode), linewidth = 0.5 * sc,
+              show.legend = TRUE) +
+    geom_point(aes(y = Mean, group = randomGroupCode),size = 1.8 * sc,
+               show.legend = TRUE) +
     geom_errorbar(
       aes(
         #this code is now matching the previous `mean_cl_normal` implementation,
@@ -254,7 +262,8 @@ plot_single_feature = function(feature,
       ),
       width = 0.2 * sc,
       linewidth = 0.4 * sc,
-      alpha = 0.6
+      alpha = 0.6,
+      show.legend = TRUE
     ) +
     geom_point(
       aes(
@@ -265,15 +274,18 @@ plot_single_feature = function(feature,
       size = 1.7 * sc,
       shape = 21,
       stroke = 0.1 * sc,
-      color = "black"
+      color = "black",
+      show.legend = TRUE
     ) +
     scale_color_manual(
       values = MotrpacHumanPreSuspensionAnalysis::HUMAN_EXERCISE_GROUP_COLORS,
-      labels = label_map
+      labels = label_map,
+      limits = sort(names(MotrpacHumanPreSuspensionAnalysis::HUMAN_EXERCISE_GROUP_COLORS))
     ) +
     scale_fill_manual(
       values = c(`Below p threshold` = "black", above = "white"),
-      labels = label_map
+      labels = label_map,
+      drop = FALSE
     ) +
     facet_wrap(~ tissue_assay + feature_id, scales = "free_y") +
     ggtitle(feature_label) +
