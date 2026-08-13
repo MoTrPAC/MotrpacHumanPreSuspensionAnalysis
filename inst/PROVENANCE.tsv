@@ -1,18 +1,7 @@
 object	provenance	pipeline_step	verdict	note
 ADIPOSE_EPIGEN_METHYLCAP_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats; epigen DA read from the step-09 freeze, restricted to adj_p_value < 0.05
 ADIPOSE_METAB_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble; 12 metab platforms stacked, platform in its own column
-ADIPOSE_METAB_T_ACOA_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_T_AMINES_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_T_KA_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_T_NUC_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_T_OXYLIPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_T_TCA_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_HILICPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_IONPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_LRPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_LRPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_RPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-ADIPOSE_METAB_U_RPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
+ADIPOSE_METAB_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats; 12 metab platforms stacked, platform in its own column, matching ADIPOSE_METAB_DA; this release reshaped the shipped per-platform objects rather than refitting
 ADIPOSE_PROT_PH_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
 ADIPOSE_PROT_PH_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 ADIPOSE_PROT_PR_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
@@ -22,18 +11,9 @@ ADIPOSE_TRNSCRPT_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da
 assay_codes	carried-forward		CARRIED-FORWARD	no manifest node; re-export of MotrpacBicQC::assay_codes
 BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats; epigen DA read from the step-09 freeze, restricted to adj_p_value < 0.05
 BLOOD_METAB_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble; 10 metab platforms stacked (metab-t-clinical + metab-t-imm-crt excluded)
-BLOOD_METAB_T_AMINES_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
+BLOOD_METAB_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats; 10 metab platforms stacked, platform in its own column, matching BLOOD_METAB_DA; this release reshaped the shipped per-platform objects rather than refitting
 BLOOD_METAB_T_CLINICAL_DA	regenerated	10_build_data	ADDED	built by 10_build_da_assemble; kept split from BLOOD_PROT_CLINICAL_DA (package fuses both into CLIN_CHEMISTRY_DA)
-BLOOD_METAB_T_CLINICAL_SUM_STATS	regenerated	10_build_data	ADDED	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_T_CONV_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_T_OXYLIPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_T_TCA_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_HILICPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_IONPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_LRPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_LRPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_RPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-BLOOD_METAB_U_RPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
+BLOOD_METAB_T_CLINICAL_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features; relabelled assay = metab with platform in its own column, matching BLOOD_METAB_T_CLINICAL_DA
 BLOOD_PROT_CLINICAL_DA	regenerated	10_build_data	ADDED	built by 10_build_da_assemble; kept split from BLOOD_METAB_T_CLINICAL_DA (package fuses both into CLIN_CHEMISTRY_DA)
 BLOOD_PROT_CLINICAL_SUM_STATS	regenerated	10_build_data	ADDED	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 BLOOD_PROT_OL_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
@@ -58,16 +38,7 @@ MOLECULAR_SIGNATURES	regenerated	10_build_data	VALUES-DIFFER	adapted stem reads 
 MUSCLE_EPIGEN_ATAC_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats; epigen DA read from the step-09 freeze, restricted to adj_p_value < 0.05
 MUSCLE_EPIGEN_METHYLCAP_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats; epigen DA read from the step-09 freeze, restricted to adj_p_value < 0.05
 MUSCLE_METAB_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble; 10 metab platforms stacked, platform in its own column
-MUSCLE_METAB_T_AMINES_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_T_NUC_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_T_OXYLIPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_T_TCA_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_HILICPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_IONPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_LRPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_LRPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_RPNEG_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
-MUSCLE_METAB_U_RPPOS_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
+MUSCLE_METAB_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats; 10 metab platforms stacked, platform in its own column, matching MUSCLE_METAB_DA; this release reshaped the shipped per-platform objects rather than refitting
 MUSCLE_PROT_PH_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze
 MUSCLE_PROT_PH_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 MUSCLE_PROT_PR_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze

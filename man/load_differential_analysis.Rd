@@ -45,8 +45,13 @@ possess the following columns:
 
 \describe{
 \item{tissue}{factor; the tissue.}
-\item{assay}{factor; the ome.}
-\item{platform}{factor; (metabolomics only) metabolomics platform.}
+\item{assay}{factor; the assay family, not the platform. Every
+metabolomics table reads \code{"metab"} — clinical chemistry included —
+so \code{assay} alone does not separate \code{metab-t-clinical} from the
+research platforms, and five analytes (Cortisol, Glucose, Glycerol, KET,
+NEFA) exist on both. Include \code{platform} in any key that has to tell
+them apart.}
+\item{platform}{factor; (metabolomics only) the metabolomics platform.}
 \item{full_model}{factor; full model containing predictors and any
 covariates.}
 \item{contrast}{factor; full contrast (up to 33).}

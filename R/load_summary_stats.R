@@ -28,7 +28,12 @@
 #'   \code{"transcript-rna-seq"}, \code{"prot-pr"}, \code{"prot-ph"},
 #'   \code{"prot-ol"}, \code{"epigen-atac-seq"},
 #'   \code{"epigen-methylcap-seq"}, \code{"metab"}, or \code{"all"}.
-#'   Selecting \code{"metab"} loads all metabolomics platforms.
+#'   Naming any single metabolomics platform is the same as naming
+#'   \code{"metab"}: the research platforms live in one stacked object per
+#'   tissue, so all of them are loaded and the platform is read off the
+#'   \code{platform} column. \code{"metab-t-clinical"} is the exception — it is
+#'   clinical chemistry, is not in the stack, and is gated by
+#'   \code{load_clinical}.
 #'
 #' @param single_matrix logical; if \code{TRUE}, returns a single combined
 #'   \code{data.frame} across all selected tissues and assays. If \code{FALSE}
@@ -45,11 +50,21 @@
 #'
 #' @returns
 #' If \code{single_matrix = FALSE}, a nested list of \code{data.frame} objects.
-#' The top-level names correspond to tissues, and the second-level names
-#' correspond to assays or platforms.
+#' The top-level names correspond to tissues and the second-level names to
+#' assays — the same nesting \code{\link{load_differential_analysis}} returns,
+#' so the two tiers can be walked together. The research metabolomics platforms
+#' arrive as a single \code{"metab"} element per tissue rather than one element
+#' per platform.
 #'
 #' If \code{single_matrix = TRUE}, a single \code{data.frame} containing all
 #' selected summary statistics, with missing columns filled as \code{NA}.
+#'
+#' Each table carries \code{tissue}, \code{assay}, \code{randomGroupCode},
+#' \code{Timepoint}, \code{feature_id}, \code{Count}, \code{Mean} and \code{SD}.
+#' The metabolomics tables carry \code{assay = "metab"} and one further column,
+#' \code{platform}, naming the platform the row was measured on. That is how the
+#' \code{*_DA} objects are labelled, so a join between the two tiers no longer
+#' has to translate between two names for the same ome.
 #'
 #' @author Christopher Jin
 #'
@@ -60,8 +75,9 @@
 #' ## Load all summary statistics
 #' sum_stats = load_summary_stats()
 #'
-#' ## Load metabolomics only
+#' ## Load metabolomics only. One table per tissue, every platform in it.
 #' metab_stats = load_summary_stats(selected_omes = "metab")
+#' unique(metab_stats[["blood"]][["metab"]][["platform"]])
 #'
 #' ## Load adipose transcriptomics as a single table
 #' adipose_rna = load_summary_stats(
@@ -83,15 +99,19 @@ load_summary_stats = function(selected_tissues = "all",
     several.ok = TRUE
   )
 
-  # Asking for one metabolomics platform loads them all. metab-t-clinical is
-  # exempt: expanding it would return fourteen research platforms nobody asked
-  # for and drop the one that was requested. It reaches selected_omes only when
-  # named, or through "all", and the load_clinical gate below decides whether it
-  # survives either way.
+  # Asking for one metabolomics platform loads them all, because there is one
+  # object holding all of them: the research platforms are stacked into a single
+  # {TISSUE}_METAB_SUM_STATS per tissue, keyed the way *_METAB_DA is keyed.
+  #
+  # metab-t-clinical is exempt. It is clinical chemistry, kept out of the stack
+  # and published separately as BLOOD_METAB_T_CLINICAL_SUM_STATS; folding it into
+  # "metab" would quietly return the stacked table instead of the one that was
+  # asked for. It reaches selected_omes only when named, or through "all", and
+  # the load_clinical gate below decides whether it survives either way.
   metab_platforms <- grepl("metab", selected_omes) &
     !selected_omes %in% clinical_ome_list()
   if (any(metab_platforms)) {
-    selected_omes = c(selected_omes[!metab_platforms], metab_only_list())
+    selected_omes = c(selected_omes[!metab_platforms], "metab")
     if(verbose) message("By default, if any metab platform is loaded, all of them are loaded")
   }
 
@@ -99,7 +119,7 @@ load_summary_stats = function(selected_tissues = "all",
     arg = selected_omes,
     choices = c(
       "all", "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
-      "epigen-atac-seq", "epigen-methylcap-seq", metab_only_list(),
+      "epigen-atac-seq", "epigen-methylcap-seq", "metab",
       clinical_ome_list()
     ),
     several.ok = TRUE
@@ -112,7 +132,7 @@ load_summary_stats = function(selected_tissues = "all",
   if ("all" %in% selected_omes) {
     selected_omes <- c(
       "transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol",
-      "epigen-atac-seq","epigen-methylcap-seq", metab_only_list(),
+      "epigen-atac-seq","epigen-methylcap-seq", "metab",
       clinical_ome_list()
     )
   }
@@ -143,6 +163,14 @@ load_summary_stats = function(selected_tissues = "all",
   }
   if(any(grepl("epigen", selected_omes)) & verbose){
     message("Epigenetics summary stats are trimmed to only show significant features due to file size limitations")
+  }
+  if("metab" %in% selected_omes & verbose){
+    message("Metabolomics platforms are returned stacked in one table per tissue, with the
+            platform in the `platform` column and `assay` reading \"metab\", matching the
+            differential analysis. Please remember that the lowest CV metabolite is chosen and
+            the relevant refmet name is used. If you're not able to find your desired
+            metabolite, look through the METABOLOMICS_CVS object for the relevant
+            refmet/feature name.")
   }
 
 

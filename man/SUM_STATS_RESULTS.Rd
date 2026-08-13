@@ -4,45 +4,16 @@
 \name{SUM_STATS_RESULTS}
 \alias{SUM_STATS_RESULTS}
 \alias{ADIPOSE_EPIGEN_METHYLCAP_SEQ_SUM_STATS}
-\alias{ADIPOSE_METAB_T_ACOA_SUM_STATS}
-\alias{ADIPOSE_METAB_T_AMINES_SUM_STATS}
-\alias{ADIPOSE_METAB_T_KA_SUM_STATS}
-\alias{ADIPOSE_METAB_T_NUC_SUM_STATS}
-\alias{ADIPOSE_METAB_T_OXYLIPNEG_SUM_STATS}
-\alias{ADIPOSE_METAB_T_TCA_SUM_STATS}
-\alias{ADIPOSE_METAB_U_HILICPOS_SUM_STATS}
-\alias{ADIPOSE_METAB_U_IONPNEG_SUM_STATS}
-\alias{ADIPOSE_METAB_U_LRPNEG_SUM_STATS}
-\alias{ADIPOSE_METAB_U_LRPPOS_SUM_STATS}
-\alias{ADIPOSE_METAB_U_RPNEG_SUM_STATS}
-\alias{ADIPOSE_METAB_U_RPPOS_SUM_STATS}
+\alias{ADIPOSE_METAB_SUM_STATS}
 \alias{ADIPOSE_PROT_PH_SUM_STATS}
 \alias{ADIPOSE_PROT_PR_SUM_STATS}
 \alias{ADIPOSE_TRANSCRIPT_RNA_SEQ_SUM_STATS}
 \alias{BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS}
-\alias{BLOOD_METAB_T_AMINES_SUM_STATS}
-\alias{BLOOD_METAB_T_CONV_SUM_STATS}
-\alias{BLOOD_METAB_T_OXYLIPNEG_SUM_STATS}
-\alias{BLOOD_METAB_T_TCA_SUM_STATS}
-\alias{BLOOD_METAB_U_HILICPOS_SUM_STATS}
-\alias{BLOOD_METAB_U_IONPNEG_SUM_STATS}
-\alias{BLOOD_METAB_U_LRPNEG_SUM_STATS}
-\alias{BLOOD_METAB_U_LRPPOS_SUM_STATS}
-\alias{BLOOD_METAB_U_RPNEG_SUM_STATS}
-\alias{BLOOD_METAB_U_RPPOS_SUM_STATS}
+\alias{BLOOD_METAB_SUM_STATS}
 \alias{BLOOD_PROT_OL_SUM_STATS}
 \alias{BLOOD_TRANSCRIPT_RNA_SEQ_SUM_STATS}
 \alias{MUSCLE_EPIGEN_METHYLCAP_SEQ_SUM_STATS}
-\alias{MUSCLE_METAB_T_AMINES_SUM_STATS}
-\alias{MUSCLE_METAB_T_NUC_SUM_STATS}
-\alias{MUSCLE_METAB_T_OXYLIPNEG_SUM_STATS}
-\alias{MUSCLE_METAB_T_TCA_SUM_STATS}
-\alias{MUSCLE_METAB_U_HILICPOS_SUM_STATS}
-\alias{MUSCLE_METAB_U_IONPNEG_SUM_STATS}
-\alias{MUSCLE_METAB_U_LRPNEG_SUM_STATS}
-\alias{MUSCLE_METAB_U_LRPPOS_SUM_STATS}
-\alias{MUSCLE_METAB_U_RPNEG_SUM_STATS}
-\alias{MUSCLE_METAB_U_RPPOS_SUM_STATS}
+\alias{MUSCLE_METAB_SUM_STATS}
 \alias{MUSCLE_PROT_PH_SUM_STATS}
 \alias{MUSCLE_PROT_PR_SUM_STATS}
 \alias{MUSCLE_TRANSCRIPT_RNA_SEQ_SUM_STATS}
@@ -77,23 +48,13 @@ differential analysis for that tissue and ome.}
 
 Before v2.0.1 the platform was written into \code{assay}, there was no
 \code{platform} column, and the identifying columns came first with
-\code{tissue} and \code{assay} last.
+\code{tissue} and \code{assay} last. There was also one object per
+metabolomics platform rather than one per tissue.
 }
 \usage{
 ## Adipose
 ADIPOSE_EPIGEN_METHYLCAP_SEQ_SUM_STATS
-ADIPOSE_METAB_T_ACOA_SUM_STATS
-ADIPOSE_METAB_T_AMINES_SUM_STATS
-ADIPOSE_METAB_T_TCA_SUM_STATS
-ADIPOSE_METAB_T_NUC_SUM_STATS
-ADIPOSE_METAB_T_KA_SUM_STATS
-ADIPOSE_METAB_T_OXYLIPNEG_SUM_STATS
-ADIPOSE_METAB_U_HILICPOS_SUM_STATS
-ADIPOSE_METAB_U_IONPNEG_SUM_STATS
-ADIPOSE_METAB_U_LRPNEG_SUM_STATS
-ADIPOSE_METAB_U_LRPPOS_SUM_STATS
-ADIPOSE_METAB_U_RPNEG_SUM_STATS
-ADIPOSE_METAB_U_RPPOS_SUM_STATS
+ADIPOSE_METAB_SUM_STATS
 
 ADIPOSE_PROT_PH_SUM_STATS
 ADIPOSE_PROT_PR_SUM_STATS
@@ -101,16 +62,7 @@ ADIPOSE_TRANSCRIPT_RNA_SEQ_SUM_STATS
 
 ## Blood
 BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS
-BLOOD_METAB_T_AMINES_SUM_STATS
-BLOOD_METAB_T_TCA_SUM_STATS
-BLOOD_METAB_T_CONV_SUM_STATS
-BLOOD_METAB_T_OXYLIPNEG_SUM_STATS
-BLOOD_METAB_U_HILICPOS_SUM_STATS
-BLOOD_METAB_U_IONPNEG_SUM_STATS
-BLOOD_METAB_U_LRPNEG_SUM_STATS
-BLOOD_METAB_U_LRPPOS_SUM_STATS
-BLOOD_METAB_U_RPNEG_SUM_STATS
-BLOOD_METAB_U_RPPOS_SUM_STATS
+BLOOD_METAB_SUM_STATS
 
 BLOOD_PROT_OL_SUM_STATS
 BLOOD_METAB_T_CLINICAL_SUM_STATS
@@ -119,16 +71,7 @@ BLOOD_TRANSCRIPT_RNA_SEQ_SUM_STATS
 
 ## Muscle
 MUSCLE_EPIGEN_METHYLCAP_SEQ_SUM_STATS
-MUSCLE_METAB_T_AMINES_SUM_STATS
-MUSCLE_METAB_T_TCA_SUM_STATS
-MUSCLE_METAB_T_NUC_SUM_STATS
-MUSCLE_METAB_T_OXYLIPNEG_SUM_STATS
-MUSCLE_METAB_U_HILICPOS_SUM_STATS
-MUSCLE_METAB_U_IONPNEG_SUM_STATS
-MUSCLE_METAB_U_LRPNEG_SUM_STATS
-MUSCLE_METAB_U_LRPPOS_SUM_STATS
-MUSCLE_METAB_U_RPNEG_SUM_STATS
-MUSCLE_METAB_U_RPPOS_SUM_STATS
+MUSCLE_METAB_SUM_STATS
 
 MUSCLE_PROT_PH_SUM_STATS
 MUSCLE_PROT_PR_SUM_STATS
@@ -146,9 +89,22 @@ except methylcap, which is processed separately.
 For any datasets with missing values, the values reflect means/sds/n with missing values excluded.
 }
 \details{
-Datasets are stratified by tissue (e.g., adipose, blood, muscle), assay
-(metabolomics, proteomics, transcriptomics, epigenomics), and where
-applicable, analytical platform (e.g., TCA, AMINES, OXYLIPNEG, RPNEG,
-RPPOS, ATAC-SEQ, RNA-SEQ).
+Datasets are stratified by tissue (e.g., adipose, blood, muscle) and assay
+(metabolomics, proteomics, transcriptomics, epigenomics) — one object per
+tissue and assay, named the way the \code{*_DA} objects are named.
+
+Every metabolomics object reads \code{assay = "metab"} and names its platform
+in a \code{platform} column (e.g. \code{"metab-u-rppos"}, \code{"metab-t-tca"}),
+which is how the \code{*_DA} objects are labelled.
+
+The research platforms are not one object each. They are stacked into a single
+\code{{TISSUE}_METAB_SUM_STATS} per tissue, which is how
+\code{{TISSUE}_METAB_DA} is keyed, so the two tiers nest the same way.
+\code{BLOOD_METAB_T_CLINICAL_SUM_STATS} is clinical chemistry: it carries the
+same labelling but stays its own object, on this tier and the
+differential-analysis tier alike, because it shares five analytes with the
+research platforms (Cortisol, Glucose, Glycerol, KET, NEFA) that would
+otherwise sit in one object twice. \code{platform} is what tells the two
+apart — \code{assay} does not.
 }
 \keyword{datasets}

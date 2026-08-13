@@ -105,6 +105,13 @@ Group-level means and standard deviations for normalized expression data
 are stored as `*_SUM_STATS` objects (e.g., `MUSCLE_PROT_PR_SUM_STATS`).
 Use `load_summary_stats()` to access these.
 
+There is one object per tissue and assay, named the way the `*_DA` objects
+are named. The research metabolomics platforms are stacked into a single
+`{TISSUE}_METAB_SUM_STATS` per tissue carrying `assay = "metab"` and a
+`platform` column, matching `{TISSUE}_METAB_DA`.
+`BLOOD_METAB_T_CLINICAL_SUM_STATS` is clinical chemistry and stays its own
+object.
+
 ## 2.3 Contrast Converter
 
 The `CONTRAST_CONVERTER` table maps all **33 contrasts** used in
@@ -382,8 +389,10 @@ for normalized expression data.
 ## Load all summary statistics
 sum_stats <- load_summary_stats()
 
-## Load metabolomics only
+## Load metabolomics only. One table per tissue, every platform in it,
+## with the platform in the `platform` column.
 metab_stats <- load_summary_stats(selected_omes = "metab")
+unique(metab_stats[["blood"]][["metab"]][["platform"]])
 
 ## Load as a single combined table
 adipose_rna <- load_summary_stats(

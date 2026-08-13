@@ -2,13 +2,26 @@
 
 ## Breaking changes to data objects
 
-- The 46 `*_SUM_STATS` objects are named and ordered the way the `*_DA` objects are.
-  Every metabolomics platform is now stacked under `assay = "metab"` with the platform
+- The `*_SUM_STATS` objects are named, ordered and keyed the way the `*_DA` objects are.
+  Every metabolomics platform is now labelled `assay = "metab"` with the platform
   in its own `platform` column, where before the platform was written into `assay` and
   there was no `platform` column. Code that reads `assay` on a metabolomics summary
   statistic, or that joins one to a differential analysis result, has to read `platform`
   instead. Objects for every other ome are unchanged in this respect and still have no
   `platform` column.
+
+  There are 17 objects where there were 46. The research metabolomics platforms are no
+  longer one object each: they are stacked into a single `{TISSUE}_METAB_SUM_STATS` per
+  tissue — `ADIPOSE_METAB_SUM_STATS` (12 platforms, 8,004 rows), `BLOOD_METAB_SUM_STATS`
+  (10, 21,717), `MUSCLE_METAB_SUM_STATS` (10, 10,692) — which is how `{TISSUE}_METAB_DA`
+  is keyed, so the two tiers nest the same way. Code naming one of the 32 per-platform
+  objects has to read the tissue's stack and filter `platform` instead.
+
+  `BLOOD_METAB_T_CLINICAL_SUM_STATS` is not in the stack and remains its own object. It
+  is clinical chemistry, it is its own object on the differential-analysis tier too, and
+  it shares five analytes with the research platforms (Cortisol, Glucose, Glycerol, KET,
+  NEFA) that would otherwise sit in one object twice. It carries the same
+  `assay = "metab"` / `platform = "metab-t-clinical"` labelling either way.
 
   The column order changed with it, from
   `randomGroupCode, feature_id, Timepoint, Count, Mean, SD, tissue, assay` to
@@ -20,6 +33,22 @@
 
 - `plot_single_feature()` requires these objects and errors on summary statistics that
   predate them, rather than drawing a panel with no points.
+
+- `load_summary_stats()` returns the research metabolomics platforms as a single `"metab"`
+  element per tissue rather than one element per platform — the nesting
+  `load_differential_analysis()` returns, so the two tiers can be walked together. Naming
+  one platform still loads them all, as before.
+
+- `load_differential_analysis()` no longer rewrites `BLOOD_METAB_T_CLINICAL_DA`'s `assay`
+  to `"metab-t-clinical"` on read. Objects are returned as stored. That rewrite existed
+  because the summary statistics of the day named the platform in `assay` and the two
+  tiers therefore disagreed; they now agree, so it is gone.
+
+  The consequence is worth stating plainly: `assay` names the assay family, not the
+  platform. Clinical chemistry and the research platforms both read `"metab"`, so a key
+  that must separate them has to include `platform` — `(tissue, assay, feature_id)` alone
+  selects two rows for each of the five shared analytes. `load_clinical = FALSE` is still
+  the default, so clinical rows only arrive when asked for.
 
 ## Bug fixes
 
