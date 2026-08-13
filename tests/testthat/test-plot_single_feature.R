@@ -53,12 +53,17 @@ test_that("clinical chemistry is plotted only when a clinical ome is requested",
                                    verbose = FALSE),
                "measured by clinical chemistry \\(metab-t-clinical\\)")
 
-  # "metab" is the research platforms, and does not imply the clinical one
-  expect_error(plot_single_feature(feature = "Glucose",
-                                   selected_omes = "metab",
-                                   selected_tissues = "blood",
-                                   verbose = FALSE),
-               "measured by clinical chemistry \\(metab-t-clinical\\)")
+  # "metab" is the research platforms, and does not imply the clinical one. In blood the
+  # analyte is also on the conventional panel, so the request is answerable without it —
+  # what matters is that the clinical assay is not what comes back.
+  research <- plot_single_feature(
+    feature = "Glucose",
+    selected_omes = "metab",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_false("metab-t-clinical" %in% research$data$assay)
+  expect_true("metab-t-conv" %in% research$data$assay)
 
   # the clinical omes are separate from each other too
   expect_error(plot_single_feature(feature = "Glucose",
@@ -73,6 +78,19 @@ test_that("clinical chemistry is plotted only when a clinical ome is requested",
                                    selected_tissues = "blood",
                                    verbose = FALSE),
                "No differential analysis corresponds")
+})
+
+test_that("the conventional metabolomics platform is plotted and labelled", {
+  # metab-t-conv is no longer filtered out. It has no assay_codes row, so without a
+  # fallback its facet strip reads NA.
+  res <- plot_single_feature(
+    feature = "Glucose",
+    selected_tissues = "blood",
+    verbose = FALSE
+  )
+  expect_true("metab-t-conv" %in% res$data$assay)
+  expect_false(any(is.na(res$data$tissue_assay)))
+  expect_true("Blood Conv. Metab (log2)" %in% res$data$tissue_assay)
 })
 
 test_that("clinical prot analytes follow the same gate", {
