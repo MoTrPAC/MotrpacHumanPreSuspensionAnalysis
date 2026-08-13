@@ -15,15 +15,20 @@
 #' (metabolomics, proteomics, transcriptomics, epigenomics) — one object per
 #' tissue and assay, named the way the \code{*_DA} objects are named.
 #'
-#' The research metabolomics platforms are not one object each. They are stacked
-#' into a single \code{{TISSUE}_METAB_SUM_STATS} per tissue carrying
-#' \code{assay = "metab"} and a \code{platform} column (e.g. \code{"metab-u-rppos"},
-#' \code{"metab-t-tca"}), which is how \code{{TISSUE}_METAB_DA} is keyed. Before
-#' v2.0.1 each platform was its own object naming the platform in \code{assay},
-#' so the two tiers disagreed about what an ome was called and every join
-#' between them had to translate. \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} is
-#' clinical chemistry and stays its own object, on this tier and the
-#' differential-analysis tier alike.
+#' Every metabolomics object reads \code{assay = "metab"} and names its platform
+#' in a \code{platform} column (e.g. \code{"metab-u-rppos"}, \code{"metab-t-tca"}),
+#' which is how the \code{*_DA} objects are labelled. Before v2.0.1 this tier
+#' named the platform in \code{assay} instead, so the two tiers disagreed about
+#' what an ome was called and every join between them had to translate.
+#'
+#' The research platforms are stacked into a single
+#' \code{{TISSUE}_METAB_SUM_STATS} per tissue.
+#' \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} is clinical chemistry: it is labelled
+#' the same way but stays its own object, on this tier and the
+#' differential-analysis tier alike, because it shares five analytes with the
+#' research platforms (Cortisol, Glucose, Glycerol, KET, NEFA) that would
+#' otherwise sit in one object twice. \code{platform} is what tells the two
+#' apart — \code{assay} does not.
 #'
 #' @usage
 #' ## Adipose
@@ -56,8 +61,9 @@
 #' Each object is a \code{data.frame} with one row per feature per
 #' randomization group and timepoint, carrying \code{randomGroupCode},
 #' \code{feature_id}, \code{Timepoint}, \code{Count}, \code{Mean}, \code{SD},
-#' \code{tissue} and \code{assay}. The three \code{{TISSUE}_METAB_SUM_STATS}
-#' objects carry one further column, \code{platform}, and order their columns
+#' \code{tissue} and \code{assay}. The metabolomics objects — the three
+#' \code{{TISSUE}_METAB_SUM_STATS} and \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} —
+#' carry one further column, \code{platform}, and order their columns
 #' the way the \code{*_DA} objects order the ones they share:
 #' \code{tissue}, \code{assay}, \code{platform}, \code{randomGroupCode},
 #' \code{Timepoint}, \code{feature_id}, \code{Count}, \code{Mean}, \code{SD}.

@@ -204,10 +204,22 @@ plot_single_feature = function(feature,
   #makes the bounds slightly larger in most cases. Bigger diff with smaller n
 
   if (!is.na(clin_chem_id)) {
+    # These two objects are read directly rather than through load_summary_stats(), so they
+    # arrive unnormalised and need the same metab-platform treatment as the frame above.
+    # BLOOD_METAB_T_CLINICAL_SUM_STATS reads assay = "metab" with the platform in its own
+    # column, the same as its DA object; without the mutate it would join to nothing, since
+    # clin_chem_da_rows has already resolved its assay to "metab-t-clinical". The facet label
+    # depends on it too — "Clin. Chem." is chosen by matching `assay`, and a row still
+    # reading "metab" renders labelled NA. BLOOD_PROT_CLINICAL_SUM_STATS names itself in
+    # `assay` and carries no platform, so it acquires an NA one in the bind and the ifelse
+    # passes it through untouched.
     clin_chem_sum = dplyr::bind_rows(
         MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS,
         MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS
       ) %>%
+      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform),
+                                   as.character(assay))) %>%
+      dplyr::select(-platform) %>%
       dplyr::filter(feature_id == clin_chem_id) %>%
       dplyr::mutate(SE = SD/sqrt(Count),
                     CI_95 = qt((1 + 0.95)/2, Count - 1))

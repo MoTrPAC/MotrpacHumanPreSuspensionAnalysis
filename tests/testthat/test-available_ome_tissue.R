@@ -131,14 +131,36 @@ test_that("load_clinical = TRUE returns the clinical omes", {
   expect_equal(unique(ss$assay), "prot-clinical")
 })
 
-test_that("clinical metabolomics DA identifies itself rather than borrowing 'metab'", {
-  # BLOOD_METAB_T_CLINICAL_DA stores assay = "metab", the same string the
-  # combined table uses, which makes the two indistinguishable by
-  # (tissue, assay, feature_id). The loader relabels on read.
+test_that("clinical metabolomics identifies itself in `platform`, under assay 'metab'", {
+  # Every metabolomics table reads assay = "metab" and names its platform in the
+  # platform column, clinical chemistry included. The loader returns the objects
+  # as stored; it used to rewrite this one's assay to "metab-t-clinical", which
+  # is what the summary statistics said at the time. Both tiers now agree here.
   da <- suppressMessages(load_differential_analysis(
     selected_omes = "metab-t-clinical", selected_tissues = "blood",
     single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
-  expect_equal(unique(da$assay), "metab-t-clinical")
+  expect_equal(unique(as.character(da$assay)), "metab")
+  expect_equal(unique(as.character(da$platform)), "metab-t-clinical")
+
+  ss <- suppressMessages(load_summary_stats(
+    selected_omes = "metab-t-clinical", selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
+  expect_equal(unique(as.character(ss$assay)), "metab")
+  expect_equal(unique(as.character(ss$platform)), "metab-t-clinical")
+})
+
+test_that("`assay` alone cannot separate clinical chemistry from the research platforms", {
+  # The consequence of the shared label, pinned so it is a known property rather
+  # than a surprise: five analytes exist on both, and `platform` is what tells
+  # them apart. A key of (tissue, assay, feature_id) selects two rows for each.
+  da <- suppressMessages(load_differential_analysis(
+    selected_omes = c("metab", "metab-t-clinical"), selected_tissues = "blood",
+    single_matrix = TRUE, verbose = FALSE, load_clinical = TRUE))
+  shared <- intersect(
+    unique(as.character(da$feature_id[da$platform == "metab-t-clinical"])),
+    unique(as.character(da$feature_id[da$platform != "metab-t-clinical"]))
+  )
+  expect_setequal(shared, c("Cortisol", "Glucose", "Glycerol", "KET", "NEFA"))
 })
 
 test_that("metab_only_list is a subset of ome_available_list", {

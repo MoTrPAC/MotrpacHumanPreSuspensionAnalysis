@@ -24,8 +24,13 @@
 #'
 #'   \describe{
 #'     \item{tissue}{factor; the tissue.}
-#'     \item{assay}{factor; the ome.}
-#'     \item{platform}{factor; (metabolomics only) metabolomics platform.}
+#'     \item{assay}{factor; the assay family, not the platform. Every
+#'     metabolomics table reads \code{"metab"} — clinical chemistry included —
+#'     so \code{assay} alone does not separate \code{metab-t-clinical} from the
+#'     research platforms, and five analytes (Cortisol, Glucose, Glycerol, KET,
+#'     NEFA) exist on both. Include \code{platform} in any key that has to tell
+#'     them apart.}
+#'     \item{platform}{factor; (metabolomics only) the metabolomics platform.}
 #'     \item{full_model}{factor; full model containing predictors and any
 #'     covariates.}
 #'     \item{contrast}{factor; full contrast (up to 33).}
@@ -222,26 +227,25 @@ load_differential_analysis <- function(selected_omes = "all",
   out <- vector(mode = "list", length = length(new_names))
   names(out) <- as.character(new_names)
 
+  # Objects are returned as they are stored. Every metabolomics table, clinical
+  # chemistry included, reads assay = "metab" and names its platform in the
+  # `platform` column, so nothing is relabelled on read.
+  #
+  # A previous version rewrote BLOOD_METAB_T_CLINICAL_DA's assay to
+  # "metab-t-clinical", because the summary statistics of the day put the
+  # platform in `assay` and the two tiers therefore disagreed. They no longer
+  # do: BLOOD_METAB_T_CLINICAL_SUM_STATS carries the same assay/platform pair
+  # this object does.
+  #
+  # What that means for callers: `assay` names the assay family, not the
+  # platform. Clinical chemistry and the research platforms both read "metab",
+  # and five analytes — Cortisol, Glycerol, KET, NEFA and Glucose — exist on
+  # both, so a key that must tell them apart has to include `platform`.
+  # (tissue, assay, feature_id) alone selects two rows for those five, silently.
+  # `load_clinical = FALSE` is the default, so clinical rows only arrive when
+  # they were asked for.
   for (i in seq_along(new_names)) {
-    obj <- eval(parse(text = names(new_names[i])))
-
-    # BLOOD_METAB_T_CLINICAL_DA labels its rows assay = "metab", the same string
-    # the combined BLOOD_METAB_DA uses, with the real platform carried in a
-    # separate `platform` column. Two different tables then claim the same
-    # (tissue, assay, feature_id), and five analytes — Cortisol, Glycerol, KET,
-    # NEFA and Glucose — appear in both, so any caller keying on those columns
-    # gets duplicate rows rather than an error. pivot_wider() answers that by
-    # returning list-columns, and the failure surfaces much later as an
-    # arithmetic error on a list.
-    #
-    # The summary-statistic side already labels the same assay "metab-t-clinical".
-    # Relabel on read so the two tiers agree and the object identifies itself.
-    ome_i <- sub("^[^.]+[.]", "", names(out)[i])
-    if (identical(ome_i, "metab-t-clinical") && "assay" %in% names(obj)) {
-      obj$assay <- "metab-t-clinical"
-    }
-
-    out[[i]] <- obj
+    out[[i]] <- eval(parse(text = names(new_names[i])))
   }
 
   if (epigen) {

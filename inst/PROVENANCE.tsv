@@ -13,7 +13,7 @@ BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS	regenerated	10_build_data	VALUES-DIFFER	bui
 BLOOD_METAB_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble; 10 metab platforms stacked (metab-t-clinical + metab-t-imm-crt excluded)
 BLOOD_METAB_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats; 10 metab platforms stacked, platform in its own column, matching BLOOD_METAB_DA; this release reshaped the shipped per-platform objects rather than refitting
 BLOOD_METAB_T_CLINICAL_DA	regenerated	10_build_data	ADDED	built by 10_build_da_assemble; kept split from BLOOD_PROT_CLINICAL_DA (package fuses both into CLIN_CHEMISTRY_DA)
-BLOOD_METAB_T_CLINICAL_SUM_STATS	regenerated	10_build_data	ADDED	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
+BLOOD_METAB_T_CLINICAL_SUM_STATS	regenerated	10_build_data	SCHEMA-CHANGE	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features; relabelled assay = metab with platform in its own column, matching BLOOD_METAB_T_CLINICAL_DA
 BLOOD_PROT_CLINICAL_DA	regenerated	10_build_data	ADDED	built by 10_build_da_assemble; kept split from BLOOD_METAB_T_CLINICAL_DA (package fuses both into CLIN_CHEMISTRY_DA)
 BLOOD_PROT_CLINICAL_SUM_STATS	regenerated	10_build_data	ADDED	built by 11_build_sum_stats from the step-08 *_QC objects, filtered to the step-10 DA features
 BLOOD_PROT_OL_DA	regenerated	10_build_data	SCHEMA-CHANGE	built by 10_build_da_assemble from the step-09 DA freeze

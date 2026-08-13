@@ -1,7 +1,9 @@
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
-The metabolomics summary statistics are now keyed the way the differential analysis has always
-been keyed.
+The metabolomics summary statistics are now keyed and labelled the way the differential
+analysis has always been keyed and labelled. One vocabulary across both tiers: `assay` names
+the assay family (`"metab"` for every metabolomics table, clinical chemistry included) and
+`platform` names the platform.
 
 ## Breaking changes to data objects
 
@@ -17,12 +19,27 @@ been keyed.
   object by name, or filtered `assay == "metab-u-rppos"`, needs
   `platform == "metab-u-rppos"` instead.
 
-  `BLOOD_METAB_T_CLINICAL_SUM_STATS` is unchanged and is not in the stack. It is clinical
-  chemistry, published as its own object on both tiers, and it shares five analytes with the
-  research platforms (Cortisol, Glycerol, KET, NEFA, Glucose) that would otherwise appear in
-  one object twice.
+- `BLOOD_METAB_T_CLINICAL_SUM_STATS` moves onto the same labelling: `assay = "metab"` with a
+  new `platform` column reading `"metab-t-clinical"`, where it previously named the platform
+  in `assay`. It is **not** in the stack and remains its own object — it shares five analytes
+  with the research platforms (Cortisol, Glucose, Glycerol, KET, NEFA) that would otherwise
+  appear in one object twice. `platform` is what tells the two apart; `assay` no longer does.
+
+  Code filtering `assay == "metab-t-clinical"` on this object needs
+  `platform == "metab-t-clinical"`.
 
 ## User-facing functions
+
+- `load_differential_analysis()` no longer rewrites `BLOOD_METAB_T_CLINICAL_DA`'s `assay` to
+  `"metab-t-clinical"` on read. Objects are returned as stored. That rewrite existed because
+  the summary statistics of the day named the platform in `assay` and the two tiers therefore
+  disagreed; they now agree, so it is gone.
+
+  The consequence is worth stating plainly: `assay` names the assay family, not the platform.
+  Clinical chemistry and the research platforms both read `"metab"`, so a key that must
+  separate them has to include `platform`. `(tissue, assay, feature_id)` alone selects two
+  rows for each of the five shared analytes. `load_clinical = FALSE` is still the default, so
+  clinical rows only arrive when asked for.
 
 - `load_summary_stats()` returns the research metabolomics platforms as a single `"metab"`
   element per tissue rather than one element per platform — the nesting
@@ -35,7 +52,7 @@ been keyed.
 ## Provenance
 
 - `inst/PROVENANCE.tsv` drops the 32 per-platform rows and gains three, each recorded as a
-  schema change.
+  schema change; `BLOOD_METAB_T_CLINICAL_SUM_STATS` is recorded as one too.
 
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.0
