@@ -1,58 +1,91 @@
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
-The metabolomics summary statistics are now keyed and labelled the way the differential
-analysis has always been keyed and labelled. One vocabulary across both tiers: `assay` names
-the assay family (`"metab"` for every metabolomics table, clinical chemistry included) and
-`platform` names the platform.
-
 ## Breaking changes to data objects
 
-- The 32 `{TISSUE}_METAB_{PLATFORM}_SUM_STATS` objects are replaced by one
-  `{TISSUE}_METAB_SUM_STATS` per tissue: `ADIPOSE_METAB_SUM_STATS` (12 platforms, 8,004 rows),
-  `BLOOD_METAB_SUM_STATS` (10, 21,717) and `MUSCLE_METAB_SUM_STATS` (10, 10,692). Every row is
-  carried over unchanged; nothing was refit and no value moved.
+- The `*_SUM_STATS` objects are named, ordered and keyed the way the `*_DA` objects are.
+  Every metabolomics platform is now labelled `assay = "metab"` with the platform
+  in its own `platform` column, where before the platform was written into `assay` and
+  there was no `platform` column. Code that reads `assay` on a metabolomics summary
+  statistic, or that joins one to a differential analysis result, has to read `platform`
+  instead. Objects for every other ome are unchanged in this respect and still have no
+  `platform` column.
 
-  What moved is the label. The stack reads `assay = "metab"` and names the platform in a new
-  `platform` column, which is what `{TISSUE}_METAB_DA` has always done. Previously the summary
-  statistics put the platform in `assay`, so the same ome had two names depending on which
-  tier you were reading, and any join between them had to translate. Code that referred to an
-  object by name, or filtered `assay == "metab-u-rppos"`, needs
-  `platform == "metab-u-rppos"` instead.
+  There are 17 objects where there were 46. The research metabolomics platforms are no
+  longer one object each: they are stacked into a single `{TISSUE}_METAB_SUM_STATS` per
+  tissue — `ADIPOSE_METAB_SUM_STATS` (12 platforms, 8,004 rows), `BLOOD_METAB_SUM_STATS`
+  (10, 21,717), `MUSCLE_METAB_SUM_STATS` (10, 10,692) — which is how `{TISSUE}_METAB_DA`
+  is keyed, so the two tiers nest the same way. Code naming one of the 32 per-platform
+  objects has to read the tissue's stack and filter `platform` instead.
 
-- `BLOOD_METAB_T_CLINICAL_SUM_STATS` moves onto the same labelling: `assay = "metab"` with a
-  new `platform` column reading `"metab-t-clinical"`, where it previously named the platform
-  in `assay`. It is **not** in the stack and remains its own object — it shares five analytes
-  with the research platforms (Cortisol, Glucose, Glycerol, KET, NEFA) that would otherwise
-  appear in one object twice. `platform` is what tells the two apart; `assay` no longer does.
+  `BLOOD_METAB_T_CLINICAL_SUM_STATS` is not in the stack and remains its own object. It
+  is clinical chemistry, it is its own object on the differential-analysis tier too, and
+  it shares five analytes with the research platforms (Cortisol, Glucose, Glycerol, KET,
+  NEFA) that would otherwise sit in one object twice. It carries the same
+  `assay = "metab"` / `platform = "metab-t-clinical"` labelling either way.
 
-  Code filtering `assay == "metab-t-clinical"` on this object needs
-  `platform == "metab-t-clinical"`.
+  The column order changed with it, from
+  `randomGroupCode, feature_id, Timepoint, Count, Mean, SD, tissue, assay` to
+  `tissue, assay, [platform], randomGroupCode, Timepoint, feature_id, Count, Mean, SD`.
+  Code selecting columns by position has to be updated; code selecting by name does not.
 
-## User-facing functions
+  No value changed: Count, Mean and SD are identical to v2.0.0 for every row of all 46
+  objects.
 
-- `load_differential_analysis()` no longer rewrites `BLOOD_METAB_T_CLINICAL_DA`'s `assay` to
-  `"metab-t-clinical"` on read. Objects are returned as stored. That rewrite existed because
-  the summary statistics of the day named the platform in `assay` and the two tiers therefore
-  disagreed; they now agree, so it is gone.
-
-  The consequence is worth stating plainly: `assay` names the assay family, not the platform.
-  Clinical chemistry and the research platforms both read `"metab"`, so a key that must
-  separate them has to include `platform`. `(tissue, assay, feature_id)` alone selects two
-  rows for each of the five shared analytes. `load_clinical = FALSE` is still the default, so
-  clinical rows only arrive when asked for.
+- `plot_single_feature()` requires these objects and errors on summary statistics that
+  predate them, rather than drawing a panel with no points.
 
 - `load_summary_stats()` returns the research metabolomics platforms as a single `"metab"`
   element per tissue rather than one element per platform — the nesting
-  `load_differential_analysis()` returns, so the two can now be walked together. Naming one
-  platform still loads them all, as before.
+  `load_differential_analysis()` returns, so the two tiers can be walked together. Naming
+  one platform still loads them all, as before.
 
-- `plot_single_feature()` reads the platform off the `platform` column. Its behaviour is
-  unchanged.
+- `load_differential_analysis()` no longer rewrites `BLOOD_METAB_T_CLINICAL_DA`'s `assay`
+  to `"metab-t-clinical"` on read. Objects are returned as stored. That rewrite existed
+  because the summary statistics of the day named the platform in `assay` and the two
+  tiers therefore disagreed; they now agree, so it is gone.
 
-## Provenance
+  The consequence is worth stating plainly: `assay` names the assay family, not the
+  platform. Clinical chemistry and the research platforms both read `"metab"`, so a key
+  that must separate them has to include `platform` — `(tissue, assay, feature_id)` alone
+  selects two rows for each of the five shared analytes. `load_clinical = FALSE` is still
+  the default, so clinical rows only arrive when asked for.
 
-- `inst/PROVENANCE.tsv` drops the 32 per-platform rows and gains three, each recorded as a
-  schema change; `BLOOD_METAB_T_CLINICAL_SUM_STATS` is recorded as one too.
+## Bug fixes
+
+- `plot_single_feature()` draws the same legend for every tissue, whether or not that
+  tissue has a timepoint below the p threshold. Combining plots with
+  `patchwork::plot_layout(guides = "collect")` previously produced a repeated p
+  threshold legend, because collection only merges guides that are identical and a
+  tissue with nothing significant contributed a one-key legend. A single plot with no
+  significant timepoints now shows both p threshold keys rather than only `adj p >=`.
+
+- `plot_single_feature()` plots clinical chemistry only when a clinical ome is
+  requested. It previously appended the clinical rows whenever the feature name
+  matched an analyte, so `selected_omes = "transcript-rna-seq"` with `"Glucose"`
+  returned a clinical chemistry plot. `selected_omes` now accepts the omes in
+  `clinical_ome_list()` by name and `"all"` includes them, matching how
+  `load_differential_analysis()` treats clinical chemistry.
+
+  Breaking: a request that names another ome no longer returns clinical chemistry
+  alongside it, and `"metab"` no longer implies `"metab-t-clinical"`. Analytes
+  measured both clinically and on a research platform, such as Cortisol and
+  Lactate, return only what was asked for.
+
+- `plot_single_feature()` loads every non-epigenetic tissue and ome once and filters
+  afterwards, rather than assembling the request ome by ome. Clinical chemistry is no
+  longer a special case appended after the load, and the differential analysis and the
+  summary statistics are put in one vocabulary before either is filtered.
+
+  `plot_single_feature("VEGFA")` works again. The default `selected_omes = "all"` was
+  broken for every non-metab feature by `filter(platform != "metab-t-conv")`: `platform`
+  is NA on non-metab rows and `filter` drops NA, so the filter deleted the whole
+  non-metab payload and the feature was reported as absent from the data.
+
+- `plot_single_feature()` no longer excludes the `metab-t-conv` platform, which is now
+  plotted and labelled `Conv. Metab (log2)`. It has no `assay_codes` row, so without
+  that fallback its facet strip read `NA`. Note that it is the `metab-t-clinical`
+  measurement on a log2 scale, so Glucose, Glycerol, KET and NEFA in blood now return a
+  panel from each.
 
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.0

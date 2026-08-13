@@ -7,7 +7,11 @@
 #' @param feature A single character string corresponding to a feature_id, gene_symbol, or refmet_name within the human feature-to-gene table
 #' @param p_level Numeric threshold for adjusted p value significance in differential analysis (so this would make individual points highlighted in black if below this threshold)
 #' @param selected_tissues character; one of tissue_available_list.
-#' @param selected_omes character; one of ome_available_list.
+#' @param selected_omes character; one of ome_available_list. The clinical
+#'   chemistry omes in \code{\link{clinical_ome_list}()} are plotted only when
+#'   they are requested, either by name or through \code{"all"}; asking for
+#'   another ome no longer returns clinical chemistry alongside it. \code{"metab"}
+#'   does not imply \code{"metab-t-clinical"}.
 #' @param output_file a file path if desired, to autoatically save output in the standard size of height 1.54, width 1.225, recommended if output is known to be a single plot, not faceted
 #' @param scale_factor simple way to scale plot if larger sizes are needed for posters or talks. recommend integers only
 #' @param color_time_labels toggle TRUE/FALSE allows color tiles corresponding to time point colors to be used instead of x-axis
@@ -72,14 +76,38 @@ plot_single_feature = function(feature,
                                          "prot-pr", "prot-ol",
                                          "prot-ph", "metab",
                                          "epigen-methylcap-seq",
-                                         "epigen-atac-seq"),
+                                         "epigen-atac-seq",
+                                         MotrpacHumanPreSuspensionAnalysis::clinical_ome_list()),
                              several.ok = TRUE)
 
   if(all(selected_omes == 'all')) selected_omes = c("transcript-rna-seq",
                                                     "prot-pr", "prot-ol",
                                                     "prot-ph", "metab",
                                                     "epigen-methylcap-seq",
-                                                    "epigen-atac-seq")
+                                                    "epigen-atac-seq",
+                                                    MotrpacHumanPreSuspensionAnalysis::clinical_ome_list())
+
+  # Clinical chemistry is published as its own omes, one metabolomics and one
+  # proteomics, and the loaders gate it behind `load_clinical`. It is loaded here
+  # unconditionally and then filtered like every other ome, so `selected_omes` decides
+  # whether it is plotted. `metab` does not imply `metab-t-clinical`, matching how
+  # load_differential_analysis() exempts the clinical platform when it folds the metab
+  # platforms together. This is the v2.0 split of clinical chemistry: the one
+  # CLIN_CHEMISTRY_DA object became one per assay, and both arrive through the loaders.
+  #
+  # `metab` names a family rather than an assay: the loaders stack every research platform
+  # under it, and the fold below replaces it with the platform in `assay`. The request is
+  # expanded the same way so that the filtering happens in one vocabulary.
+  # metab-t-clinical is not part of that family and is only ever matched by name.
+  if ("metab" %in% selected_omes)
+    selected_omes = unique(c(selected_omes,
+                             MotrpacHumanPreSuspensionAnalysis::metab_only_list()))
+
+  # the omes that actually measure this analyte, empty for anything that is not
+  # clinical chemistry. Kept separate from the request so the error below can say
+  # which ome would have to be asked for.
+  feature_clinical_omes = .clinical_omes_for_feature(feature)
+  plotted_clinical_omes = base::intersect(feature_clinical_omes, selected_omes)
 
   clin_chem_id = .is_clinical_chemistry_feature(feature)
 
@@ -107,21 +135,21 @@ plot_single_feature = function(feature,
             to the input, the first is chosen for the purpose of labeling, use caution")
   }
 
+  # Every non-epigenetic tissue and ome is loaded in one call and filtered afterwards.
+  # The objects are lazily loaded and the load is cheap, and one unconditional load in
+  # one vocabulary is far simpler than assembling the request ome by ome: clinical
+  # chemistry stops being a special case appended after the fact, and honouring
+  # `selected_omes` becomes an ordinary filter. Epigenomics stays behind `epigen`,
+  # because it is fetched from AWS rather than lazily loaded.
   da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
-    selected_omes = selected_omes,
-    selected_tissues = selected_tissues,
-    single_matrix = TRUE,
-    epigen = epigen
-  )
-  # the platform column only exists when metabolomics results are included, so only
-  # apply the metab-specific filter when that column is present (non-metab single-ome
-  # requests like transcript-only have no platform column).
-  if ("platform" %in% colnames(da_object)) {
-    da_object = da_object %>%
-      dplyr::filter(platform != "metab-t-conv")
-  }
-  # the conventional metabolites have been reorganized by the BIC in assay codes so this
-  # format no longer works properly. will remove and add to eventual todo to fix. - Chris June 22nd.
+      selected_omes = "all",
+      selected_tissues = "all",
+      single_matrix = TRUE,
+      epigen = epigen,
+      load_clinical = TRUE,
+      verbose = verbose
+    ) %>%
+    .fold_metab_platform_into_assay()
 
   if(verbose){
     message("DA is loaded automatically using requested settings.
@@ -129,35 +157,33 @@ plot_single_feature = function(feature,
               any metabolomics platform measured.")
   }
 
+  # Clinical chemistry analytes are not in the feature-to-gene table, so the clinical
+  # id joins the ids matched there rather than replacing them.
+  #
+  # as.character() is load bearing: feature_id is a factor over every feature in the
+  # study, and c() on a factor drops it to the integer codes behind its levels, so the
+  # ids silently become row numbers that match nothing.
+  requested_feature_ids = unique(c(as.character(feature_info$feature_id),
+                                   clin_chem_id))
+  requested_feature_ids = requested_feature_ids[!is.na(requested_feature_ids)]
 
   # Subset to relevant feature-specific data
   feature_specific_da = da_object %>%
     dplyr::filter(assay %in% selected_omes) %>%
-    #this is a patch because the data package places metab assay_codes under `platform`
-    dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform), as.character(assay))) %>%
+    dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::filter(contrast_type == "exercise_with_controls") %>%
-    dplyr::filter(feature_id %in% feature_info$feature_id) %>%
-    dplyr::filter(!is.na(Timepoint)) %>%
-    dplyr::filter(tissue %in% selected_tissues)
-
-
-  if (!is.na(clin_chem_id)) {
-    # the v2.0 split of clinical chemistry replaces CLIN_CHEMISTRY_DA with one object per
-    # assay. The mutate is the same metab-platform normalisation applied to the
-    # main DA frame above, and it is what makes `assay` agree with the summary
-    # statistics these rows are later joined to.
-    clin_chem_da_rows = dplyr::bind_rows(
-        MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_DA,
-        MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_DA
-      ) %>%
-      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform), as.character(assay))) %>%
-      dplyr::filter(feature_id == clin_chem_id,
-                    contrast_type == "exercise_with_controls",
-                    !is.na(Timepoint))
-    feature_specific_da = dplyr::bind_rows(feature_specific_da, clin_chem_da_rows)
-  }
+    dplyr::filter(feature_id %in% requested_feature_ids) %>%
+    dplyr::filter(!is.na(Timepoint))
 
   if(nrow(feature_specific_da) == 0) {
+    # a clinical analyte held back by the ome gate is a different problem from a
+    # feature that is not in the data at all, and the fix is different too
+    if(length(feature_clinical_omes) > 0 & length(plotted_clinical_omes) == 0) {
+      stop(feature, " is measured by clinical chemistry (",
+           paste(feature_clinical_omes, collapse = ", "),
+           "), which is not among the omes you requested.
+         Add it to `selected_omes`, or use \"all\", to plot it.")
+    }
     stop("No differential analysis corresponds to your requested feature.
          Please double check your input matches something in the feature to gene
          mapping's feature_id column, or, for metabolites, the refmet_name column")
@@ -176,55 +202,23 @@ plot_single_feature = function(feature,
     ) %>%
     distinct()
 
-  summary_stats = MotrpacHumanPreSuspensionAnalysis::load_summary_stats(selected_tissues = selected_tissues,
-                                                                        selected_omes = selected_omes,
-                                                                        single_matrix = TRUE)
-
-  # The summary statistics stack the metabolomics platforms the way the DA does — one table
-  # per tissue with assay = "metab" and the platform in its own column — so they need the
-  # same normalisation applied to the DA frame above. Without it every metabolomics row
-  # reads assay = "metab", the `metab-t-conv` filter below matches nothing, and the
-  # full_join on `assay` finds no partner for any metabolite. The column is absent when no
-  # metabolomics was requested. It is dropped once spent: `feature_specific_da` carries a
-  # platform column of its own, and two would collide into platform.x/platform.y.
-  if ("platform" %in% colnames(summary_stats)) {
-    summary_stats = summary_stats %>%
-      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform),
-                                   as.character(assay))) %>%
-      dplyr::select(-platform)
-  }
-
-  summary_stats = summary_stats %>%
+  # Loaded and filtered the same way as the differential analysis above, and filtered on
+  # the same request: the join below is a full join, so an ome or a tissue left in here
+  # would add rows for something that was not asked for.
+  summary_stats = MotrpacHumanPreSuspensionAnalysis::load_summary_stats(selected_tissues = "all",
+                                                                        selected_omes = "all",
+                                                                        single_matrix = TRUE,
+                                                                        load_clinical = TRUE,
+                                                                        verbose = verbose) %>%
+    .fold_metab_platform_into_assay() %>%
+    dplyr::filter(assay %in% selected_omes) %>%
+    dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::filter(feature_id %in% feature_specific_da$feature_id) %>%
     dplyr::mutate(SE = SD/sqrt(Count),
-                  CI_95 = qt((1 + 0.95)/2, Count - 1))  %>%
-    dplyr::filter(assay != "metab-t-conv")
+                  CI_95 = qt((1 + 0.95)/2, Count - 1))
   #this code is now matching the previous `mean_cl_normal` implementation, see: `Hmisc::smean.cl.normal`
   #where instead of using a strict wald CI, the SE multiplier is estimated from a t-distribution
   #makes the bounds slightly larger in most cases. Bigger diff with smaller n
-
-  if (!is.na(clin_chem_id)) {
-    # These two objects are read directly rather than through load_summary_stats(), so they
-    # arrive unnormalised and need the same metab-platform treatment as the frame above.
-    # BLOOD_METAB_T_CLINICAL_SUM_STATS reads assay = "metab" with the platform in its own
-    # column, the same as its DA object; without the mutate it would join to nothing, since
-    # clin_chem_da_rows has already resolved its assay to "metab-t-clinical". The facet label
-    # depends on it too — "Clin. Chem." is chosen by matching `assay`, and a row still
-    # reading "metab" renders labelled NA. BLOOD_PROT_CLINICAL_SUM_STATS names itself in
-    # `assay` and carries no platform, so it acquires an NA one in the bind and the ifelse
-    # passes it through untouched.
-    clin_chem_sum = dplyr::bind_rows(
-        MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS,
-        MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS
-      ) %>%
-      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform),
-                                   as.character(assay))) %>%
-      dplyr::select(-platform) %>%
-      dplyr::filter(feature_id == clin_chem_id) %>%
-      dplyr::mutate(SE = SD/sqrt(Count),
-                    CI_95 = qt((1 + 0.95)/2, Count - 1))
-    summary_stats = dplyr::bind_rows(summary_stats, clin_chem_sum)
-  }
 
   # Merge QC, pheno, and DA data for plotting. No longer have sample level results but
   local_feature_data = feature_specific_da %>%
@@ -236,9 +230,15 @@ plot_single_feature = function(feature,
     dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::left_join(assay_names_table,by = c("assay" = "assay_code")) %>%
     dplyr::mutate(
+      # neither the clinical omes nor the conventional metabolomics platform has an
+      # assay_codes row to join against, so the facet strip would read NA without
+      # these. metab-t-conv is the same measurement as metab-t-clinical on a log2
+      # scale, and the label says so to keep the two panels apart.
       assay_short_text = dplyr::if_else(
         assay %in% c("clinical-chemistry", "metab-t-clinical", "prot-clinical"),
         "Clin. Chem.", assay_short_text),
+      assay_short_text = dplyr::if_else(
+        assay == "metab-t-conv", "Conv. Metab (log2)", assay_short_text),
       tissue = stringr::str_to_sentence(tissue),
       Timepoint = dplyr::recode(Timepoint,
                                 "pre_exercise" = "Pre",
@@ -260,7 +260,12 @@ plot_single_feature = function(feature,
     "ADUResist" = "RE"
   )
 
-  y_label = if (!is.na(clin_chem_id)) {
+  # keyed on what is actually plotted, not on whether the feature has a clinical
+  # measurement somewhere: a clinical analyte plotted from a research platform alone is
+  # on the log2 scale like anything else. Only the clinical omes are absolute —
+  # metab-t-conv is the conventional panel already log2 transformed.
+  y_label = if (any(feature_specific_da$assay %in%
+                    MotrpacHumanPreSuspensionAnalysis::clinical_ome_list())) {
     "Clinical chemistry features are presented in absolute scale. Others are log2(normalized value)"
   } else {
     "log2(normalized value)"
@@ -268,9 +273,17 @@ plot_single_feature = function(feature,
 
   sc = scale_factor * 0.7
   # bounds = ""
+  # `show.legend = TRUE` on every layer that contributes a key, together with the
+  # fixed key sets on the two discrete scales below, makes the legend depend only on
+  # the scale and not on which levels a given tissue happens to contain. Without it a
+  # tissue with no significant timepoints draws a legend that differs from one that
+  # has them, and `patchwork::plot_layout(guides = "collect")` only merges guides that
+  # are identical, so it stacks the two variants instead of collecting them into one.
   g2 = ggplot(local_feature_data, aes(x = Timepoint, color = randomGroupCode))+
-    geom_line(aes(y = Mean, group = randomGroupCode), linewidth = 0.5 * sc) +
-    geom_point(aes(y = Mean, group = randomGroupCode),size = 1.8 * sc) +
+    geom_line(aes(y = Mean, group = randomGroupCode), linewidth = 0.5 * sc,
+              show.legend = TRUE) +
+    geom_point(aes(y = Mean, group = randomGroupCode),size = 1.8 * sc,
+               show.legend = TRUE) +
     geom_errorbar(
       aes(
         #this code is now matching the previous `mean_cl_normal` implementation,
@@ -282,7 +295,8 @@ plot_single_feature = function(feature,
       ),
       width = 0.2 * sc,
       linewidth = 0.4 * sc,
-      alpha = 0.6
+      alpha = 0.6,
+      show.legend = TRUE
     ) +
     geom_point(
       aes(
@@ -293,15 +307,18 @@ plot_single_feature = function(feature,
       size = 1.7 * sc,
       shape = 21,
       stroke = 0.1 * sc,
-      color = "black"
+      color = "black",
+      show.legend = TRUE
     ) +
     scale_color_manual(
       values = MotrpacHumanPreSuspensionAnalysis::HUMAN_EXERCISE_GROUP_COLORS,
-      labels = label_map
+      labels = label_map,
+      limits = sort(names(MotrpacHumanPreSuspensionAnalysis::HUMAN_EXERCISE_GROUP_COLORS))
     ) +
     scale_fill_manual(
       values = c(`Below p threshold` = "black", above = "white"),
-      labels = label_map
+      labels = label_map,
+      drop = FALSE
     ) +
     facet_wrap(~ tissue_assay + feature_id, scales = "free_y") +
     ggtitle(feature_label) +
@@ -407,10 +424,65 @@ plot_single_feature = function(feature,
 }
 
 
-#' Check if a feature is a clinical chemistry analyte
+#' Name the metabolomics platform in the assay column
+#'
+#' Both the \code{*_DA} and the \code{*_SUM_STATS} objects stack every metabolomics
+#' platform under \code{assay = "metab"} and name the platform in its own column.
+#' Everything here keys on the platform, so it is folded into \code{assay} and the
+#' redundant column dropped, which also keeps the join between the two tiers from
+#' meeting \code{platform} on both sides.
+#'
+#' The \code{platform} column is required. Summary statistics built before v2.0.1 named
+#' the platform in \code{assay} and carried no such column; on those objects every metab
+#' row would silently keep the family name and match no differential analysis row, so
+#' they are rejected here rather than plotted as a panel with no points.
+#'
+#' @param x a data frame of differential analysis results or summary statistics,
+#'   combined across omes so that the metabolomics \code{platform} column is present
+#' @returns \code{x} with the platform named in \code{assay} and no \code{platform} column
+#' @keywords internal
+#' @noRd
+
+.fold_metab_platform_into_assay = function(x) {
+  if (!"platform" %in% colnames(x)) {
+    stop("These data objects carry no `platform` column, so they predate v2.0.1 of the
+         package. Reinstall MotrpacHumanPreSuspensionAnalysis to get summary statistics
+         that name the metabolomics platform the way the differential analysis does.")
+  }
+  out = x %>%
+    dplyr::mutate(assay = ifelse(assay == "metab",
+                                 as.character(platform),
+                                 as.character(assay))) %>%
+    dplyr::select(-platform)
+  return(out)
+}
+
+
+#' Look a feature up in the clinical chemistry summary statistics
 #'
 #' Case-insensitive lookup of the requested feature against the
 #' \code{feature_id} columns of \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} and \code{BLOOD_PROT_CLINICAL_SUM_STATS}.
+#'
+#' @param feature character; the feature name to look up
+#' @returns A data frame of the matching \code{feature_id} and \code{assay} pairs,
+#'   with zero rows when the feature is not a clinical chemistry analyte
+#' @keywords internal
+#' @noRd
+
+.clinical_chemistry_matches = function(feature) {
+  ids = dplyr::bind_rows(
+    MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS,
+    MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS
+  ) %>%
+    .fold_metab_platform_into_assay() %>%
+    dplyr::select(dplyr::any_of(c("feature_id", "assay"))) %>%
+    dplyr::distinct()
+
+  return(ids[tolower(ids$feature_id) == tolower(feature), , drop = FALSE])
+}
+
+
+#' Check if a feature is a clinical chemistry analyte
 #'
 #' @param feature character; the feature name to look up
 #' @returns The matched \code{feature_id} string (case-correct) if found,
@@ -419,8 +491,20 @@ plot_single_feature = function(feature,
 #' @noRd
 
 .is_clinical_chemistry_feature = function(feature) {
-  ids = c(MotrpacHumanPreSuspensionAnalysis::BLOOD_METAB_T_CLINICAL_SUM_STATS$feature_id,
-          MotrpacHumanPreSuspensionAnalysis::BLOOD_PROT_CLINICAL_SUM_STATS$feature_id)
-  matched = ids[tolower(ids) == tolower(feature)]
-  if (length(matched) > 0) matched[1] else NA_character_
+  matched = .clinical_chemistry_matches(feature)
+  if (nrow(matched) > 0) return(matched$feature_id[1])
+  return(NA_character_)
+}
+
+
+#' Which clinical chemistry omes carry a feature
+#'
+#' @param feature character; the feature name to look up
+#' @returns A character vector of clinical omes measuring the feature, empty when
+#'   the feature is not a clinical chemistry analyte
+#' @keywords internal
+#' @noRd
+
+.clinical_omes_for_feature = function(feature) {
+  return(unique(as.character(.clinical_chemistry_matches(feature)$assay)))
 }

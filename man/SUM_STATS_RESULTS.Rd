@@ -22,15 +22,34 @@
 \alias{BLOOD_PROT_CLINICAL_SUM_STATS}
 \title{Summary Statistics by Tissue, Assay, and Platform}
 \format{
-Each object is a \code{data.frame} with one row per feature per
-randomization group and timepoint, carrying \code{randomGroupCode},
-\code{feature_id}, \code{Timepoint}, \code{Count}, \code{Mean}, \code{SD},
-\code{tissue} and \code{assay}. The metabolomics objects — the three
-\code{{TISSUE}_METAB_SUM_STATS} and \code{BLOOD_METAB_T_CLINICAL_SUM_STATS} —
-carry one further column, \code{platform}, and order their columns
-the way the \code{*_DA} objects order the ones they share:
-\code{tissue}, \code{assay}, \code{platform}, \code{randomGroupCode},
-\code{Timepoint}, \code{feature_id}, \code{Count}, \code{Mean}, \code{SD}.
+Each object is a \code{data.frame} with one row per feature per randomization
+group and timepoint, carrying the columns below in this order. They are named
+and ordered to agree with the \code{*_DA} objects: what the rows are, then what
+identifies a row, then the statistics.
+
+\describe{
+\item{tissue}{adipose, blood or muscle.}
+\item{assay}{The ome. Every metabolomics platform is stacked under
+\code{"metab"} and named in \code{platform}, exactly as the \code{*_DA}
+objects do it; every other ome names itself here.}
+\item{platform}{The metabolomics platform, for example
+\code{"metab-u-rppos"} or \code{"metab-t-clinical"}. Present on
+metabolomics objects only, which is also how the \code{*_DA} objects carry
+it. Objects for any other ome do not have this column.}
+\item{randomGroupCode}{Randomization group: ADUControl, ADUEndur, ADUResist.}
+\item{Timepoint}{Timepoint within the acute bout.}
+\item{feature_id}{Feature identifier, in the same namespace as the
+differential analysis for that tissue and ome.}
+\item{Count}{Number of samples summarised, after excluding missing values.}
+\item{Mean}{Mean across those samples.}
+\item{SD}{Standard deviation across those samples, \code{NA} when
+\code{Count} is 1.}
+}
+
+Before v2.0.1 the platform was written into \code{assay}, there was no
+\code{platform} column, and the identifying columns came first with
+\code{tissue} and \code{assay} last. There was also one object per
+metabolomics platform rather than one per tissue.
 }
 \usage{
 ## Adipose
@@ -76,14 +95,13 @@ tissue and assay, named the way the \code{*_DA} objects are named.
 
 Every metabolomics object reads \code{assay = "metab"} and names its platform
 in a \code{platform} column (e.g. \code{"metab-u-rppos"}, \code{"metab-t-tca"}),
-which is how the \code{*_DA} objects are labelled. Before v2.0.1 this tier
-named the platform in \code{assay} instead, so the two tiers disagreed about
-what an ome was called and every join between them had to translate.
+which is how the \code{*_DA} objects are labelled.
 
-The research platforms are stacked into a single
-\code{{TISSUE}_METAB_SUM_STATS} per tissue.
-\code{BLOOD_METAB_T_CLINICAL_SUM_STATS} is clinical chemistry: it is labelled
-the same way but stays its own object, on this tier and the
+The research platforms are not one object each. They are stacked into a single
+\code{{TISSUE}_METAB_SUM_STATS} per tissue, which is how
+\code{{TISSUE}_METAB_DA} is keyed, so the two tiers nest the same way.
+\code{BLOOD_METAB_T_CLINICAL_SUM_STATS} is clinical chemistry: it carries the
+same labelling but stays its own object, on this tier and the
 differential-analysis tier alike, because it shares five analytes with the
 research platforms (Cortisol, Glucose, Glycerol, KET, NEFA) that would
 otherwise sit in one object twice. \code{platform} is what tells the two
