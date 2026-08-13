@@ -424,24 +424,31 @@ plot_single_feature = function(feature,
 }
 
 
-#' Name the metabolomics platform in the assay column of a summary statistics table
+#' Name the metabolomics platform in the assay column
 #'
-#' The \code{*_DA} objects stack every metabolomics platform under \code{assay = "metab"}
-#' and name the platform in its own column, and the pipeline now builds the
-#' \code{*_SUM_STATS} objects the same way. Everything here keys on the platform, so it is
-#' folded into \code{assay} and the redundant column dropped, which also keeps the join
-#' against the differential analysis from meeting \code{platform} on both sides.
+#' Both the \code{*_DA} and the \code{*_SUM_STATS} objects stack every metabolomics
+#' platform under \code{assay = "metab"} and name the platform in its own column.
+#' Everything here keys on the platform, so it is folded into \code{assay} and the
+#' redundant column dropped, which also keeps the join between the two tiers from
+#' meeting \code{platform} on both sides.
 #'
-#' Objects built before that change name the platform in \code{assay} already and carry no
-#' \code{platform} column; they are returned untouched, so both shapes come out the same.
+#' The \code{platform} column is required. Summary statistics built before v2.0.1 named
+#' the platform in \code{assay} and carried no such column; on those objects every metab
+#' row would silently keep the family name and match no differential analysis row, so
+#' they are rejected here rather than plotted as a panel with no points.
 #'
-#' @param x a data frame of summary statistics
+#' @param x a data frame of differential analysis results or summary statistics,
+#'   combined across omes so that the metabolomics \code{platform} column is present
 #' @returns \code{x} with the platform named in \code{assay} and no \code{platform} column
 #' @keywords internal
 #' @noRd
 
 .fold_metab_platform_into_assay = function(x) {
-  if (!"platform" %in% colnames(x)) return(x)
+  if (!"platform" %in% colnames(x)) {
+    stop("These data objects carry no `platform` column, so they predate v2.0.1 of the
+         package. Reinstall MotrpacHumanPreSuspensionAnalysis to get summary statistics
+         that name the metabolomics platform the way the differential analysis does.")
+  }
   out = x %>%
     dplyr::mutate(assay = ifelse(assay == "metab",
                                  as.character(platform),
