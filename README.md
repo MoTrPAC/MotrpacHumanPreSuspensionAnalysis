@@ -149,13 +149,12 @@ additional access. Some advanced workflows rely on the private package
 `MotrpacHumanPreSuspensionData` that is available only to MoTrPAC
 consortium members.
 
-At the moment, the primary functions with this optional dependency are:
+At the moment, the only function with this optional dependency is:
 
-- `run_SCION()`
 - `plot_precovid_cca()`
 
-If the private package is not installed, these functions will return a
-clear error message with access guidance.
+If the private package is not installed, it will return a clear error
+message with access guidance.
 
 ## Getting help
 
