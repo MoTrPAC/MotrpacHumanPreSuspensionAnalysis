@@ -178,7 +178,23 @@ plot_single_feature = function(feature,
 
   summary_stats = MotrpacHumanPreSuspensionAnalysis::load_summary_stats(selected_tissues = selected_tissues,
                                                                         selected_omes = selected_omes,
-                                                                        single_matrix = TRUE) %>%
+                                                                        single_matrix = TRUE)
+
+  # The summary statistics stack the metabolomics platforms the way the DA does — one table
+  # per tissue with assay = "metab" and the platform in its own column — so they need the
+  # same normalisation applied to the DA frame above. Without it every metabolomics row
+  # reads assay = "metab", the `metab-t-conv` filter below matches nothing, and the
+  # full_join on `assay` finds no partner for any metabolite. The column is absent when no
+  # metabolomics was requested. It is dropped once spent: `feature_specific_da` carries a
+  # platform column of its own, and two would collide into platform.x/platform.y.
+  if ("platform" %in% colnames(summary_stats)) {
+    summary_stats = summary_stats %>%
+      dplyr::mutate(assay = ifelse(assay == "metab", as.character(platform),
+                                   as.character(assay))) %>%
+      dplyr::select(-platform)
+  }
+
+  summary_stats = summary_stats %>%
     dplyr::filter(feature_id %in% feature_specific_da$feature_id) %>%
     dplyr::mutate(SE = SD/sqrt(Count),
                   CI_95 = qt((1 + 0.95)/2, Count - 1))  %>%

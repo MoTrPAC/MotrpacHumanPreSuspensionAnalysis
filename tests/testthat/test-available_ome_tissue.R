@@ -44,7 +44,8 @@ test_that("every ome this package ships is reachable through ome_available_list"
   shipped <- c(ome_of(grep("_SUM_STATS$", items, value = TRUE), "SUM_STATS"),
                ome_of(grep("_DA$", items, value = TRUE), "DA"))
   # Two names are not omes and are expected here:
-  #   "metab"       the combined per-tissue DA table, not a platform
+  #   "metab"       the combined per-tissue table — the DA and, since v2.0.1, the
+  #                 summary statistics too — not a platform
   #   "splicing-da" SPLICING_DA carries no tissue prefix, so the TISSUE_OME_DA
   #                 pattern leaves it unchanged. The loader derives its tissue as
   #                 "splicing", which matches no selectable tissue, so the object
