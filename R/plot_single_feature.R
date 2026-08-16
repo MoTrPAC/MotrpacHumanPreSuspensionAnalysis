@@ -17,6 +17,13 @@
 #' @param color_time_labels toggle TRUE/FALSE allows color tiles corresponding to time point colors to be used instead of x-axis
 #' @param include_legend toggle TRUE/FALSE to include a legend
 #' @param legend_position if include_legend == TRUE, position can be selected
+#' @param repo_local_dir character; a local path to cache downloaded
+#'   differential analysis files in, relevant only if epigen is TRUE
+#' @param gsutil character; path to the gsutil executable, relevant only if
+#'   epigen is TRUE
+#' @param bucket character; GCS prefix the epigenomics files are read from,
+#'   relevant only if epigen is TRUE. Defaults to the staging bucket of the
+#'   current precovid-repro release cycle.
 #' @param verbose logical; toggle to include verbose information
 #' @param epigen logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object.
 #'
@@ -61,6 +68,9 @@ plot_single_feature = function(feature,
                                color_time_labels = FALSE,
                                include_legend = TRUE,
                                legend_position = "right",
+                               repo_local_dir = NULL,
+                               gsutil = "gsutil",
+                               bucket = .STAGING_BUCKET,
                                verbose = TRUE,
                                epigen = FALSE){
 
@@ -140,12 +150,15 @@ plot_single_feature = function(feature,
   # one vocabulary is far simpler than assembling the request ome by ome: clinical
   # chemistry stops being a special case appended after the fact, and honouring
   # `selected_omes` becomes an ordinary filter. Epigenomics stays behind `epigen`,
-  # because it is fetched from AWS rather than lazily loaded.
+  # because it is downloaded from the bucket rather than lazily loaded.
   da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
       selected_omes = "all",
       selected_tissues = "all",
       single_matrix = TRUE,
       epigen = epigen,
+      repo_local_dir = repo_local_dir,
+      gsutil = gsutil,
+      bucket = bucket,
       load_clinical = TRUE,
       verbose = verbose
     ) %>%
