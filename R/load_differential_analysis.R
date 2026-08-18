@@ -6,7 +6,23 @@
 #' @param single_matrix logical; if \code{TRUE}, returns a single
 #'   \code{data.frame} containing all results. Otherwise, returns a list of
 #'   \code{data.frame} objects (default).
-#' @param epigen logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.
+#' @param epigen logical; a toggle of TRUE/FALSE if epigenetics data is desired.
+#'   The epigenomics tables are not shipped in the package; they are downloaded
+#'   from \code{bucket} at run time, which requires gsutil read access and is
+#'   very slow due to file sizes.
+#' @param repo_local_dir character; local directory used as the download cache
+#'   for the epigenomics files. Files are written under its \code{data/tmp/}
+#'   subdirectory, which is created if absent. Required when \code{epigen} is
+#'   \code{TRUE} and unused otherwise.
+#' @param gsutil character; path to the gsutil executable. Defaults to
+#'   \code{"gsutil"}, which assumes it is on the PATH. Only used when
+#'   \code{epigen} is \code{TRUE}.
+#' @param bucket character; GCS prefix the epigenomics files are read from.
+#'   Defaults to the staging bucket the current precovid-repro release cycle
+#'   writes (\code{config/pipeline.env}, \code{STAGING_BUCKET}). Pass a release
+#'   prefix such as
+#'   \code{"gs://motrpac-data-hub/analysis/human-precovid-sed-adu/c1.3"} to read
+#'   published data instead. Only used when \code{epigen} is \code{TRUE}.
 #' @param combine_with_featgene logical; whether to include columns from
 #'   \code{HUMAN_FEATURE_TO_GENE} in the output.
 #' @param verbose logical; whether or not to display messages for some warnings.
@@ -93,6 +109,9 @@ load_differential_analysis <- function(selected_omes = "all",
                                        selected_tissues = "all",
                                        single_matrix = FALSE,
                                        epigen = FALSE,
+                                       repo_local_dir = NULL,
+                                       gsutil = "gsutil",
+                                       bucket = .STAGING_BUCKET,
                                        combine_with_featgene = FALSE,
                                        verbose = TRUE,
                                        load_clinical = FALSE) {
@@ -184,7 +203,7 @@ load_differential_analysis <- function(selected_omes = "all",
                                             c("epigen-atac-seq",
                                               "epigen-methylcap-seq")]
     if(verbose){
-      message("You've elected to load in the epigenetic data too. These file sizes are significantly larger and will require loading in data from AWS. This loading can be quite slow.")
+      message("You've elected to load in the epigenetic data too. These file sizes are significantly larger and will be downloaded from ", bucket, ", which requires gsutil access. This loading can be quite slow.")
     }
   }
 
@@ -211,7 +230,8 @@ load_differential_analysis <- function(selected_omes = "all",
   # then matches no request. BLOOD_METAB_T_CLINICAL_DA derived as
   # "metab-t_clinical" rather than "metab-t-clinical" and was unreachable; the
   # epigen tables had the same defect, masked only because they are split off
-  # above and loaded from AWS. load_summary_stats() and load_qc() already gsub.
+  # above and read from the bucket. load_summary_stats() and load_qc() already
+  # gsub.
   omes <- gsub("_", "-", tolower(omes))
   omes[omes == "trnscrpt"] <- "transcript-rna-seq"
 
@@ -249,8 +269,11 @@ load_differential_analysis <- function(selected_omes = "all",
   }
 
   if (epigen) {
-    epi_list <- load_DA_from_AWS(selected_tissues = selected_tissues,
-                                 selected_omes = selected_omes_epigen)
+    epi_list <- .load_DA_from_bucket(selected_tissues = selected_tissues,
+                                     selected_omes = selected_omes_epigen,
+                                     repo_local_dir = repo_local_dir,
+                                     gsutil = gsutil,
+                                     bucket = bucket)
 
     epi_list <- unlist(epi_list, recursive = FALSE)
     epi_list <- .process_raw_DA(epi_list)

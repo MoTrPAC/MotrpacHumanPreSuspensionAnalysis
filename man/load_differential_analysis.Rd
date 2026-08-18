@@ -9,6 +9,9 @@ load_differential_analysis(
   selected_tissues = "all",
   single_matrix = FALSE,
   epigen = FALSE,
+  repo_local_dir = NULL,
+  gsutil = "gsutil",
+  bucket = .STAGING_BUCKET,
   combine_with_featgene = FALSE,
   verbose = TRUE,
   load_clinical = FALSE
@@ -24,7 +27,26 @@ load_differential_analysis(
 \code{data.frame} containing all results. Otherwise, returns a list of
 \code{data.frame} objects (default).}
 
-\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.}
+\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired.
+The epigenomics tables are not shipped in the package; they are downloaded
+from \code{bucket} at run time, which requires gsutil read access and is
+very slow due to file sizes.}
+
+\item{repo_local_dir}{character; local directory used as the download cache
+for the epigenomics files. Files are written under its \code{data/tmp/}
+subdirectory, which is created if absent. Required when \code{epigen} is
+\code{TRUE} and unused otherwise.}
+
+\item{gsutil}{character; path to the gsutil executable. Defaults to
+\code{"gsutil"}, which assumes it is on the PATH. Only used when
+\code{epigen} is \code{TRUE}.}
+
+\item{bucket}{character; GCS prefix the epigenomics files are read from.
+Defaults to the staging bucket the current precovid-repro release cycle
+writes (\code{config/pipeline.env}, \code{STAGING_BUCKET}). Pass a release
+prefix such as
+\code{"gs://motrpac-data-hub/analysis/human-precovid-sed-adu/c1.3"} to read
+published data instead. Only used when \code{epigen} is \code{TRUE}.}
 
 \item{combine_with_featgene}{logical; whether to include columns from
 \code{HUMAN_FEATURE_TO_GENE} in the output.}
