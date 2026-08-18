@@ -1,3 +1,44 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.3
+
+## Data objects
+
+- `HUMAN_FEATURE_TO_GENE` gains three columns and has 13 where it had 10. No row and no
+  existing column changed: all 1,920,618 rows and all ten previously shipped columns are
+  identical to 2.0.1, so nothing that reads the table today reads anything different. Code
+  selecting columns by position has to be updated; code selecting by name does not.
+
+  - `custom_annotation` (factor) and `relationship_to_gene` (numeric) say where an
+    ATAC-seq or MethylCap-seq peak sits relative to the gene it was assigned to — the
+    region it falls in (`"Promoter (<=1kb)"`, `"Intron"`, `"Distal Intergenic"`, and seven
+    others) and the signed base-pair distance to that gene, `0` where the peak overlaps it.
+    Both were produced by the pipeline all along and dropped before the table was built, so
+    an epigenomics feature arrived carrying only a gene: a peak in a promoter and a peak
+    40 kb into an intron were indistinguishable once mapped. They are populated for all
+    1,852,716 epigenomics rows and `NA` everywhere else.
+
+    Unlike `confident_site` they are not a per-tissue measurement — they are derived from
+    the peak coordinates in the `feature_id` — so they take the same value in every tissue
+    a peak appears in and are not collapsed. This was checked rather than assumed: none of
+    the 306,788 ATAC or 1,545,930 MethylCap feature identifiers shared between tissues
+    disagree.
+
+  - `confident_site` (logical) is the phosphosite localization flag, `NA` outside
+    `prot-ph`. It is **collapsed across tissues** — `TRUE` only where a site is confidently
+    localized in every tissue that measured it — because this table is keyed on
+    `(assay, feature_id)` and has no tissue column, and 859 sites disagree between muscle
+    and adipose. Read `*_PROT_PH_QC$feature_metadata` in
+    `MotrpacHumanPreSuspensionData` when tissue-specific localization matters;
+    `preprocess_PTMSEA()` already does, and is unaffected by this addition.
+
+## Documentation
+
+- `?HUMAN_FEATURE_TO_GENE` documented `assay` as a factor. It is a character vector, and
+  has been for as long as the table has been built this way.
+
+- The documented `assay` values did not include `"prot-clinical"`, which the 2.0 split of
+  clinical chemistry into a metabolomics and a proteomics assay introduced. All eight
+  values the column actually takes are now listed.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
 ## Breaking changes to data objects
