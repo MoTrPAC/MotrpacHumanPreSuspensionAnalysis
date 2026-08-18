@@ -1,3 +1,13 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.4
+
+## Data objects
+
+- `FCM_CLUSTERS` clusters blood into 12 clusters where it had 13; adipose (13) and muscle
+  (12) are unchanged and reproduce bit for bit. `FCM_CAMERA` and `FCM_ORA` follow the new
+  clustering and have 434,337 rows where they had 444,806. Cluster numbers are a trajectory
+  order, not identities, so blood cluster N in 2.0.4 is not blood cluster N in 2.0.3 —
+  against the outgoing objects blood scores an adjusted Rand index of 0.711.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.3
 
 ## Data objects

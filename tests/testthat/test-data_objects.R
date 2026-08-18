@@ -185,6 +185,17 @@ test_that("FCM_CLUSTERS exists and has content", {
   expect_true(length(FCM_CLUSTERS) > 0)
 })
 
+test_that("FCM_CLUSTERS has the cluster count each tissue was built at", {
+  expected_k <- c(adipose = 13L, blood = 12L, muscle = 12L)
+  expect_setequal(names(FCM_CLUSTERS), names(expected_k))
+  for (tissue in names(expected_k)) {
+    x <- FCM_CLUSTERS[[tissue]]
+    expect_equal(nrow(x$centers), expected_k[[tissue]])
+    expect_equal(ncol(x$membership), expected_k[[tissue]])
+    expect_true(all(x$cluster >= 1L & x$cluster <= expected_k[[tissue]]))
+  }
+})
+
 test_that("FCM_CAMERA has expected structure", {
   expect_s3_class(FCM_CAMERA, "data.frame")
   expect_true(nrow(FCM_CAMERA) > 0)
