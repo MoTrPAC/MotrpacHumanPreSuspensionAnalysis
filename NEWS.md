@@ -4,7 +4,7 @@
 
 - `HUMAN_FEATURE_TO_GENE` gains three columns and has 13 where it had 10. No row and no
   existing column changed: all 1,920,618 rows and all ten previously shipped columns are
-  identical to 2.0.1, so nothing that reads the table today reads anything different. Code
+  identical to 2.0.2, so nothing that reads the table today reads anything different. Code
   selecting columns by position has to be updated; code selecting by name does not.
 
   - `custom_annotation` (factor) and `relationship_to_gene` (numeric) say where an
@@ -38,6 +38,22 @@
 - The documented `assay` values did not include `"prot-clinical"`, which the 2.0 split of
   clinical chemistry into a metabolomics and a proteomics assay introduced. All eight
   values the column actually takes are now listed.
+
+# MotrpacHumanPreSuspensionAnalysis 2.0.2
+
+## Breaking changes
+
+- `load_differential_analysis(epigen = TRUE)` reads the epigenomics tables from Google
+  Cloud Storage via gsutil instead of the public CloudFront release, and defaults to the
+  current precovid-repro staging bucket. It now requires `repo_local_dir`, and gains
+  `gsutil` and `bucket` arguments; `plot_single_feature()` passes all three through.
+- The unexported `load_DA_from_AWS()` and `.load_single_ome_tissue_AWS()` are removed.
+  Its pinned `version = "1.2"` no longer matched the atac-seq tables, which are at v2.0.
+
+## Other changes
+
+- `MotrpacBicQC` returns as a `Suggests` dependency, loaded only on the `epigen = TRUE`
+  path, which reports that it relies on the gsutil implementation.
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 

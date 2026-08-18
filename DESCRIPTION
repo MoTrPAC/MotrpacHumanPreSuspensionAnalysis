@@ -69,6 +69,7 @@ Imports:
 Suggests:
     here,
     knitr,
+    MotrpacBicQC (>= 0.9.5),
     patchwork,
     pkgdown,
     pheatmap,
