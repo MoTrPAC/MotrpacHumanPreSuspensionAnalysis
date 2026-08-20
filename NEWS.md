@@ -1,3 +1,23 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.5
+
+## New data
+
+- `PTMSEA_INPUT` — the prot-ph differential-analysis z-statistics as a PTM-SEA input, one
+  `GCT` per tissue, from the confidently localized sites. `GCT` is `cmapR`'s S4 class;
+  attach `cmapR` to use its accessors.
+
+## Data objects
+
+- The thirteen `*_DA` objects gain `CI.L_calculated` and `CI.R_calculated`, the 95%
+  confidence interval on `logFC`, computed against each contrast's own residual degrees of
+  freedom. No existing column or row changed. `topTable`'s `CI.L`/`CI.R` remain unshipped:
+  for a `dream` fit they bound every contrast by the first contrast's degrees of freedom.
+
+- `UTORONTO_TFs` is now the prot-ph TF regulator pool — 1,381 rows, `feature_id` and
+  `gene_symbol` — where it was the raw UToronto extract, 2,765 rows and 28 columns keyed by
+  Ensembl gene ID. **Breaking**: the annotation columns are gone and a row is a phosphosite,
+  not a gene.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.4
 
 ## Data objects
