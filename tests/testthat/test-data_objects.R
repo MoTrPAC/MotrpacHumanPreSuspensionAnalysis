@@ -64,6 +64,47 @@ test_that("HUMAN_FEATURE_TO_GENE has expected structure", {
   expect_true(all(expected_cols %in% colnames(HUMAN_FEATURE_TO_GENE)))
 })
 
+test_that("HUMAN_FEATURE_TO_GENE carries the epigenomics peak annotation", {
+  # Both columns are produced by the pipeline's epigenomics stems and were dropped before
+  # the table was built, which left an ATAC or MethylCap feature carrying only a gene --
+  # a promoter peak and one 40kb into an intron were indistinguishable once mapped.
+  expect_true(all(c("custom_annotation", "relationship_to_gene") %in%
+                    colnames(HUMAN_FEATURE_TO_GENE)))
+
+  is_epi <- as.character(HUMAN_FEATURE_TO_GENE$assay) %in%
+    c("epigen-atac-seq", "epigen-methylcap-seq")
+  expect_true(any(is_epi))
+
+  # relationship_to_gene must be numeric, not the character it is read as: the column exists
+  # to be compared (abs(x) < 5000, x > 0) and "40000" < "5000" is TRUE as a string.
+  expect_type(HUMAN_FEATURE_TO_GENE$relationship_to_gene, "double")
+  expect_s3_class(HUMAN_FEATURE_TO_GENE$custom_annotation, "factor")
+
+  # Populated on the epigenomics rows and scoped to them -- a non-NA value on another assay
+  # would mean a peak annotation had been matched onto a feature it does not describe.
+  expect_false(anyNA(HUMAN_FEATURE_TO_GENE$custom_annotation[is_epi]))
+  expect_false(anyNA(HUMAN_FEATURE_TO_GENE$relationship_to_gene[is_epi]))
+  expect_true(all(is.na(HUMAN_FEATURE_TO_GENE$custom_annotation[!is_epi])))
+  expect_true(all(is.na(HUMAN_FEATURE_TO_GENE$relationship_to_gene[!is_epi])))
+
+  # Unlike confident_site these are coordinate-derived rather than measured per tissue, so
+  # they must not have split any key. The table is keyed on (assay, feature_id); a duplicate
+  # would make every join against it one-to-many.
+  key_cols <- HUMAN_FEATURE_TO_GENE[, c("assay", "feature_id")]
+  expect_false(any(duplicated(key_cols)))
+})
+
+test_that("HUMAN_FEATURE_TO_GENE carries confident_site, scoped to prot-ph", {
+  expect_true("confident_site" %in% colnames(HUMAN_FEATURE_TO_GENE))
+  # Logical, not a two-level factor: the point of the column is filter(confident_site),
+  # which errors on a factor, and as.logical() of one returns NA rather than the value.
+  expect_type(HUMAN_FEATURE_TO_GENE$confident_site, "logical")
+  is_ph <- as.character(HUMAN_FEATURE_TO_GENE$assay) == "prot-ph"
+  expect_true(any(is_ph))
+  expect_false(anyNA(HUMAN_FEATURE_TO_GENE$confident_site[is_ph]))
+  expect_true(all(is.na(HUMAN_FEATURE_TO_GENE$confident_site[!is_ph])))
+})
+
 test_that("SET_TO_ID has expected structure", {
   expect_s3_class(SET_TO_ID, "data.frame")
   expect_true(all(c("set_id", "set") %in% colnames(SET_TO_ID)))
@@ -82,7 +123,7 @@ test_that("COVARIATES_FILE exists and is a data.frame", {
 
 test_that("OUTLIERS has expected structure", {
   expect_s3_class(OUTLIERS, "data.frame")
-  expect_equal(nrow(OUTLIERS), 154L)
+  expect_equal(nrow(OUTLIERS), 160L)
   expect_equal(ncol(OUTLIERS), 4L)
 })
 
@@ -142,6 +183,17 @@ test_that("CAMERA_RESULTS has expected structure", {
 test_that("FCM_CLUSTERS exists and has content", {
   expect_true(exists("FCM_CLUSTERS"))
   expect_true(length(FCM_CLUSTERS) > 0)
+})
+
+test_that("FCM_CLUSTERS has the cluster count each tissue was built at", {
+  expected_k <- c(adipose = 13L, blood = 12L, muscle = 12L)
+  expect_setequal(names(FCM_CLUSTERS), names(expected_k))
+  for (tissue in names(expected_k)) {
+    x <- FCM_CLUSTERS[[tissue]]
+    expect_equal(nrow(x$centers), expected_k[[tissue]])
+    expect_equal(ncol(x$membership), expected_k[[tissue]])
+    expect_true(all(x$cluster >= 1L & x$cluster <= expected_k[[tissue]]))
+  }
 })
 
 test_that("FCM_CAMERA has expected structure", {

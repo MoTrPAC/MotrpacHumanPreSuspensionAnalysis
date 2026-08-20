@@ -8,7 +8,8 @@ load_summary_stats(
   selected_tissues = "all",
   selected_omes = "all",
   single_matrix = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  load_clinical = FALSE
 )
 }
 \arguments{
@@ -19,21 +20,43 @@ load_summary_stats(
 \code{"transcript-rna-seq"}, \code{"prot-pr"}, \code{"prot-ph"},
 \code{"prot-ol"}, \code{"epigen-atac-seq"},
 \code{"epigen-methylcap-seq"}, \code{"metab"}, or \code{"all"}.
-Selecting \code{"metab"} loads all metabolomics platforms.}
+Naming any single metabolomics platform is the same as naming
+\code{"metab"}: the research platforms live in one stacked object per
+tissue, so all of them are loaded and the platform is read off the
+\code{platform} column. \code{"metab-t-clinical"} is the exception — it is
+clinical chemistry, is not in the stack, and is gated by
+\code{load_clinical}.}
 
 \item{single_matrix}{logical; if \code{TRUE}, returns a single combined
 \code{data.frame} across all selected tissues and assays. If \code{FALSE}
 (default), returns a nested list.}
 
 \item{verbose}{logical; toggle verbosity.}
+
+\item{load_clinical}{logical; whether to include the clinical chemistry omes
+(\code{clinical_ome_list()}: \code{"prot-clinical"} and
+\code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+are dropped even when named unless it is set.}
 }
 \value{
 If \code{single_matrix = FALSE}, a nested list of \code{data.frame} objects.
-The top-level names correspond to tissues, and the second-level names
-correspond to assays or platforms.
+The top-level names correspond to tissues and the second-level names to
+assays — the same nesting \code{\link{load_differential_analysis}} returns,
+so the two tiers can be walked together. The research metabolomics platforms
+arrive as a single \code{"metab"} element per tissue rather than one element
+per platform.
 
 If \code{single_matrix = TRUE}, a single \code{data.frame} containing all
 selected summary statistics, with missing columns filled as \code{NA}.
+
+Each table carries \code{tissue}, \code{assay}, \code{randomGroupCode},
+\code{Timepoint}, \code{feature_id}, \code{Count}, \code{Mean} and \code{SD}.
+The metabolomics tables carry \code{assay = "metab"} and one further column,
+\code{platform}, naming the platform the row was measured on. That is how the
+\code{*_DA} objects are labelled, so a join between the two tiers no longer
+has to translate between two names for the same ome.
 }
 \description{
 Loads group- and timepoint-level summary statistics for normalized expression
@@ -61,8 +84,9 @@ In epigenetic assays, features were filtered for significant features (FDR<0.05)
 ## Load all summary statistics
 sum_stats = load_summary_stats()
 
-## Load metabolomics only
+## Load metabolomics only. One table per tissue, every platform in it.
 metab_stats = load_summary_stats(selected_omes = "metab")
+unique(metab_stats[["blood"]][["metab"]][["platform"]])
 
 ## Load adipose transcriptomics as a single table
 adipose_rna = load_summary_stats(

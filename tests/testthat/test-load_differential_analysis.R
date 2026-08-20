@@ -125,3 +125,9 @@ test_that("load_differential_analysis DA tables have expected column types", {
   expect_type(res$adj_p_value, "double")
   expect_s3_class(res$contrast, "factor")
 })
+
+test_that("differential analysis results no longer carry the CI.L/CI.R columns", {
+  # Dropped for v2.0. Pinned so the removal cannot silently reverse.
+  expect_false(any(c("CI.L", "CI.R") %in% colnames(ADIPOSE_PROT_PR_DA)))
+  expect_false(any(c("CI.L", "CI.R") %in% colnames(MUSCLE_TRNSCRPT_DA)))
+})

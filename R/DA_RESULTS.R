@@ -11,6 +11,8 @@
 #'
 #' BLOOD_METAB_DA
 #' BLOOD_PROT_OL_DA
+#' BLOOD_METAB_T_CLINICAL_DA
+#' BLOOD_PROT_CLINICAL_DA
 #' BLOOD_TRNSCRPT_DA
 #'
 #' MUSCLE_METAB_DA
@@ -103,15 +105,14 @@
 "SPLICING_DA"
 
 
-#' Clinical Chemistry Differential analysis
-#'
-#' A data object containing results from a differential expression analysis of the clinical
-#' analytes as described in data-raw/differential_analysis_results/
-#'
-#' @format A \code{data.frame} with 297 rows and 20 columns.
-#'
-#' @docType data
-"CLIN_CHEMISTRY_DA"
 
 
+#' @rdname DA_RESULTS
+#' @format NULL
+#' @usage NULL
+"BLOOD_METAB_T_CLINICAL_DA"
 
+#' @rdname DA_RESULTS
+#' @format NULL
+#' @usage NULL
+"BLOOD_PROT_CLINICAL_DA"

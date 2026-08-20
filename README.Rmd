@@ -155,13 +155,12 @@ access. Some advanced workflows rely on the private package
 `MotrpacHumanPreSuspensionData` that is available only to MoTrPAC consortium
 members.
 
-At the moment, the primary functions with this optional dependency are:
+At the moment, the only function with this optional dependency is:
 
-- `run_SCION()`
 - `plot_precovid_cca()`
 
-If the private package is not installed, these functions will return a clear
-error message with access guidance.
+If the private package is not installed, it will return a clear error message
+with access guidance.
 
 ## Getting help
 
@@ -237,7 +236,9 @@ names(summary_stats)
 names(summary_stats[["blood"]])
 ```
 
-By default, load_summary_stats() loads group- and timepoint-level summary statistics for normalized expression data in a nested list structure, organized identically to the differential-analysis datasets. The top level corresponds to tissues, and the second level corresponds to molecular assays or platforms. 
+By default, load_summary_stats() loads group- and timepoint-level summary statistics for normalized expression data in a nested list structure, organized identically to the differential-analysis datasets. The top level corresponds to tissues, and the second level corresponds to molecular assays.
+
+The research metabolomics platforms arrive as a single `metab` element per tissue, not one element per platform. That table reads `assay = "metab"` and names the platform in its own `platform` column, exactly as `{TISSUE}_METAB_DA` does, so a summary statistic and the differential-analysis row it belongs to agree on what the ome is called. Naming any one platform loads the whole stack. Clinical chemistry (`metab-t-clinical`) is not in it and stays its own object.
 
 You may subset the data using selected_tissues and selected_omes. Available options can be queried via `tissue_available_list()` and `ome_available_list()`. If an invalid tissue or assay is supplied, informative warnings or errors are raised to guide correction.
 

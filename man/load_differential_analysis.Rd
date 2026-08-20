@@ -9,8 +9,12 @@ load_differential_analysis(
   selected_tissues = "all",
   single_matrix = FALSE,
   epigen = FALSE,
+  repo_local_dir = NULL,
+  gsutil = "gsutil",
+  bucket = .STAGING_BUCKET,
   combine_with_featgene = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  load_clinical = FALSE
 )
 }
 \arguments{
@@ -23,12 +27,38 @@ load_differential_analysis(
 \code{data.frame} containing all results. Otherwise, returns a list of
 \code{data.frame} objects (default).}
 
-\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.}
+\item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired.
+The epigenomics tables are not shipped in the package; they are downloaded
+from \code{bucket} at run time, which requires gsutil read access and is
+very slow due to file sizes.}
+
+\item{repo_local_dir}{character; local directory used as the download cache
+for the epigenomics files. Files are written under its \code{data/tmp/}
+subdirectory, which is created if absent. Required when \code{epigen} is
+\code{TRUE} and unused otherwise.}
+
+\item{gsutil}{character; path to the gsutil executable. Defaults to
+\code{"gsutil"}, which assumes it is on the PATH. Only used when
+\code{epigen} is \code{TRUE}.}
+
+\item{bucket}{character; GCS prefix the epigenomics files are read from.
+Defaults to the staging bucket the current precovid-repro release cycle
+writes (\code{config/pipeline.env}, \code{STAGING_BUCKET}). Pass a release
+prefix such as
+\code{"gs://motrpac-data-hub/analysis/human-precovid-sed-adu/c1.3"} to read
+published data instead. Only used when \code{epigen} is \code{TRUE}.}
 
 \item{combine_with_featgene}{logical; whether to include columns from
 \code{HUMAN_FEATURE_TO_GENE} in the output.}
 
 \item{verbose}{logical; whether or not to display messages for some warnings.}
+
+\item{load_clinical}{logical; whether to include the clinical chemistry omes
+(\code{clinical_ome_list()}: \code{"prot-clinical"} and
+\code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+are dropped even when named unless it is set.}
 }
 \value{
 A nested list of \code{data.table} objects. The top level names are
@@ -37,8 +67,13 @@ possess the following columns:
 
 \describe{
 \item{tissue}{factor; the tissue.}
-\item{assay}{factor; the ome.}
-\item{platform}{factor; (metabolomics only) metabolomics platform.}
+\item{assay}{factor; the assay family, not the platform. Every
+metabolomics table reads \code{"metab"} — clinical chemistry included —
+so \code{assay} alone does not separate \code{metab-t-clinical} from the
+research platforms, and five analytes (Cortisol, Glucose, Glycerol, KET,
+NEFA) exist on both. Include \code{platform} in any key that has to tell
+them apart.}
+\item{platform}{factor; (metabolomics only) the metabolomics platform.}
 \item{full_model}{factor; full model containing predictors and any
 covariates.}
 \item{contrast}{factor; full contrast (up to 33).}
@@ -52,9 +87,20 @@ covariates.}
 phosphosites, transcripts, metabolites/lipids, peaks, or GpGs).}
 \item{logFC}{numeric; difference between the group means in the
 contrast.}
-\item{CI.L}{numeric; lower confidence limit.}
-\item{CI.R}{numeric; upper confidence limit.}
-\item{degrees_of_freedom}{numeric; degrees of freedom.}
+\item{CI.L_calculated}{numeric; lower bound of the 95\\% confidence
+interval on \code{logFC}, computed as
+\code{logFC - (logFC / t) * qt(0.975, df)} against that contrast's own
+residual degrees of freedom.}
+\item{CI.R_calculated}{numeric; upper bound of the same interval. The
+pair is named \code{_calculated} to keep it distinct from
+\code{topTable}'s \code{CI.L}/\code{CI.R}, which these tables do not
+carry: for a \code{dream} fit those bound every contrast by the first
+contrast's degrees of freedom.}
+\item{degrees_of_freedom}{numeric; the per-feature residual degrees of
+freedom used to shrink that feature's variance. Note this is NOT the
+degrees of freedom the p-value was computed from, which is the
+per-contrast Satterthwaite value plus the prior; p-values cannot be
+recomputed from this column.}
 \item{logLik}{numeric; log likelihood of differential expression.}
 \item{AveExpr}{numeric; mean of all sample-level values for that
 feature.}

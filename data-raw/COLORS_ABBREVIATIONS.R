@@ -1,86 +1,14 @@
-
-#' Color scheme for figures making sex-based differentiation.
-# "HUMAN_SEX_COLORS"
-HUMAN_SEX_COLORS = c(male= "#5555ff",
-                     Male= "#5555ff",
-                     female= "#f95c6f",
-                     Female= "#f95c6f")
-usethis::use_data(HUMAN_SEX_COLORS, overwrite = TRUE)
-
-#' Color scheme for figures making tissue-based differentiation
-# "HUMAN_TISSUE_COLORS"
-HUMAN_TISSUE_COLORS = c(blood= "#d7191c",
-                        muscle= "#abd9e9",
-                        adipose= "#ffffbf")
-usethis::use_data(HUMAN_TISSUE_COLORS, overwrite = TRUE)
-
-#' Abbreviations for tissues
-# "HUMAN_TISSUE_ABBR"
-HUMAN_TISSUE_ABBR = c(blood= "#BLO",
-                      muscle= "#MUS",
-                      adipose= "#ADI")
-usethis::use_data(HUMAN_TISSUE_ABBR, overwrite = TRUE)
-
-#' Color scheme for figures making group-based differentiation
-# "HUMAN_EXERCISE_GROUP_COLORS"
-HUMAN_EXERCISE_GROUP_COLORS = c(ADUResist = "#1b9e77",
-                                ADUEndur = "#d95f02",
-                                ADUControl = "#7570b3")
-usethis::use_data(HUMAN_EXERCISE_GROUP_COLORS, overwrite = TRUE)
-
+# Retired: precovid-repro builds this now.
 #
-# "HUMAN_ACUTE_TIMEPOINT_COLORS"
-HUMAN_ACUTE_TIMEPOINT_COLORS = c(pre_exercise = "#BEBEBE",
-                                 Pre_exercise = "#BEBEBE",
-                                 During = "#FDE725",
-                                 during_20_min = "#FDE725",
-                                 during_40_min = "#BAD071",
-                                 post_10_min = "#D1BBD7",
-                                 Early = "#AE76A3",
-                                 post_15_30_45_min = "#AE76A3",
-                                 post_15_min = "#AE76A3",
-                                 post_30_min = "#AE76A3",
-                                 post_45_min = "#AE76A3",
-                                 Mid = "#882E72",
-                                 post_3.5_4_hr = "#882E72",
-                                 post_4_hr = "#882E72",
-                                 Late = "#61194F",
-                                 post_24_hr = "#61194F")
-usethis::use_data(HUMAN_ACUTE_TIMEPOINT_COLORS, overwrite = TRUE)
+#   precovid-repro/scripts/00_preflight/data-raw/COLORS_ABBREVIATIONS.R
+#
+# The objects this script used to write into data/ are produced by the
+# pipeline and carried in by its Stage 3 (30_update_relevant_packages), so
+# running anything here would write a second, unversioned copy from inputs
+# the release no longer reads. The code is removed rather than left runnable
+# beside the thing that replaced it: two live generators for one object is
+# how a package ends up shipping data nobody can trace.
+#
+# inst/PROVENANCE.tsv records, per object, which pipeline step built it and
+# whether it was regenerated or staged verbatim.
 
-#' Color scheme for figures making ome-based differentiation
-
-# "HUMAN_OME_COLORS"
-HUMAN_OME_COLORS = c(Transcriptomics = "#377EB8",
-                     "transcript-rna-seq" = "#377EB8",
-                     Proteomics = "#228833",
-                     "Proteomics (MS)" = "#228833",
-                     "prot-pr" = "#228833",
-                     "Proteomics (Olink)" = "#228833",
-                     "prot-ol" = "#228833",
-                     Metabolomics = "#6D4B08",
-                     "metab-u-hilicpos" = "#6D4B08",
-                     "metab-u-ionpneg" = "#6D4B08",
-                     "metab-u-lrpneg" = "#6D4B08",
-                     "metab-u-lrppos" = "#6D4B08",
-                     "metab-u-rpneg" = "#6D4B08",
-                     "metab-u-rppos" = "#6D4B08",
-                     "metab-t-amines" = "#6D4B08",
-                     "metab-t-conv" = "#6D4B08",
-                     "metab-t-imm-crt" = "#6D4B08",
-                     "metab-t-imm-glc" = "#6D4B08",
-                     "metab-t-imm-ins" = "#6D4B08",
-                     "metab-t-oxylipneg" = "#6D4B08",
-                     "metab-t-tca" = "#6D4B08",
-                     "metab-t-nuc" = "#6D4B08",
-                     "metab-t-acoa" = "#6D4B08",
-                     "metab-t-ka" = "#6D4B08",
-                     "metab-meta-reg" ="#6D4B08",
-                     "epigen-atac-seq" = "#882255",
-                     ATAC = "#882255",
-                     `Chromatin Accessibility (ATAC)` = "#882255",
-                     Phosphoproteomics = "#F3A02B",
-                     "prot-ph" = "#F3A02B",
-                     "epigen-methylcap-seq" = "#D687B5",
-                     Methylation = "#D687B5")
-usethis::use_data(HUMAN_OME_COLORS, overwrite = TRUE)

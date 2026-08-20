@@ -14,3 +14,4 @@
 ^\.claude$
 ^CLAUDE\.md$
 ^sandbox$
+^figure_check$

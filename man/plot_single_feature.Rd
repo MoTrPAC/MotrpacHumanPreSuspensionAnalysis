@@ -14,6 +14,9 @@ plot_single_feature(
   color_time_labels = FALSE,
   include_legend = TRUE,
   legend_position = "right",
+  repo_local_dir = NULL,
+  gsutil = "gsutil",
+  bucket = .STAGING_BUCKET,
   verbose = TRUE,
   epigen = FALSE
 )
@@ -23,7 +26,11 @@ plot_single_feature(
 
 \item{selected_tissues}{character; one of tissue_available_list.}
 
-\item{selected_omes}{character; one of ome_available_list.}
+\item{selected_omes}{character; one of ome_available_list. The clinical
+chemistry omes in \code{\link{clinical_ome_list}()} are plotted only when
+they are requested, either by name or through \code{"all"}; asking for
+another ome no longer returns clinical chemistry alongside it. \code{"metab"}
+does not imply \code{"metab-t-clinical"}.}
 
 \item{p_level}{Numeric threshold for adjusted p value significance in differential analysis (so this would make individual points highlighted in black if below this threshold)}
 
@@ -36,6 +43,16 @@ plot_single_feature(
 \item{include_legend}{toggle TRUE/FALSE to include a legend}
 
 \item{legend_position}{if include_legend == TRUE, position can be selected}
+
+\item{repo_local_dir}{character; a local path to cache downloaded
+differential analysis files in, relevant only if epigen is TRUE}
+
+\item{gsutil}{character; path to the gsutil executable, relevant only if
+epigen is TRUE}
+
+\item{bucket}{character; GCS prefix the epigenomics files are read from,
+relevant only if epigen is TRUE. Defaults to the staging bucket of the
+current precovid-repro release cycle.}
 
 \item{verbose}{logical; toggle to include verbose information}
 

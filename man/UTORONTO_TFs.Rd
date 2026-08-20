@@ -3,19 +3,39 @@
 \docType{data}
 \name{UTORONTO_TFs}
 \alias{UTORONTO_TFs}
-\title{Pre-specified transcription Factors from the UToronto dataset}
+\title{Transcription-Factor Phosphosite Regulator Pool}
 \format{
-https://humantfs.ccbr.utoronto.ca/download.php
+A data frame with 1,381 rows and 2 columns, one row per prot-ph
+feature.
+
+\describe{
+\item{feature_id}{character; the prot-ph phosphosite identifier, unique
+within the table.}
+\item{gene_symbol}{character; the HGNC symbol of the transcription factor
+the site sits on. 383 distinct symbols, since a factor generally carries
+more than one site.}
+}
+}
+\source{
+\url{https://humantfs.ccbr.utoronto.ca/download.php}
 }
 \usage{
 UTORONTO_TFs
 }
 \description{
-This page contains the official list of human TFs
-from Lambert et al (PMID:29425488), along with all associated information.
-Candidate proteins were manually examined by a panel of experts based on available data.
-Proteins with experimentally demonstrated DNA binding specificity were considered TFs.
-Other proteins, such as co-factors and RNA binding proteins, were classified as non-TFs.
-All proteins (both TFs and non-TFs) are contained in the database, along with the associated evidence.
+The prot-ph features whose gene is a curated human transcription
+factor. The Human TFs database extract of Lambert et al (PMID:29425488) is
+restricted to the entries curated as \code{Is TF? == "Yes"}, and those gene
+symbols are mapped through \code{\link{HUMAN_FEATURE_TO_GENE}} to every
+prot-ph feature sharing the symbol.
+
+This is a regulator pool, not an annotation table. It exists to restrict a
+network inference to phosphosites sitting on transcription factors, and the
+\code{feature_id} column is what such a caller subsets on. The curated TF
+call, the DNA-binding domain and the rest of the Lambert annotation are not
+carried here; consult the source below for those.
 }
-\keyword{dataset}
+\seealso{
+\code{\link{HUMAN_FEATURE_TO_GENE}}
+}
+\keyword{datasets}

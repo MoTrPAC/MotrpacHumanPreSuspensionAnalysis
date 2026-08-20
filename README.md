@@ -149,13 +149,12 @@ additional access. Some advanced workflows rely on the private package
 `MotrpacHumanPreSuspensionData` that is available only to MoTrPAC
 consortium members.
 
-At the moment, the primary functions with this optional dependency are:
+At the moment, the only function with this optional dependency is:
 
-- `run_SCION()`
 - `plot_precovid_cca()`
 
-If the private package is not installed, these functions will return a
-clear error message with access guidance.
+If the private package is not installed, it will return a clear error
+message with access guidance.
 
 ## Getting help
 
@@ -299,23 +298,35 @@ summary_stats = load_summary_stats(
   single_matrix = FALSE,
   verbose = TRUE
 )
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
 #> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
+#> Metabolomics platforms are returned stacked in one table per tissue, with the
+#>             platform in the `platform` column and `assay` reading "metab", matching the
+#>             differential analysis. Please remember that the lowest CV metabolite is chosen and
+#>             the relevant refmet name is used. If you're not able to find your desired
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
+#>             refmet/feature name.
 names(summary_stats)
 #> [1] "adipose" "blood"   "muscle"
 names(summary_stats[["blood"]])
-#>  [1] "epigen-atac-seq"      "epigen-methylcap-seq" "metab-t-amines"      
-#>  [4] "metab-t-conv"         "metab-t-oxylipneg"    "metab-t-tca"         
-#>  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      
-#> [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       
-#> [13] "prot-ol"              "transcript-rna-seq"
+#> [1] "epigen-methylcap-seq" "metab"                "prot-ol"             
+#> [4] "transcript-rna-seq"
 ```
 
 By default, load_summary_stats() loads group- and timepoint-level
 summary statistics for normalized expression data in a nested list
 structure, organized identically to the differential-analysis datasets.
 The top level corresponds to tissues, and the second level corresponds
-to molecular assays or platforms.
+to molecular assays.
+
+The research metabolomics platforms arrive as a single `metab` element
+per tissue, not one element per platform. That table reads
+`assay = "metab"` and names the platform in its own `platform` column,
+exactly as `{TISSUE}_METAB_DA` does, so a summary statistic and the
+differential-analysis row it belongs to agree on what the ome is called.
+Naming any one platform loads the whole stack. Clinical chemistry
+(`metab-t-clinical`) is not in it and stays its own object.
 
 You may subset the data using selected_tissues and selected_omes.
 Available options can be queried via `tissue_available_list()` and
@@ -331,11 +342,19 @@ upon request via the Motrpac Consortium.
 
 ``` r
 single_matrix = load_summary_stats(single_matrix = TRUE)
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
 #> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
+#> Metabolomics platforms are returned stacked in one table per tissue, with the
+#>             platform in the `platform` column and `assay` reading "metab", matching the
+#>             differential analysis. Please remember that the lowest CV metabolite is chosen and
+#>             the relevant refmet name is used. If you're not able to find your desired
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
+#>             refmet/feature name.
 colnames(single_matrix)
 #> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
-#> [5] "Mean"            "SD"              "tissue"          "assay"
+#> [5] "Mean"            "SD"              "tissue"          "assay"          
+#> [9] "platform"
 ```
 
 Summary statistics were filtered to only those that qualified for
