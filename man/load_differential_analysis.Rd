@@ -87,6 +87,15 @@ covariates.}
 phosphosites, transcripts, metabolites/lipids, peaks, or GpGs).}
 \item{logFC}{numeric; difference between the group means in the
 contrast.}
+\item{CI.L_calculated}{numeric; lower bound of the 95\\% confidence
+interval on \code{logFC}, computed as
+\code{logFC - (logFC / t) * qt(0.975, df)} against that contrast's own
+residual degrees of freedom.}
+\item{CI.R_calculated}{numeric; upper bound of the same interval. The
+pair is named \code{_calculated} to keep it distinct from
+\code{topTable}'s \code{CI.L}/\code{CI.R}, which these tables do not
+carry: for a \code{dream} fit those bound every contrast by the first
+contrast's degrees of freedom.}
 \item{degrees_of_freedom}{numeric; the per-feature residual degrees of
 freedom used to shrink that feature's variance. Note this is NOT the
 degrees of freedom the p-value was computed from, which is the
