@@ -62,6 +62,40 @@ exactly recreate pre-print Figures. We will aim to provide version
 information via the GitHub “Releases” section for major version
 milestones.
 
+## How this repo fits with the others
+
+The Pre-Suspension human work is split across four repositories. Individual-level molecular
+and phenotypic data cannot be distributed publicly, so they live in a separate, access-gated
+package, and everything that *can* be released publicly (aggregate results, all analysis
+code) is kept clear of them.
+
+```
+                MoTrPAC BIC — consortium GCS buckets
+                (raw and normalized assay data, gated)
+                                │
+                         precovid-repro
+              rebuilds every data object, versions the data,
+             uploads it, and carries it into both packages
+                                │
+              ┌─────────────────┴─────────────────┐
+              ▼                                   ▼
+ MotrpacHumanPreSuspensionData      MotrpacHumanPreSuspensionAnalysis
+ subject-level data — access-gated  aggregate results — public
+              └─────────────────┬─────────────────┘
+                                ▼
+               motrpac-human-presuspension-acute
+               manuscript figure code + QC vignettes
+                                ▼
+                          manuscripts
+```
+
+| Repository | What it holds | Access |
+|---|---|---|
+| `precovid-repro` | the end-to-end rebuild pipeline and its pinned software environment | private; a full run needs consortium bucket access |
+| [`MotrpacHumanPreSuspensionData`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData) | subject-level molecular and phenotypic data objects | formal data-access request to the consortium |
+| [`MotrpacHumanPreSuspensionAnalysis`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis) | differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions | public |
+| [`motrpac-human-presuspension-acute`](https://github.com/MoTrPAC/motrpac-human-presuspension-acute) | per-manuscript figure code and QC vignettes | code public; some panels need Data access |
+
 ------------------------------------------------------------------------
 
 # Installation
