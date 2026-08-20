@@ -71,11 +71,12 @@ code) is kept clear of them.
 
 ```
                 MoTrPAC BIC — consortium GCS buckets
-                (raw and normalized assay data, gated)
+                     (raw assay data, gated)
                                 │
                          precovid-repro
-              rebuilds every data object, versions the data,
-             uploads it, and carries it into both packages
+        normalizes omics data, applies statistical models,
+        builds every data object, versions it, uploads it,
+                and carries it into both packages
                                 │
               ┌─────────────────┴─────────────────┐
               ▼                                   ▼
