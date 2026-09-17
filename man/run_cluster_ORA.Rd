@@ -16,9 +16,9 @@ run_cluster_ORA(
 )
 }
 \arguments{
-\item{FCM}{fuzzy c-means (FCM) clustering results. Output of
-\code{\link{run_cmeans}}. This should be a named list of objects of class
-\code{fclust}.}
+\item{FCM}{fuzzy c-means (FCM) clustering results: a named list of objects
+of class \code{fclust}, one per tissue, such as
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}}.}
 
 \item{selected_omes}{character; one or more character strings selected from
 the following options: \code{"transcript-rna-seq"}, \code{"prot-pr"},
@@ -106,15 +106,14 @@ c-means (FCM) clustering.
 }
 \examples{
 \dontrun{
-  FCM <- run_cmeans()
-
   # Run ORA with all available molecular signatures
-  cluster_res <- run_cluster_ORA(FCM = FCM)
+  cluster_res <- run_cluster_ORA(FCM = FCM_CLUSTERS)
   head(cluster_res)
 }
 }
 \seealso{
-\code{\link{run_cmeans}}, \code{\link{run_cluster_cameraPR}},
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
+\code{\link{run_cluster_cameraPR}},
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 }

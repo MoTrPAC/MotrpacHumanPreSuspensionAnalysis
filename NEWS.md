@@ -1,5 +1,10 @@
 # MotrpacHumanPreSuspensionAnalysis 2.0.6
 
+## Removed
+
+- **Breaking**: `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
+  `FCM_CLUSTERS`. Mfuzz, Biobase and ggpubr are no longer imported.
+
 ## Data objects
 
 - `COVARIATES_FILE` drops the `BMI` and `codedsiteid` rows for `epigen-methylcap-seq`, which

@@ -509,31 +509,7 @@ plot_enrich_heatmap(
 )
 ```
 
-## 5.4 Cluster Trajectory Plots
-
-After running fuzzy c-means clustering, use `plot_cmeans()` to visualize
-cluster trajectories as line plots colored by membership probability.
-
-```{r plot-cmeans, eval = FALSE}
-# Note: filename is required — the plot is saved directly to PDF.
-FCM <- run_cmeans(selected_tissues = "adipose")
-
-plot_cmeans(
-  FCM = FCM[["adipose"]],
-  filename = "adipose_clusters.pdf",
-  min_membership = 0.3,
-  ncol = 4
-)
-```
-
-Key parameters:
-
-- `keep_clusters` — subset to specific cluster numbers
-- `min_membership` — minimum membership probability for display
-- `common_ylim` — use the same y-axis across all cluster panels
-- `modality` — show "both", "Endur" only, or "Resist" only
-
-## 5.5 Cluster Enrichment Heatmaps
+## 5.4 Cluster Enrichment Heatmaps
 
 `plot_cluster_enrichment()` generates bubble heatmaps for cluster-level
 enrichment results (from `run_cluster_cameraPR()` or
@@ -595,35 +571,14 @@ Pre-computed results are available as `CAMERA_RESULTS`.
 
 # 7. Fuzzy C-Means Clustering
 
-`run_cmeans()` performs fuzzy c-means (FCM) clustering on z-score
-matrices from differential analysis, grouping features with similar
-temporal response patterns.
+`FCM_CLUSTERS` holds pre-computed fuzzy c-means (FCM) clustering of the
+differential analysis z-score matrices, grouping features with similar
+temporal response patterns. It is a named list with one `fclust` object
+per tissue.
 
-```{r run-cmeans-default, eval = FALSE}
-# Run with defaults (13 clusters for adipose/blood, 12 for muscle)
-FCM <- run_cmeans()
-names(FCM)  # one element per tissue
+```{r fcm-clusters, eval = FALSE}
+names(FCM_CLUSTERS)  # one element per tissue
 ```
-
-```{r run-cmeans-explore, eval = FALSE}
-# Explore optimal cluster numbers
-FCM_explore <- run_cmeans(
-  selected_tissues = "adipose",
-  num_clusters_adipose = 3:14
-)
-
-# Run for a single modality
-FCM_endur <- run_cmeans(
-  selected_tissues = "muscle",
-  modality = "Endur"
-)
-```
-
-Features are scaled by their standard deviation (including pre-exercise
-zeros) before clustering. Clusters are reordered by hierarchical
-clustering of centroids so that similar trajectories appear adjacent.
-
-Pre-computed clustering results are available as `FCM_CLUSTERS`.
 
 ## 7.1 Cluster-Level Enrichment with CAMERA-PR
 
@@ -631,8 +586,7 @@ Pre-computed clustering results are available as `FCM_CLUSTERS`.
 specific cluster centroids using modified signed rank tests.
 
 ```{r run-cluster-cameraPR, eval = FALSE}
-FCM <- run_cmeans()
-cluster_camera <- run_cluster_cameraPR(FCM = FCM)
+cluster_camera <- run_cluster_cameraPR(FCM = FCM_CLUSTERS)
 head(cluster_camera)
 ```
 
@@ -645,9 +599,8 @@ over-represented molecular signatures among features with high
 membership probabilities.
 
 ```{r run-cluster-ora, eval = FALSE}
-FCM <- run_cmeans()
 cluster_ora <- run_cluster_ORA(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   min_prob = 0.3
 )
 head(cluster_ora)
@@ -695,23 +648,13 @@ plot_enrich_heatmap(
   filename = "muscle_prot_enrichment.pdf"
 )
 
-# 5. Perform clustering
-FCM <- run_cmeans(selected_tissues = "muscle")
-
-# 6. Visualize clusters
-plot_cmeans(
-  FCM = FCM[["muscle"]],
-  filename = "muscle_clusters.pdf",
-  min_membership = 0.3
-)
-
-# 7. Cluster-level enrichment
+# 5. Cluster-level enrichment on the pre-computed clusters
 cluster_res <- run_cluster_cameraPR(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   selected_tissues = "muscle"
 )
 
-# 8. Visualize cluster enrichment
+# 6. Visualize cluster enrichment
 plot_cluster_enrichment(
   x = cluster_res,
   selected_ome = "prot-pr",

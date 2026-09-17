@@ -15,9 +15,9 @@ run_cluster_cameraPR(
 )
 }
 \arguments{
-\item{FCM}{fuzzy c-means (FCM) clustering results. Output of
-\code{\link{run_cmeans}}. This should be a named list of objects of class
-\code{fclust}.}
+\item{FCM}{fuzzy c-means (FCM) clustering results: a named list of objects
+of class \code{fclust}, one per tissue, such as
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}}.}
 
 \item{selected_omes}{character; one or more character strings selected from
 the following options: \code{"transcript-rna-seq"}, \code{"prot-pr"},
@@ -99,15 +99,14 @@ centroid.
 }
 \examples{
 \dontrun{
-  FCM <- run_cmeans()
-
   # Run CAMERA-PR with all available molecular signatures
-  cluster_res <- run_cluster_cameraPR(FCM = FCM)
+  cluster_res <- run_cluster_cameraPR(FCM = FCM_CLUSTERS)
   head(cluster_res)
 }
 }
 \seealso{
-\code{\link{run_cmeans}}, \code{\link{run_cluster_ORA}},
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
+\code{\link{run_cluster_ORA}},
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 }

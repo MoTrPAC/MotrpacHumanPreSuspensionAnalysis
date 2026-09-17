@@ -32,13 +32,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org')"
 
 # Install Bioconductor dependencies (from Remotes)
-# Mfuzz depends on e1071 and Biobase; install its deps first
-RUN R -e "install.packages('e1071', repos='https://cloud.r-project.org')"
-RUN R -e "BiocManager::install(c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition'), ask=FALSE, update=TRUE, force=TRUE)"
+RUN R -e "BiocManager::install(c('ComplexHeatmap', 'TMSig', 'variancePartition'), ask=FALSE, update=TRUE, force=TRUE)"
 
 # Verify all Bioconductor packages installed
 RUN R -e " \
-  pkgs <- c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition'); \
+  pkgs <- c('ComplexHeatmap', 'TMSig', 'variancePartition'); \
   missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; \
   if (length(missing)) stop('Failed to install: ', paste(missing, collapse=', ')) \
 "
@@ -46,7 +44,7 @@ RUN R -e " \
 # Install CRAN Imports
 RUN R -e "install.packages(c( \
     'data.table', 'dplyr', 'magrittr', 'tibble', 'tidyr', \
-    'ggplot2', 'ggpubr', 'latex2exp', 'forcats', 'scales', 'stringr' \
+    'ggplot2', 'latex2exp', 'forcats', 'scales', 'stringr' \
   ), repos='https://cloud.r-project.org')"
 
 # Install CRAN Suggests
@@ -69,7 +67,7 @@ RUN R -e "install.packages('pak', repos='https://cloud.r-project.org')"
 RUN R -e "pak::local_install_dev_deps(dependencies = TRUE)"
 
 # Verify a known required dependency is available before package install
-RUN R -e "if (!requireNamespace('ggpubr', quietly = TRUE)) stop('ggpubr is not installed')"
+RUN R -e "if (!requireNamespace('ggplot2', quietly = TRUE)) stop('ggplot2 is not installed')"
 
 # Build and install the package with R CMD
 RUN R CMD build --no-build-vignettes . && \
