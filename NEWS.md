@@ -1,3 +1,10 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.6
+
+## Data objects
+
+- `COVARIATES_FILE` drops the `BMI` and `codedsiteid` rows for `epigen-methylcap-seq`, which
+  the MALAX model (`~0 + group_timepoint + age + sex + (1 | pid)`) never included.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.5
 
 ## New data
