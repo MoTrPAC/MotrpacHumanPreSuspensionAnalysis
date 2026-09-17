@@ -18,6 +18,10 @@ plot_feature_heatmap(
   post_hr = NULL,
   full_modality_names = FALSE,
   multi_tissue_clust_rows = FALSE,
+  right_annotation = NULL,
+  heatmap_args = list(),
+  draw_args = list(),
+  return_drawing = FALSE,
   verbose = TRUE,
   ...
 )
@@ -50,7 +54,8 @@ heatmap.}
 \item{column_title}{character; the title you'd like to include for the columns. Usually empty}
 
 \item{filename}{character; optional file name used to save the heatmap. If
-provided, the heatmap will not be drawn.}
+provided, the heatmap will not be drawn. Ignored when
+\code{return_drawing = TRUE}.}
 
 \item{max_size}{numeric; largest number of pathways to display, if a pathway has too many features.
 Will automatically chose the first n pathways.}
@@ -69,15 +74,40 @@ a generic label of post 3.5/4 hr}
 Exercise and Resistance Exercise but if FALSE the modality values are set as EE
 and RE (by default the value is FALSE)}
 
-\item{multi_tissue_clust_rows}{logical; if you'd like to cluster rows specifically in a multi-tissue case}
+\item{multi_tissue_clust_rows}{logical; whether to cluster rows when more
+than one tissue is selected. Rows are restricted to features with a value in
+every column, since missing values break row clustering. Single-tissue
+heatmaps are always clustered.}
+
+\item{right_annotation}{\code{NULL}, a
+\code{\link[ComplexHeatmap]{HeatmapAnnotation}}, or a function. A function
+receives the row labels in heatmap row order and must return a row
+\code{HeatmapAnnotation}; use it when the annotation depends on which
+feature each row is. A \code{HeatmapAnnotation} is used as is and must
+already be in row order.}
+
+\item{heatmap_args}{list; arguments passed to
+\code{\link[ComplexHeatmap]{Heatmap}}. They override the defaults set
+here, e.g. \code{list(cluster_rows = FALSE)}.}
+
+\item{draw_args}{list; arguments passed to
+\code{\link[ComplexHeatmap]{draw}}. They override the defaults set here,
+e.g. \code{list(newpage = FALSE)}.}
+
+\item{return_drawing}{logical; if \code{TRUE}, nothing is drawn or saved.
+Instead a list is returned so the caller controls the graphics device.}
 
 \item{verbose}{logical; for specific warnings and additional information.}
 
 \item{...}{Additional parameters to be added to a ComplexHeatmap call}
 }
 \value{
-Nothing. A heatmap is drawn or saved to a file if \code{filename} is
-provided.
+If \code{return_drawing = FALSE} (default), nothing; the heatmap is
+drawn on the current device, or saved to \code{filename} if provided. If
+\code{return_drawing = TRUE}, a list with components \code{draw}, a
+function with no arguments that draws the heatmap on the current device
+without starting a new page, and \code{width} and \code{height}, the
+suggested page size in inches.
 }
 \description{
 Create a heatmap for user-specified features for a given tissue
@@ -91,6 +121,21 @@ plot_feature_heatmap(set_id = "11725",
   selected_tissue = "muscle",
   selected_ome = "prot-ph",
   filename = "sandbox/test_feature_heatmap.pdf")
+
+# Draw on a device the caller opens, with a row annotation
+hm <- plot_feature_heatmap(
+  feature_ids = c("ENSG00000109819.9", "ENSG00000112715.26",
+                  "ENSG00000119508.18", "ENSG00000162772.17"),
+  selected_tissue = c("muscle", "adipose"),
+  selected_ome = "transcript-rna-seq",
+  multi_tissue_clust_rows = TRUE,
+  right_annotation = function(row_labels) {
+    ComplexHeatmap::rowAnnotation(group = rep("A", length(row_labels)))
+  },
+  return_drawing = TRUE)
+grDevices::pdf("heatmap.pdf", width = hm$width, height = hm$height)
+hm$draw()
+grDevices::dev.off()
 }
 }
 \author{

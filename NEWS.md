@@ -1,5 +1,10 @@
 # MotrpacHumanPreSuspensionAnalysis 2.0.6
 
+## Changes
+
+- `plot_feature_heatmap()`: `multi_tissue_clust_rows = TRUE` works (it referenced an undefined
+  object); new `right_annotation`, `heatmap_args`, `draw_args` and `return_drawing` arguments.
+
 ## Removed
 
 - **Breaking**: `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
