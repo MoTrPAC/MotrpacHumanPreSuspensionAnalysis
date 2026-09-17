@@ -10,6 +10,7 @@
 #' @param custom_title character; whatever title is desired for the figure
 #'
 #' @return a ggplot object with the desired PCA plotting aesthetic.
+#' @import ggplot2
 #' @export plot_precovid_pca
 #'
 
