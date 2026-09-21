@@ -7,9 +7,9 @@
 #'   molecular signatures that closely follow the trajectories of each cluster's
 #'   centroid.
 #'
-#' @param FCM fuzzy c-means (FCM) clustering results. Output of
-#'   \code{\link{run_cmeans}}. This should be a named list of objects of class
-#'   \code{fclust}.
+#' @param FCM fuzzy c-means (FCM) clustering results: a named list of objects
+#'   of class \code{fclust}, one per tissue, such as
+#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}}.
 #' @inheritParams run_cameraPR
 #'
 #' @returns An object of class \code{data.frame} with the following columns:
@@ -50,7 +50,8 @@
 #'     cluster.}
 #'   }
 #'
-#' @seealso \code{\link{run_cmeans}}, \code{\link{run_cluster_ORA}},
+#' @seealso \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
+#'   \code{\link{run_cluster_ORA}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 #'    \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 #'
@@ -63,10 +64,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   FCM <- run_cmeans()
-#'
 #'   # Run CAMERA-PR with all available molecular signatures
-#'   cluster_res <- run_cluster_cameraPR(FCM = FCM)
+#'   cluster_res <- run_cluster_cameraPR(FCM = FCM_CLUSTERS)
 #'   head(cluster_res)
 #' }
 
@@ -176,7 +175,7 @@ run_cluster_cameraPR <- function(FCM,
                                  selected_tissues = "all")
 {
   if (!is.vector(FCM, mode = "list") || is.null(names(FCM))) {
-    stop("`FCM` must be the output of run_cmeans(). ",
+    stop("`FCM` must be a named list of fclust objects, such as FCM_CLUSTERS. ",
          "See documentation for details.")
   }
 

@@ -64,6 +64,70 @@ test_that("plot_feature_heatmap validates full_modality_names is logical", {
   )
 })
 
+# --- plot_feature_heatmap drawing options ---
+
+heatmap_feature_ids <- c("ENSG00000109819.9", "ENSG00000112715.26",
+                         "ENSG00000119508.18", "ENSG00000162772.17")
+
+test_that("plot_feature_heatmap clusters rows across tissues", {
+  skip_if_not_installed("TMSig")
+  filename <- tempfile(fileext = ".pdf")
+  expect_no_error(
+    plot_feature_heatmap(
+      feature_ids = heatmap_feature_ids,
+      selected_tissue = c("muscle", "adipose"),
+      selected_ome = "transcript-rna-seq",
+      multi_tissue_clust_rows = TRUE,
+      filename = filename
+    )
+  )
+  expect_true(file.exists(filename))
+})
+
+test_that("plot_feature_heatmap return_drawing returns a drawing and page size", {
+  skip_if_not_installed("TMSig")
+  hm <- plot_feature_heatmap(
+    feature_ids = heatmap_feature_ids,
+    selected_tissue = "muscle",
+    selected_ome = "transcript-rna-seq",
+    return_drawing = TRUE
+  )
+  expect_named(hm, c("draw", "width", "height"))
+  expect_type(hm$draw, "closure")
+  expect_true(is.numeric(hm$width) && hm$width > 0)
+  expect_true(is.numeric(hm$height) && hm$height > 0)
+
+  filename <- tempfile(fileext = ".pdf")
+  grDevices::pdf(filename, width = hm$width, height = hm$height)
+  expect_no_error(hm$draw())
+  grDevices::dev.off()
+  expect_true(file.exists(filename))
+})
+
+test_that("plot_feature_heatmap passes row labels in matrix order to right_annotation", {
+  skip_if_not_installed("TMSig")
+  received <- NULL
+  hm <- plot_feature_heatmap(
+    feature_ids = heatmap_feature_ids,
+    selected_tissue = c("muscle", "adipose"),
+    selected_ome = "transcript-rna-seq",
+    multi_tissue_clust_rows = TRUE,
+    right_annotation = function(row_labels) {
+      received <<- row_labels
+      ComplexHeatmap::rowAnnotation(group = rep("A", length(row_labels)))
+    },
+    heatmap_args = list(row_names_side = "left"),
+    return_drawing = TRUE
+  )
+  expect_setequal(received, c("PPARGC1A", "VEGFA", "NR4A3", "ATF3"))
+  expect_identical(received, sort(received, method = "radix"))
+
+  filename <- tempfile(fileext = ".pdf")
+  grDevices::pdf(filename, width = hm$width, height = hm$height)
+  expect_no_error(hm$draw())
+  grDevices::dev.off()
+})
+
 # --- plot_enrich_heatmap input validation ---
 
 test_that("plot_enrich_heatmap errors on missing required columns", {

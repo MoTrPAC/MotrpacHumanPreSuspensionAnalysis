@@ -35,7 +35,7 @@
 #' @importFrom scales label_number
 #' @importFrom dplyr mutate filter if_else c_across
 #' @importFrom stringr str_to_sentence str_c
-#' @importFrom ggplot2 ggplot
+#' @import ggplot2
 #'
 #'
 #' @examples

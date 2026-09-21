@@ -19,7 +19,8 @@
 #' @param selected_ome character; the ome that will be used to create the
 #'   heatmap.
 #' @param filename character; optional file name used to save the heatmap. If
-#'   provided, the heatmap will not be drawn.
+#'   provided, the heatmap will not be drawn. Ignored when
+#'   \code{return_drawing = TRUE}.
 #' @param post_min numeric; for experiments, timepoints could be either 15, 30, or
 #'   45 minutes depending on the analysis, this argument allows users to specify
 #'   which of those 3 values to use, by default the value is NULL and will provide
@@ -37,12 +38,33 @@
 #' @param column_title character; the title you'd like to include for the columns. Usually empty
 #' @param max_size numeric; largest number of pathways to display, if a pathway has too many features.
 #'    Will automatically chose the first n pathways.
-#' @param multi_tissue_clust_rows logical; if you'd like to cluster rows specifically in a multi-tissue case
+#' @param multi_tissue_clust_rows logical; whether to cluster rows when more
+#'   than one tissue is selected. Rows are restricted to features with a value in
+#'   every column, since missing values break row clustering. Single-tissue
+#'   heatmaps are always clustered.
+#' @param right_annotation \code{NULL}, a
+#'   \code{\link[ComplexHeatmap]{HeatmapAnnotation}}, or a function. A function
+#'   receives the row labels in heatmap row order and must return a row
+#'   \code{HeatmapAnnotation}; use it when the annotation depends on which
+#'   feature each row is. A \code{HeatmapAnnotation} is used as is and must
+#'   already be in row order.
+#' @param heatmap_args list; arguments passed to
+#'   \code{\link[ComplexHeatmap]{Heatmap}}. They override the defaults set
+#'   here, e.g. \code{list(cluster_rows = FALSE)}.
+#' @param draw_args list; arguments passed to
+#'   \code{\link[ComplexHeatmap]{draw}}. They override the defaults set here,
+#'   e.g. \code{list(newpage = FALSE)}.
+#' @param return_drawing logical; if \code{TRUE}, nothing is drawn or saved.
+#'   Instead a list is returned so the caller controls the graphics device.
 #' @param verbose logical; for specific warnings and additional information.
 #' @param ... Additional parameters to be added to a ComplexHeatmap call
 #'
-#' @returns Nothing. A heatmap is drawn or saved to a file if \code{filename} is
-#'   provided.
+#' @returns If \code{return_drawing = FALSE} (default), nothing; the heatmap is
+#'   drawn on the current device, or saved to \code{filename} if provided. If
+#'   \code{return_drawing = TRUE}, a list with components \code{draw}, a
+#'   function with no arguments that draws the heatmap on the current device
+#'   without starting a new page, and \code{width} and \code{height}, the
+#'   suggested page size in inches.
 #'
 #' @export plot_feature_heatmap
 #'
@@ -50,6 +72,8 @@
 #'
 #' @import ComplexHeatmap
 #' @importFrom dplyr %>% filter mutate bind_rows
+#' @importFrom data.table data.table setorderv
+#' @importFrom utils modifyList
 #' @importFrom grDevices dev.off
 #' @importFrom tibble column_to_rownames
 #' @importFrom tidyr pivot_wider
@@ -62,6 +86,21 @@
 #'   selected_tissue = "muscle",
 #'   selected_ome = "prot-ph",
 #'   filename = "sandbox/test_feature_heatmap.pdf")
+#'
+#' # Draw on a device the caller opens, with a row annotation
+#' hm <- plot_feature_heatmap(
+#'   feature_ids = c("ENSG00000109819.9", "ENSG00000112715.26",
+#'                   "ENSG00000119508.18", "ENSG00000162772.17"),
+#'   selected_tissue = c("muscle", "adipose"),
+#'   selected_ome = "transcript-rna-seq",
+#'   multi_tissue_clust_rows = TRUE,
+#'   right_annotation = function(row_labels) {
+#'     ComplexHeatmap::rowAnnotation(group = rep("A", length(row_labels)))
+#'   },
+#'   return_drawing = TRUE)
+#' grDevices::pdf("heatmap.pdf", width = hm$width, height = hm$height)
+#' hm$draw()
+#' grDevices::dev.off()
 #'}
 
 
@@ -79,6 +118,10 @@ plot_feature_heatmap <- function(feature_ids = NULL,
                                  post_hr = NULL,
                                  full_modality_names = FALSE,
                                  multi_tissue_clust_rows = FALSE,
+                                 right_annotation = NULL,
+                                 heatmap_args = list(),
+                                 draw_args = list(),
+                                 return_drawing = FALSE,
                                  verbose = TRUE,
                                  ...)
 {
@@ -202,6 +245,21 @@ plot_feature_heatmap <- function(feature_ids = NULL,
            !duplicated(feature_id)) %>%
     dplyr::select(feature_id, contrast, contrast2, z.std, adj_p_value,tissue) %>%
     droplevels.data.frame()
+
+  # Missing values break row clustering, so a clustered multi-tissue heatmap
+  # keeps only features with a value in every column
+  multi_tissue <- length(selected_tissue) > 1L
+  if (multi_tissue && multi_tissue_clust_rows) {
+    n_columns <- nlevels(x$contrast2)
+    x <- x %>%
+      dplyr::filter(.by = feature_id,
+                    sum(!is.na(z.std)) == n_columns)
+
+    if (!nrow(x)) {
+      stop("No feature has a value in every column, so rows cannot be ",
+           "clustered. Set `multi_tissue_clust_rows = FALSE`.")
+    }
+  }
 
   # Better contrast labels
   contrast_df <- .add_contrast_labels() %>%
@@ -355,13 +413,13 @@ plot_feature_heatmap <- function(feature_ids = NULL,
   width <- as.numeric(width + row_label_width) + width_extra
 
 
-  draw_args <- list(
+  default_draw_args <- list(
     annotation_legend_list = NULL,
     merge_legends = TRUE
   )
 
   if (n_features <= 10L) {
-    draw_args[["padding"]] <- unit(c(80, 0, 0, 0), "pt")
+    default_draw_args[["padding"]] <- unit(c(80, 0, 0, 0), "pt")
   }
 
   extended_range <- TMSig::extendRangeNum(x[["z.std"]], nearest = 0.1)
@@ -375,52 +433,71 @@ plot_feature_heatmap <- function(feature_ids = NULL,
     breaks <- c(extended_range[1], 0, extended_range[2])
   }
 
-  # if we are comparing multiple tissues, likely to have
-  # missing values which likely will cause issues with clustering
-  # if we are comparing multiple tissues, likely to have
-  # missing values which likely will cause issues with clustering
-  # thus, either filter features with missing values, or don't cluster rows
-  if (multi_tissue_clust_rows == TRUE){
-    x<-x %>%
-      dplyr::filter(feature_id %in% test_x$feature_id)
-    clust_row_info == TRUE
-  } else {
-    clust_row_info <- ifelse(length(selected_tissue) > 1, FALSE, TRUE)
+  clust_row_info <- !multi_tissue || multi_tissue_clust_rows
+
+  if (is.function(right_annotation)) {
+    # Rows of the enrichmap() matrix are in data.table (C-locale) order
+    row_order <- data.table::data.table(feature_id = unique(x[["feature_id"]]))
+    data.table::setorderv(row_order, "feature_id")
+    right_annotation <- right_annotation(row_order[["feature_id"]])
   }
 
-  TMSig::enrichmap(
-    x = x,
-    n_top = Inf,
-    set_column = "feature_id",
-    statistic_column = "z.std",
-    contrast_column = "contrast2",
-    padj_column = "adj_p_value",
-    plot_sig_only = FALSE,
-    filename = filename,
-    height = height,
-    width = width,
-    heatmap_color_fun = .feature_color_function,
-    heatmap_args = list(
-      layer_fun = .feature_layer_fun,
-      cluster_rows = clust_row_info,
-      column_split = column_split,
-      column_labels = contrast_df$contrast_labels,
-      show_column_names = show_column_names,
-      column_names_side = "top",
-      na_col = "grey80",
-      column_title = gt_render(column_title,
-                               padding = unit(c(0, 0, 0, 0.8), "in")),
-      column_title_gp = gpar(fontsize = 12),
-      top_annotation = top_annotation,
-      heatmap_legend_param = list(
-        title = "Z-Score",
-        at = breaks,
-        labels = breaks
-      )
-    ),
-
-    draw_args = draw_args
+  default_heatmap_args <- list(
+    layer_fun = .feature_layer_fun,
+    cluster_rows = clust_row_info,
+    column_split = column_split,
+    column_labels = contrast_df$contrast_labels,
+    show_column_names = show_column_names,
+    column_names_side = "top",
+    na_col = "grey80",
+    column_title = gt_render(column_title,
+                             padding = unit(c(0, 0, 0, 0.8), "in")),
+    column_title_gp = gpar(fontsize = 12),
+    top_annotation = top_annotation,
+    right_annotation = right_annotation,
+    heatmap_legend_param = list(
+      title = "Z-Score",
+      at = breaks,
+      labels = breaks
+    )
   )
+  heatmap_args <- modifyList(default_heatmap_args, heatmap_args,
+                             keep.null = TRUE)
+
+  if (return_drawing) {
+    draw_args <- modifyList(list(newpage = FALSE), draw_args, keep.null = TRUE)
+  }
+  draw_args <- modifyList(default_draw_args, draw_args, keep.null = TRUE)
+
+  draw_heatmap <- function(filename) {
+    TMSig::enrichmap(
+      x = x,
+      n_top = Inf,
+      set_column = "feature_id",
+      statistic_column = "z.std",
+      contrast_column = "contrast2",
+      padj_column = "adj_p_value",
+      plot_sig_only = FALSE,
+      filename = filename,
+      height = height,
+      width = width,
+      heatmap_color_fun = .feature_color_function,
+      heatmap_args = heatmap_args,
+      draw_args = draw_args
+    )
+  }
+
+  if (return_drawing) {
+    draw <- function() {
+      draw_heatmap()
+      return(invisible(NULL))
+    }
+    out <- list(draw = draw, width = width, height = height)
+    return(out)
+  }
+
+  draw_heatmap(filename)
+  return(invisible(NULL))
 }
 
 
