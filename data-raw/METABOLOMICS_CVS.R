@@ -6,8 +6,7 @@
 #
 # precovid-repro STAGES these rather than rebuilding them — its Stage 1 copies
 # the object through verbatim, so the pipeline is a carrier here, not a
-# producer. inst/PROVENANCE.tsv records them as `staged-verbatim` rather than
-# `regenerated`, and that is the distinction: a regenerated object has its
+# producer. That is the distinction that matters: a regenerated object has its
 # generator in precovid-repro and this repo's copy was retired; a staged one
 # has its generator HERE and nowhere else. Retiring this file would leave the
 # object with no way to be rebuilt at all.

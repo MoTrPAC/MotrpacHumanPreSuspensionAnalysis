@@ -38,6 +38,12 @@ read this way; every other ome ships inside the package. The files are far
 too large to distribute, and the bucket they live in is consortium-gated, so
 this requires a working \code{gsutil} and read access.
 
+This route replaced the AWS CloudFront read in v2.0.2 because the released
+CDN copy of the epigenomics DA was stale against the c2.0 ATAC tables. It is
+meant to be reverted: Jimmy is re-uploading the epigenomics DA to the CDN,
+and once that is done \code{\link{load_differential_analysis}} should go back
+to reading published files over HTTPS and this bucket path can be retired.
+
 The prefix is listed once with \code{gsutil ls -R} and filtered down to
 differential analysis tables, then each match is resolved to a tissue and ome
 from its file name. Files are cached under \code{repo_local_dir}, so a second
