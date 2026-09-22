@@ -203,7 +203,7 @@ plot_single_feature = function(feature,
   }
 
   #assay name conversion table
-  assay_names_table<-MotrpacHumanPreSuspensionAnalysis::assay_codes %>%
+  assay_names_table<-MotrpacBicQC::assay_codes %>%
     dplyr::select(any_of(c('assay_code',
                            'assay_name',
                            'assay_abbreviation',
@@ -243,13 +243,9 @@ plot_single_feature = function(feature,
     dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::left_join(assay_names_table,by = c("assay" = "assay_code")) %>%
     dplyr::mutate(
-      # neither the clinical omes nor the conventional metabolomics platform has an
-      # assay_codes row to join against, so the facet strip would read NA without
-      # these. metab-t-conv is the same measurement as metab-t-clinical on a log2
-      # scale, and the label says so to keep the two panels apart.
-      assay_short_text = dplyr::if_else(
-        assay %in% c("clinical-chemistry", "metab-t-clinical", "prot-clinical"),
-        "Clin. Chem.", assay_short_text),
+      # metab-t-conv carries the same measurement as metab-t-clinical on a log2
+      # scale. Upstream labels both from the LAB assay family, so the override keeps
+      # the two panels distinguishable.
       assay_short_text = dplyr::if_else(
         assay == "metab-t-conv", "Conv. Metab (log2)", assay_short_text),
       tissue = stringr::str_to_sentence(tissue),

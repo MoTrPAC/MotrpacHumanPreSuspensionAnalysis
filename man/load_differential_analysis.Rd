@@ -30,7 +30,14 @@ load_differential_analysis(
 \item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired.
 The epigenomics tables are not shipped in the package; they are downloaded
 from \code{bucket} at run time, which requires gsutil read access and is
-very slow due to file sizes.}
+very slow due to file sizes.
+
+Reading over gsutil is a temporary arrangement. The epigenomics DA tables
+are being re-uploaded to the AWS CloudFront distribution, and once that
+lands this loader will read from the CDN again as it did before v2.0.2.
+\code{repo_local_dir} and \code{gsutil} will stop being required at that
+point, and consortium bucket access will no longer be needed to load
+epigenomics results.}
 
 \item{repo_local_dir}{character; local directory used as the download cache
 for the epigenomics files. Files are written under its \code{data/tmp/}

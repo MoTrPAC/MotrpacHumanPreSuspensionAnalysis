@@ -1,3 +1,51 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.7
+
+## Removed data
+
+- **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
+  `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
+  when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
+  current snapshot. `inspectdf` is available again, so the snapshot has been retired in
+  favour of reading upstream live. Code that referenced
+  `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
+
+## Dependencies
+
+- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.8.1`, reversing the 2.0.2
+  demotion. **1.8.1 is currently only on the package's `develop` branch**, which is its
+  default branch, so `remotes::install_github("MoTrPAC/MotrpacBicQC")` gets it; the newest
+  tag, `v1.8.0`, still carries the old 44-row table and is not sufficient.
+
+## Changes
+
+- `plot_single_feature()` reads `MotrpacBicQC::assay_codes` directly. Upstream 1.8.1 adds
+  rows for `metab-t-clinical`, `prot-clinical`, `metab-t-conv` and `metab-t-imm-crt`, none
+  of which existed in the vendored snapshot, so the hard-coded label fallback for the
+  clinical omes is deleted — those facet strips are now labelled from upstream and read
+  `Clin. Chem` rather than `Clin. Chem.`. The `metab-t-conv` label is still overridden to
+  `Conv. Metab (log2)`: upstream labels it `Conv(T)` in the `LAB` family, which does not
+  distinguish it from its log2 twin `metab-t-clinical`.
+
+- Upstream also revises the 44 pre-existing rows in two columns this package does not
+  display: `assay_name` punctuation on six rows (comma to hyphen) and `cas_code` on four
+  (`transcript-rna-seq` and `transcript-rna-seq-splicing` from `mssm` to `stanford`,
+  `prot-pr` and `prot-ph` from `pnnl` to `broad_prot`). Every `assay_short_text` is
+  unchanged, so no existing figure label moves.
+
+## Notes
+
+- Reading epigenomics differential analysis over gsutil is temporary. The tables are being
+  re-uploaded to the AWS CloudFront distribution, and once that lands
+  `load_differential_analysis(epigen = TRUE)` will read from the CDN again as it did before
+  2.0.2, dropping the `repo_local_dir` and `gsutil` requirements along with the need for
+  consortium bucket access.
+
+## Documentation
+
+- The 2.0.0 entry below gains the collection-level provenance behind the v2.0 regeneration
+  and the versioning policy that governs it. Those objects have shipped since 2.0.0; only
+  the record of them is new.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.6
 
 ## Changes
@@ -97,11 +145,6 @@
 - The unexported `load_DA_from_AWS()` and `.load_single_ome_tissue_AWS()` are removed.
   Its pinned `version = "1.2"` no longer matched the atac-seq tables, which are at v2.0.
 
-## Other changes
-
-- `MotrpacBicQC` returns as a `Suggests` dependency, loaded only on the `epigen = TRUE`
-  path, which reports that it relies on the gsutil implementation.
-
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
 ## Breaking changes to data objects
@@ -109,50 +152,16 @@
 - The `*_SUM_STATS` objects are named, ordered and keyed the way the `*_DA` objects are.
   Every metabolomics platform is now labelled `assay = "metab"` with the platform
   in its own `platform` column, where before the platform was written into `assay` and
-  there was no `platform` column. Code that reads `assay` on a metabolomics summary
-  statistic, or that joins one to a differential analysis result, has to read `platform`
-  instead. Objects for every other ome are unchanged in this respect and still have no
-  `platform` column.
+  there was no `platform` column. 
 
   There are 17 objects where there were 46. The research metabolomics platforms are no
   longer one object each: they are stacked into a single `{TISSUE}_METAB_SUM_STATS` per
-  tissue — `ADIPOSE_METAB_SUM_STATS` (12 platforms, 8,004 rows), `BLOOD_METAB_SUM_STATS`
-  (10, 21,717), `MUSCLE_METAB_SUM_STATS` (10, 10,692) — which is how `{TISSUE}_METAB_DA`
-  is keyed, so the two tiers nest the same way. Code naming one of the 32 per-platform
-  objects has to read the tissue's stack and filter `platform` instead.
-
-  `BLOOD_METAB_T_CLINICAL_SUM_STATS` is not in the stack and remains its own object. It
-  is clinical chemistry, it is its own object on the differential-analysis tier too, and
-  it shares five analytes with the research platforms (Cortisol, Glucose, Glycerol, KET,
-  NEFA) that would otherwise sit in one object twice. It carries the same
-  `assay = "metab"` / `platform = "metab-t-clinical"` labelling either way.
-
-  The column order changed with it, from
-  `randomGroupCode, feature_id, Timepoint, Count, Mean, SD, tissue, assay` to
-  `tissue, assay, [platform], randomGroupCode, Timepoint, feature_id, Count, Mean, SD`.
-  Code selecting columns by position has to be updated; code selecting by name does not.
-
-  No value changed: Count, Mean and SD are identical to v2.0.0 for every row of all 46
-  objects.
-
-- `plot_single_feature()` requires these objects and errors on summary statistics that
-  predate them, rather than drawing a panel with no points.
+  tissue 
 
 - `load_summary_stats()` returns the research metabolomics platforms as a single `"metab"`
   element per tissue rather than one element per platform — the nesting
   `load_differential_analysis()` returns, so the two tiers can be walked together. Naming
   one platform still loads them all, as before.
-
-- `load_differential_analysis()` no longer rewrites `BLOOD_METAB_T_CLINICAL_DA`'s `assay`
-  to `"metab-t-clinical"` on read. Objects are returned as stored. That rewrite existed
-  because the summary statistics of the day named the platform in `assay` and the two
-  tiers therefore disagreed; they now agree, so it is gone.
-
-  The consequence is worth stating plainly: `assay` names the assay family, not the
-  platform. Clinical chemistry and the research platforms both read `"metab"`, so a key
-  that must separate them has to include `platform` — `(tissue, assay, feature_id)` alone
-  selects two rows for each of the five shared analytes. `load_clinical = FALSE` is still
-  the default, so clinical rows only arrive when asked for.
 
 ## Bug fixes
 
@@ -194,7 +203,92 @@
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.0
 
-Data objects regenerated by the precovid-repro pipeline for the v2.0 release.
+Data objects regenerated by the precovid-repro pipeline for the v2.0 data collection.
+
+## Versioning
+
+**Package versions and data collection versions are not the same thing.** This package is
+versioned independently of the freeze it carries: the 2.0.x series all ships the v2.0
+collection, and a package release may change nothing about the data at all. Cite the
+collection version, not the package version, when describing which data an analysis used.
+
+Within the collection, versioning is per file: a file is bumped to v2.0 only where its
+content actually changed, so a v2.0 collection legitimately contains files carrying earlier
+version suffixes. See the MoTrPAC Knowledge Center for the release and versioning policy:
+<https://motrpac-data.org/knowledge-center>.
+
+## Why the v2.0 objects differ from v1.3
+
+- **Sample misalignment in QC-norm batch correction, affecting transcriptomics and Olink.**
+  `limma::removeBatchEffect()` pairs covariate row *i* with matrix column *i* positionally.
+  The covariate table was built with `merge()`, which returns rows sorted by `vialLabel`,
+  and was passed against a matrix whose columns were in count-file order (transcriptomics)
+  or pivot order (Olink). The two orders are not the same, so each sample was
+  batch-corrected using another sample's batch, site and plate assignment. Median
+  per-feature correlation against v1.3 is 0.925 for transcriptomics (0.908-0.944 across the
+  three tissues) and 0.900 for `prot-ol`. Every differential-analysis and summary-statistic
+  object on those two omes moves with it: counted at each feature's best post-exercise
+  timepoint on the endurance exercise-vs-control contrasts, blood `prot-ol` goes from 103
+  to 146 significant features of 1,417 Olink targets.
+
+- **Replicate averaging in muscle proteomics (`prot-pr`, `prot-ph`).** Muscle samples
+  measured twice are meant to be merged by averaging the pair and dropping the now-redundant
+  column. For intra-site pairs the mean was written into the column that was about to be
+  deleted, so the value that survived was the first measurement on its own rather than the
+  mean of the two. Inter-site pairs were averaged correctly, which is what made this easy to
+  miss. Batch correction and replicate handling also ran in a different order in `prot-pr`
+  than in `prot-ph`, so the two omes were not processed identically.
+
+- **Feature metadata rebuilt.** Each ome's `metadata_features` is now a self-contained
+  feature-to-gene mapping that matches its QC-norm matrix exactly. This is why every `*_QC`
+  object in `MotrpacHumanPreSuspensionData` differs from v1.3 while only six have a
+  `qc_norm` matrix whose values differ.
+
+- **ATAC differential analysis refit.** The released DA tables were built against an earlier
+  feature set than the QC-norm matrices they accompany; the two are reconciled here. Muscle
+  ATAC moves from 1,584 to 1,521 significant features on the delta-delta contrasts — 87
+  gained, 149 lost, `logFC` correlating 0.992 with the release. Blood (`t05-pbmc`) has no
+  significant peaks, as in v1.3.
+
+- **Six ATAC samples removed as sample mix-ups.** `OUTLIERS` has 160 rows where v1.3 had
+  154; the six added are `epigen-atac-seq` samples, four blood and two muscle, now excluded
+  from the analysis. No row was dropped.
+
+- **One muscle `transcript-rna-seq` sample restored.** It was missing from
+  `metadata_samples` and was therefore dropped at the modelling stage. Differences in the
+  refit differential analysis are minimal.
+
+## Reference and enrichment objects
+
+- `CAMERA_RESULTS` has 1,016,991 rows, 1,869 fewer than v1.3, the losses concentrated in
+  blood `prot-ol` (-1,419), adipose `prot-pr` (-270) and muscle `prot-pr` (-189): the gene
+  universe moved with the feature-metadata rebuild, and a set that no longer intersects it
+  is not scored. The ranking is largely intact — Spearman 0.957 to
+  1.000 on the signed statistic.
+
+- `METABOLOMICS_CVS` has 4,000 rows where the v1.3 object had 3,878, and the 122 rows are
+  mostly a v1.3 defect rather than a v2.0 change: the v1.3 `.rda` was staler than the v1.3
+  `.txt` it was meant to mirror, which already published 4,000 keys. The change that
+  actually propagates downstream is 69 `lowest_CV` flips and 93 `refmet_name` corrections,
+  which together decide which copy of a duplicated RefMet name survives de-duplication.
+
+- `OME_TISSUE_CODE` has 53 rows where it had 49: it gains the two clinical omes
+  (`metab-t-clinical`, `prot-clinical`) and the five `lab-*` plasma-chemistry tiers, and
+  loses `metab-meta-reg` in all three tissues. The `lab-*` codes are inputs to the clinical
+  omes and are deliberately absent from `ome_available_list()`; do not pass them to a
+  loader.
+
+- `"metab-meta-reg"` is gone from `ome_available_list()`, `OME_TISSUE_CODE`
+  and `HUMAN_OME_COLORS` (31 entries where there were 32). No object was ever built under
+  that name, so every accessor offered it as a choice that returned nothing. Passing it to
+  a loader now errors at `match.arg()`, and `HUMAN_OME_COLORS[["metab-meta-reg"]]` returns
+  `NULL`.
+
+## Split data
+
+- `BLOOD_CLINICAL_CHEMISTRY_SUM_STATS` — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_SUM_STATS and BLOOD_PROT_CLINICAL_SUM_STATS.
+- `BLOOD_EPIGEN_ATAC_SEQ_SUM_STATS` — no blood ATAC feature is significant at adj_p_value < 0.05 this cycle, and epigenomics summary statistics carry significant features only, so no object is built.
+- `CLIN_CHEMISTRY_DA` — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_DA and BLOOD_PROT_CLINICAL_DA.
 
 ## New data
 
@@ -202,21 +296,11 @@ Data objects regenerated by the precovid-repro pipeline for the v2.0 release.
 
   Clinical chemistry, one assay in v1.3, is split into a metabolomics and a proteomics assay.
 
-## Removed data
-
-- `BLOOD_CLINICAL_CHEMISTRY_SUM_STATS` — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_SUM_STATS and BLOOD_PROT_CLINICAL_SUM_STATS.
-- `BLOOD_EPIGEN_ATAC_SEQ_SUM_STATS` — no blood ATAC feature is significant at adj_p_value < 0.05 this cycle, and epigenomics summary statistics carry significant features only, so no object is built.
-- `CLIN_CHEMISTRY_DA` — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_DA and BLOOD_PROT_CLINICAL_DA.
-
-## Breaking changes to data objects
+## Changes to data objects
 
 - 11 objects drop the `CI.L`, `CI.R` columns; code that selects them will error: ADIPOSE_METAB_DA, ADIPOSE_PROT_PH_DA, ADIPOSE_PROT_PR_DA, ADIPOSE_TRNSCRPT_DA, BLOOD_METAB_DA, BLOOD_PROT_OL_DA, BLOOD_TRNSCRPT_DA, MUSCLE_METAB_DA, MUSCLE_PROT_PH_DA, MUSCLE_PROT_PR_DA, MUSCLE_TRNSCRPT_DA.
 
 - HUMAN_FEATURE_TO_GENE gains the `flanking_sequence` column.
-
-## Provenance
-
-- `inst/PROVENANCE.tsv` records each object as regenerated, staged verbatim, or carried forward. This payload: 4 added, 2 carried forward, 8 identical, 3 removed, 12 schema change, 54 values differ.
 
 
 # MotrpacHumanPreSuspensionAnalysis 0.2.4

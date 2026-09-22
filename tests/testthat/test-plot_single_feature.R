@@ -81,8 +81,9 @@ test_that("clinical chemistry is plotted only when a clinical ome is requested",
 })
 
 test_that("the conventional metabolomics platform is plotted and labelled", {
-  # metab-t-conv is no longer filtered out. It has no assay_codes row, so without a
-  # fallback its facet strip reads NA.
+  # metab-t-conv is no longer filtered out. Upstream assay_codes labels it "Conv(T)",
+  # which does not distinguish it from its log2 twin metab-t-clinical, so
+  # plot_single_feature() overrides the label rather than taking upstream verbatim.
   res <- plot_single_feature(
     feature = "Glucose",
     selected_tissues = "blood",
