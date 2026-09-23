@@ -41,13 +41,10 @@
   `prot-pr` and `prot-ph` from `pnnl` to `broad_prot`). Every `assay_short_text` is
   unchanged, so no existing figure label moves.
 
-## Notes
-
-- Reading epigenomics differential analysis over gsutil is temporary. The tables are being
-  re-uploaded to the AWS CloudFront distribution, and once that lands
-  `load_differential_analysis(epigen = TRUE)` will read from the CDN again as it did before
-  2.0.2, dropping the `repo_local_dir` and `gsutil` requirements along with the need for
-  consortium bucket access.
+- **Breaking**: `load_differential_analysis(epigen = TRUE)` reads the c2.0 epigenomics DA
+  from the public CloudFront release again, with no bucket access or local cache.
+  `load_differential_analysis()` and `plot_single_feature()` drop the `gsutil` and `bucket`
+  arguments; `repo_local_dir` is kept but ignored, with a message.
 
 ## Documentation
 
