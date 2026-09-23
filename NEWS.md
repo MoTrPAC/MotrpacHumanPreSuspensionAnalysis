@@ -19,6 +19,17 @@
   has been retired in favour of reading upstream live. Code that referenced
   `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
 
+## Data objects
+
+- `HUMAN_FEATURE_TO_GENE` drops `confident_site` and has 12 columns where 2.0.3 gave it 13.
+  The flag is measured per tissue, and this table is keyed on `(assay, feature_id)` with no
+  tissue column, so the only value it could carry was the collapse across tissues — not the
+  measurement for either tissue on the 859 of 7,865 shared prot-ph sites where muscle and
+  adipose disagree. Read the per-tissue value from `*_PROT_PH_QC$feature_metadata` in
+  `MotrpacHumanPreSuspensionData`, which is what `preprocess_PTMSEA()` does; `PTMSEA_INPUT`
+  never read this table and is unaffected. All 1,920,618 rows and the other 11 columns are
+  unchanged from 2.0.3.
+
 ## Dependencies
 
 - MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.9.0`, reversing the 2.0.2
@@ -135,6 +146,8 @@
     and adipose. Read `*_PROT_PH_QC$feature_metadata` in
     `MotrpacHumanPreSuspensionData` when tissue-specific localization matters;
     `preprocess_PTMSEA()` already does, and is unaffected by this addition.
+    **Removed again in 2.0.7** for the reason given there: a collapse across tissues is not
+    the measurement for either tissue.
 
 ## Documentation
 
