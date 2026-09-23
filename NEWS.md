@@ -23,10 +23,10 @@
 
 - MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.9.0`, reversing the 2.0.2
   demotion. 1.9.0 is the MotrpacBicQC release that carries the clinical assay codes this
-  package reads. It is on that package's `master` branch (merged 2026-09-23) and is not yet
-  tagged, so `DESCRIPTION` declares `Remotes: MoTrPAC/MotrpacBicQC@master` and
-  `pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")` resolves it from there without a
-  separate install step. The newest tag, `v1.8.0`, still carries the old 44-row table and
+  package reads, published as the `v1.9.0` tag on 2026-09-23. `DESCRIPTION` declares
+  `Remotes: MoTrPAC/MotrpacBicQC@v1.9.0`, so
+  `pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")` resolves it from GitHub without a
+  separate install step. The previous tag, `v1.8.0`, still carries the old 44-row table and
   is not sufficient. MotrpacBicQC imports `inspectdf`, which is archived on CRAN; the README
   gives the archive install command if it fails to resolve.
 

@@ -158,7 +158,7 @@ which is not on CRAN or Bioconductor. `DESCRIPTION` declares it in
 automatically. If you install with `remotes` instead, install it first:
 
 ``` r
-remotes::install_github("MoTrPAC/MotrpacBicQC@master")
+remotes::install_github("MoTrPAC/MotrpacBicQC@v1.9.0")
 ```
 
 MotrpacBicQC imports `inspectdf`, which was archived on CRAN in April

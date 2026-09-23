@@ -164,7 +164,7 @@ This package imports [MotrpacBicQC](https://github.com/MoTrPAC/MotrpacBicQC)
 automatically. If you install with `remotes` instead, install it first:
 
 ```{r install-bicqc, eval = FALSE}
-remotes::install_github("MoTrPAC/MotrpacBicQC@master")
+remotes::install_github("MoTrPAC/MotrpacBicQC@v1.9.0")
 ```
 
 MotrpacBicQC imports `inspectdf`, which was archived on CRAN in April 2026. If
