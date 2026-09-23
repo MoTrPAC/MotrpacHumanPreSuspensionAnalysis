@@ -27,9 +27,17 @@
 #'   selected.
 #' @param zscore_colors character; length 2 vector of colors for the smallest
 #'   and largest z-scores. Default is "#3366ff" (blue) and "darkred".
-#' @param filename character; path to a PDF file to save the heatmap.
+#' @param filename character; path to a PDF file to save the heatmap. Ignored
+#'   if \code{return_drawing = TRUE}.
+#' @param return_drawing logical; if \code{TRUE}, nothing is drawn or saved.
+#'   Instead a list is returned so the caller controls the graphics device.
 #'
-#' @returns Nothing. The heatmap is saved to a PDF file.
+#' @returns If \code{return_drawing = FALSE} (default), nothing; the heatmap is
+#'   saved to \code{filename}. If \code{return_drawing = TRUE}, a list with
+#'   components \code{draw}, a function with no arguments that draws the
+#'   heatmap on the current device without starting a new page; \code{width}
+#'   and \code{height}, the suggested page size in inches; and \code{n_sets},
+#'   the number of sets drawn.
 #'
 #' @author Tyler Sagendorf
 #'
@@ -59,8 +67,12 @@ plot_enrich_heatmap <- function(x,
                                 padj_cutoff = 0.05,
                                 n_top = 6L,
                                 zscore_colors = c("#3366ff", "darkred"),
-                                filename)
+                                filename = NULL,
+                                return_drawing = FALSE)
 {
+  if (!return_drawing && is.null(filename))
+    stop("`filename` is required unless `return_drawing = TRUE`.")
+
   # Allow users with older R versions to still use the package
   check_package_installation(pkg = "TMSig", fun = "plot_bubble_heatmap")
 
@@ -157,6 +169,12 @@ plot_enrich_heatmap <- function(x,
       stop("None of the `set_ids` are valid. Check `set_ids` and the values ",
            "of `selected_ome`, `selected_tissues`, and `padj_cutoff`.")
     }
+
+    missing_set_ids <- setdiff(set_ids, x$set_id)
+
+    if (length(missing_set_ids))
+      message(length(missing_set_ids), " of ", length(set_ids), " `set_ids` ",
+              "not drawn: ", paste(sort(missing_set_ids), collapse = ", "))
   }
 
   x <- dplyr::filter(x, set_id %in% set_ids)
@@ -285,14 +303,6 @@ plot_enrich_heatmap <- function(x,
     breaks <- c(extended_range[1], 0, extended_range[2])
   }
 
-  on.exit(invisible(dev.off())) # close device after drawing heatmap
-
-  # Use cairo_pdf so that the ">=" symbol renders properly on Mac
-  grDevices::cairo_pdf(
-    filename = filename, height = height, width = width,
-    onefile = FALSE, fallback_resolution = 300
-  )
-
   # If at least one set is not measured in >= 50% of contrasts across tissues,
   # turn off row clustering because there is a chance it will fail anyway.
   cluster_rows <- x %>%
@@ -319,39 +329,62 @@ plot_enrich_heatmap <- function(x,
     )
   }
 
+  # The caller's device is already open
+  if (return_drawing)
+    draw_args[["newpage"]] <- FALSE
+
   # Bubble heatmap
-  TMSig::enrichmap(
-    x = x,
-    n_top = Inf,
-    set_column = "set_short",
-    statistic_column = statistic_column,
-    contrast_column = "contrast2",
-    padj_column = "adj_p_value",
-    padj_cutoff = padj_cutoff,
-    plot_sig_only = TRUE,
-    heatmap_color_fun = .enrich_heatmap_color_function,
-    colors = zscore_colors,
-    padj_legend_title = "BH Adjusted\nP-Value",
-    draw_args = draw_args,
-    heatmap_args = list(
-      na_col = "grey95",
-      rect_gp = gpar(fill = "white",
-                     col = "grey85"),
-      cluster_rows = cluster_rows,
-      column_split = column_split,
-      row_labels = latex2exp::TeX(levels(x$set_short)),
-      column_labels = column_df$contrast_labels,
-      show_column_names = show_column_names,
-      column_names_side = "top",
-      column_title_gp = gpar(fontsize = 0),
-      top_annotation = top_annotation,
-      heatmap_legend_param = list(
-        title = heatmap_title,
-        at = breaks,
-        labels = breaks
+  draw_heatmap <- function() {
+    TMSig::enrichmap(
+      x = x,
+      n_top = Inf,
+      set_column = "set_short",
+      statistic_column = statistic_column,
+      contrast_column = "contrast2",
+      padj_column = "adj_p_value",
+      padj_cutoff = padj_cutoff,
+      plot_sig_only = TRUE,
+      heatmap_color_fun = .enrich_heatmap_color_function,
+      colors = zscore_colors,
+      padj_legend_title = "BH Adjusted\nP-Value",
+      draw_args = draw_args,
+      heatmap_args = list(
+        na_col = "grey95",
+        rect_gp = gpar(fill = "white",
+                       col = "grey85"),
+        cluster_rows = cluster_rows,
+        column_split = column_split,
+        row_labels = latex2exp::TeX(levels(x$set_short)),
+        column_labels = column_df$contrast_labels,
+        show_column_names = show_column_names,
+        column_names_side = "top",
+        column_title_gp = gpar(fontsize = 0),
+        top_annotation = top_annotation,
+        heatmap_legend_param = list(
+          title = heatmap_title,
+          at = breaks,
+          labels = breaks
+        )
       )
     )
+  }
+
+  if (return_drawing) {
+    return(list(draw = draw_heatmap, width = width, height = height,
+                n_sets = n_sets))
+  }
+
+  on.exit(invisible(dev.off())) # close device after drawing heatmap
+
+  # Use cairo_pdf so that the ">=" symbol renders properly on Mac
+  grDevices::cairo_pdf(
+    filename = filename, height = height, width = width,
+    onefile = FALSE, fallback_resolution = 300
   )
+
+  draw_heatmap()
+
+  return(invisible(NULL))
 }
 
 

@@ -1,3 +1,11 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.8
+
+## Changes
+
+- `plot_enrich_heatmap()` gains `return_drawing`: with `TRUE` it returns `draw`, `width`,
+  `height` and `n_sets` instead of writing a PDF, and `filename` is optional. It also names
+  any `set_ids` it drops.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 
 ## New data
