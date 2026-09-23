@@ -32,7 +32,8 @@ jobs:
           install.packages(c("BiocManager", "remotes", "pkgdown"), repos = "https://cloud.r-project.org")
           options(repos = BiocManager::repositories())
           BiocManager::install(c("ComplexHeatmap", "TMSig", "variancePartition"), ask = FALSE, update = FALSE)
-          remotes::install_github("MoTrPAC/MotrpacBicQC", upgrade = "never")
+          remotes::install_version("inspectdf", version = "0.0.12.1", repos = "https://cloud.r-project.org", upgrade = "never")
+          remotes::install_github("MoTrPAC/MotrpacBicQC@master", upgrade = "never")
           remotes::install_deps(dependencies = TRUE, upgrade = "never")
 
       - name: Configure git author

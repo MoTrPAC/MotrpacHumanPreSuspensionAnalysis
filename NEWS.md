@@ -14,20 +14,25 @@
 - **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
-  current snapshot. `inspectdf` is available again, so the snapshot has been retired in
-  favour of reading upstream live. Code that referenced
+  current snapshot. `inspectdf` is still archived (since 2026-04-10), but it installs from
+  the CRAN archive and MotrpacBicQC installs normally once it is present, so the snapshot
+  has been retired in favour of reading upstream live. Code that referenced
   `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
 
 ## Dependencies
 
-- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.8.1`, reversing the 2.0.2
-  demotion. **1.8.1 is currently only on the package's `develop` branch**, which is its
-  default branch, so `remotes::install_github("MoTrPAC/MotrpacBicQC")` gets it; the newest
-  tag, `v1.8.0`, still carries the old 44-row table and is not sufficient.
+- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.9.0`, reversing the 2.0.2
+  demotion. 1.9.0 is the MotrpacBicQC release that carries the clinical assay codes this
+  package reads. It is on that package's `master` branch (merged 2026-09-23) and is not yet
+  tagged, so `DESCRIPTION` declares `Remotes: MoTrPAC/MotrpacBicQC@master` and
+  `pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")` resolves it from there without a
+  separate install step. The newest tag, `v1.8.0`, still carries the old 44-row table and
+  is not sufficient. MotrpacBicQC imports `inspectdf`, which is archived on CRAN; the README
+  gives the archive install command if it fails to resolve.
 
 ## Changes
 
-- `plot_single_feature()` reads `MotrpacBicQC::assay_codes` directly. Upstream 1.8.1 adds
+- `plot_single_feature()` reads `MotrpacBicQC::assay_codes` directly. Upstream 1.9.0 adds
   rows for `metab-t-clinical`, `prot-clinical`, `metab-t-conv` and `metab-t-imm-crt`, none
   of which existed in the vendored snapshot, so the hard-coded label fallback for the
   clinical omes is deleted — those facet strips are now labelled from upstream and read
