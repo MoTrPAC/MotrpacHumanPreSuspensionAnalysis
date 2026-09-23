@@ -31,7 +31,7 @@
 #'   \code{confident_site} — they take the same value in every tissue a peak appears in and
 #'   need no collapsing.
 #'
-#' @source Built by Stage 1 step 07 of the precovid-repro pipeline. The
+#' @source Built by Stage 1 step 07 of the motrpac-human-presuspension-repro pipeline. The
 #'   \code{refmet_name}, \code{refmet_id} and \code{kegg_id} columns come from a
 #'   pinned offline RefMet/KEGG snapshot rather than a live Metabolomics Workbench
 #'   query, so the mapping does not move with those databases. The peak annotations in
