@@ -19,7 +19,10 @@ plot_enrich_heatmap(
 )
 }
 \arguments{
-\item{x}{a \code{data.frame} of CAMERA-PR or PTM-SEA results.}
+\item{x}{a \code{data.frame} of CAMERA-PR results with a \code{z.std}
+column, such as \code{CAMERA_RESULTS} or the output of
+\code{run_cameraPR()}, or PTM-SEA results with an \code{NES} column, such
+as \code{PTMSEA_RESULTS}.}
 
 \item{set_ids}{character or \code{NULL}; one or more of \code{x$set_id}. The
 dataset \code{x} will be filtered to these sets. If \code{NULL}, the top 6
@@ -52,8 +55,9 @@ Nothing. The heatmap is saved to a PDF file.
 }
 \description{
 Create a heatmap of molecular signatures for a given tissue,
-ome, and contrast type combination. Only works with CAMERA-PR or PTM-SEA
-results.
+ome, and contrast type combination from CAMERA-PR results
+(\code{CAMERA_RESULTS} or the output of \code{run_cameraPR()}) or PTM-SEA
+results (\code{PTMSEA_RESULTS}).
 }
 \author{
 Tyler Sagendorf

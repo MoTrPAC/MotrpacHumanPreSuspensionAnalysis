@@ -484,8 +484,10 @@ Key parameters:
 
 ## 5.3 Enrichment Heatmaps
 
-`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR or
-PTM-SEA results, showing enrichment z-scores with significance bubbles.
+`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR results
+(`CAMERA_RESULTS` or the output of `run_cameraPR()`), showing enrichment
+z-scores with significance bubbles. It also takes `PTMSEA_RESULTS`, which
+shares that layout, and plots the PTM-SEA NES instead.
 
 ```{r plot-enrich-heatmap, eval = FALSE}
 # Note: filename is required — the heatmap is saved directly to PDF.
@@ -506,6 +508,14 @@ plot_enrich_heatmap(
   selected_tissues = c("adipose", "blood"),
   selected_ome = "transcript-rna-seq",
   filename = "selected_pathways.pdf"
+)
+
+# PTM-SEA results (prot-ph, muscle and adipose)
+plot_enrich_heatmap(
+  x = PTMSEA_RESULTS,
+  selected_tissues = c("adipose", "muscle"),
+  selected_ome = "prot-ph",
+  filename = "ptmsea_heatmap.pdf"
 )
 ```
 

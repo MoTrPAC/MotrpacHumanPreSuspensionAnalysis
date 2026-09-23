@@ -2,10 +2,14 @@
 #'   PTM-SEA results
 #'
 #' @description Create a heatmap of molecular signatures for a given tissue,
-#'   ome, and contrast type combination. Only works with CAMERA-PR or PTM-SEA
-#'   results.
+#'   ome, and contrast type combination from CAMERA-PR results
+#'   (\code{CAMERA_RESULTS} or the output of \code{run_cameraPR()}) or PTM-SEA
+#'   results (\code{PTMSEA_RESULTS}).
 #'
-#' @param x a \code{data.frame} of CAMERA-PR or PTM-SEA results.
+#' @param x a \code{data.frame} of CAMERA-PR results with a \code{z.std}
+#'   column, such as \code{CAMERA_RESULTS} or the output of
+#'   \code{run_cameraPR()}, or PTM-SEA results with an \code{NES} column, such
+#'   as \code{PTMSEA_RESULTS}.
 #' @param set_ids character or \code{NULL}; one or more of \code{x$set_id}. The
 #'   dataset \code{x} will be filtered to these sets. If \code{NULL}, the top 6
 #'   most significant sets from each contrast will be selected.
@@ -32,7 +36,7 @@
 #' @export plot_enrich_heatmap
 #'
 #' @import ComplexHeatmap
-#' @importFrom dplyr %>% filter slice_min pull distinct mutate left_join arrange rename count
+#' @importFrom dplyr %>% filter slice_head pull distinct mutate left_join arrange rename count
 #' @importFrom grDevices dev.off cairo_pdf
 #' @importFrom grid convertUnit unit gpar
 #' @importFrom latex2exp TeX
@@ -75,7 +79,7 @@ plot_enrich_heatmap <- function(x,
                                          "baseline",
                                          "control_only"))
 
-  ## Prepare CAMERA-PR results ----
+  ## Prepare CAMERA-PR or PTM-SEA results ----
   required_cols <- c("tissue", "assay", "contrast", "contrast_type",
                      "set_id", "set", "set_short", "p_value", "adj_p_value")
 
@@ -86,9 +90,11 @@ plot_enrich_heatmap <- function(x,
          paste(missing_cols, collapse = ", "))
 
   if (!any(c("z.std", "NES") %in% colnames(x)))
-    stop("`x` must include a 'z.std' or 'NES' column, depending on ",
-         "whether it was produced by run_cameraPR or run_PTMSEA, ",
-         "respectively.")
+    stop("`x` must include a 'z.std' or 'NES' column, as in CAMERA_RESULTS ",
+         "or PTMSEA_RESULTS, respectively.")
+
+  # If FALSE, assume PTM-SEA results
+  is_camera <- !is.null(x[["z.std"]])
 
   x <- x %>%
     dplyr::filter(contrast_type == !!contrast_type,
@@ -120,25 +126,32 @@ plot_enrich_heatmap <- function(x,
 
     n_top <- max(1L, n_top, na.rm = FALSE)
 
-    set_ids <- x %>%
-      dplyr::filter(adj_p_value < padj_cutoff) %>%
-      # p_value used for ordering to avoid ties
-      dplyr::slice_min(p_value,
-                by = c(tissue, contrast),
-                n = n_top) %>%
+    # p_value used for ordering. PTM-SEA p-values floor at the permutation
+    # limit, so ties are broken by the absolute statistic.
+    top_sets <- dplyr::filter(x, adj_p_value < padj_cutoff)
+    top_sets <- top_sets[order(top_sets$p_value,
+                               -abs(top_sets[[if (is_camera) "z.std" else "NES"]])), ]
+
+    set_ids <- top_sets %>%
+      dplyr::slice_head(by = c(tissue, contrast),
+                        n = n_top) %>%
       dplyr::pull(set_id) %>%
       unique() %>%
       as.character()
   } else {
     if (!is.character(set_ids))
       stop("`set_ids` must be NULL or a character vector of set identifiers ",
-           "selected from SET_TO_ID$set_id")
+           "selected from `x$set_id`")
 
-    # Strip away any non digit characters (e.g. special formatting chars)
-    set_ids <- gsub("[^[:digit:]]", "", set_ids)
     set_ids <- unique(set_ids)
-    set_ids <- as.numeric(set_ids)
-    set_ids <- sprintf("%05d", set_ids)
+
+    # CAMERA-PR set IDs are zero-padded integers (SET_TO_ID$set_id).
+    # Strip away any non digit characters (e.g. special formatting chars)
+    if (is_camera) {
+      set_ids <- gsub("[^[:digit:]]", "", set_ids)
+      set_ids <- as.numeric(set_ids)
+      set_ids <- sprintf("%05d", set_ids)
+    }
 
     if (all(!set_ids %in% x$set_id)) {
       stop("None of the `set_ids` are valid. Check `set_ids` and the values ",
@@ -152,9 +165,6 @@ plot_enrich_heatmap <- function(x,
   contrast_df <- .add_contrast_labels() %>%
     dplyr::filter(contrast %in% levels(x$contrast)) %>%
     droplevels.data.frame()
-
-  # If FALSE, assume PTM-SEA results
-  is_camera <- !is.null(x[["z.std"]])
 
   ## Create heatmap ----
   column_df <- distinct(x, tissue, contrast) %>%

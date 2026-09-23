@@ -5,9 +5,9 @@
 - `ORA_COLORS` — the white-to-`#543483` ramp for ORA heatmaps, as `c(low, high)`; pass it to
   `TMSig::enrichmap(colors = )`. `plot_cluster_enrichment()` now reads it.
 
-- `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts, one `cmapR`
-  `GCT` per tissue (muscle 506 x 6, adipose 437 x 2): NES in `mat`, p-values, FDR and
-  signature overlap in `rdesc`. Provenance in `data-raw/PTMSEA/README.md`.
+- `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts (muscle
+  506 signatures x 6 contrasts, adipose 437 x 2), in the long layout of `CAMERA_RESULTS` with
+  `NES` in place of `t`, `df` and `z.std`. Provenance in `data-raw/PTMSEA/README.md`.
 
 ## Removed data
 
@@ -45,6 +45,13 @@
   from the public CloudFront release again, with no bucket access or local cache.
   `load_differential_analysis()` and `plot_single_feature()` drop the `gsutil` and `bucket`
   arguments; `repo_local_dir` is kept but ignored, with a message.
+
+- `plot_enrich_heatmap()` accepts `PTMSEA_RESULTS` again, plotting NES; `set_ids` takes
+  PTMsigDB signature IDs for PTM-SEA input. `n_top` breaks p-value ties by the absolute
+  statistic, so PTM-SEA's permutation-floor p-values no longer pull in every tied set.
+
+- `data-raw/google_cloud_bucket_checks/` is removed; the bucket validation pipeline lives in
+  motrpac-human-presuspension-repro.
 
 ## Documentation
 
