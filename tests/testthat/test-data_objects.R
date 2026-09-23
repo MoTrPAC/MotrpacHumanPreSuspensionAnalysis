@@ -37,6 +37,11 @@ test_that("HUMAN_OME_COLORS is a named character vector", {
   expect_true(length(HUMAN_OME_COLORS) >= 4L)
 })
 
+test_that("ORA_COLORS is a low/high color ramp", {
+  expect_type(ORA_COLORS, "character")
+  expect_identical(names(ORA_COLORS), c("low", "high"))
+})
+
 # --- Reference tables ---
 
 test_that("CONTRAST_CONVERTER has expected structure", {
@@ -94,15 +99,9 @@ test_that("HUMAN_FEATURE_TO_GENE carries the epigenomics peak annotation", {
   expect_false(any(duplicated(key_cols)))
 })
 
-test_that("HUMAN_FEATURE_TO_GENE carries confident_site, scoped to prot-ph", {
-  expect_true("confident_site" %in% colnames(HUMAN_FEATURE_TO_GENE))
-  # Logical, not a two-level factor: the point of the column is filter(confident_site),
-  # which errors on a factor, and as.logical() of one returns NA rather than the value.
-  expect_type(HUMAN_FEATURE_TO_GENE$confident_site, "logical")
-  is_ph <- as.character(HUMAN_FEATURE_TO_GENE$assay) == "prot-ph"
-  expect_true(any(is_ph))
-  expect_false(anyNA(HUMAN_FEATURE_TO_GENE$confident_site[is_ph]))
-  expect_true(all(is.na(HUMAN_FEATURE_TO_GENE$confident_site[!is_ph])))
+test_that("HUMAN_FEATURE_TO_GENE does not carry confident_site", {
+  # Measured per tissue; read it from *_PROT_PH_QC$feature_metadata.
+  expect_false("confident_site" %in% colnames(HUMAN_FEATURE_TO_GENE))
 })
 
 test_that("SET_TO_ID has expected structure", {

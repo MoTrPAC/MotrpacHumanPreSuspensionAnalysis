@@ -1,6 +1,6 @@
-# Retired: precovid-repro builds this now.
+# Retired: motrpac-human-presuspension-repro builds this now.
 #
-#   precovid-repro/scripts/10_build_data/07_build_human_feature_to_gene/HUMAN_FEATURE_TO_GENE.R
+#   motrpac-human-presuspension-repro/scripts/10_build_data/07_build_human_feature_to_gene/HUMAN_FEATURE_TO_GENE.R
 #
 # The objects this script used to write into data/ are produced by the
 # pipeline and carried in by its Stage 3 (30_update_relevant_packages), so

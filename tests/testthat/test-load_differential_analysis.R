@@ -131,3 +131,42 @@ test_that("differential analysis results no longer carry the CI.L/CI.R columns",
   expect_false(any(c("CI.L", "CI.R") %in% colnames(ADIPOSE_PROT_PR_DA)))
   expect_false(any(c("CI.L", "CI.R") %in% colnames(MUSCLE_TRNSCRPT_DA)))
 })
+
+test_that("load_differential_analysis messages that repo_local_dir is ignored", {
+  expect_message(
+    load_differential_analysis(
+      selected_omes = "prot-pr",
+      selected_tissues = "muscle",
+      repo_local_dir = tempdir(),
+      verbose = FALSE
+    ),
+    regexp = "no longer needed"
+  )
+  expect_error(
+    load_differential_analysis(selected_omes = "prot-pr", gsutil = "gsutil"),
+    regexp = "unused argument"
+  )
+})
+
+test_that("epigenomics DA URLs cover every measured tissue-ome pair", {
+  epigen_omes <- c("epigen-atac-seq", "epigen-methylcap-seq")
+  pairs <- OME_TISSUE_CODE[OME_TISSUE_CODE$ome %in% epigen_omes, c("ome", "tissue")]
+  urls <- mapply(.aws_epigen_da_url, pairs$ome, pairs$tissue)
+  expect_length(urls, 5L)
+  expect_true(all(startsWith(urls, .AWS_EPIGEN_DA_URL)))
+  expect_null(.aws_epigen_da_url("epigen-atac-seq", "adipose"))
+})
+
+test_that("epigenomics DA files resolve on the CDN", {
+  skip_on_cran()
+  skip_if_offline("d1yw74buhe0ts0.cloudfront.net")
+  epigen_omes <- c("epigen-atac-seq", "epigen-methylcap-seq")
+  pairs <- OME_TISSUE_CODE[OME_TISSUE_CODE$ome %in% epigen_omes, c("ome", "tissue")]
+  urls <- mapply(.aws_epigen_da_url, pairs$ome, pairs$tissue)
+  for (url in urls) {
+    con <- url(url, open = "r")
+    header <- readLines(con, n = 1L)
+    close(con)
+    expect_match(header, "^\"?assay\"?\t\"?feature_id", info = url)
+  }
+})
