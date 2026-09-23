@@ -15,8 +15,6 @@ plot_single_feature(
   include_legend = TRUE,
   legend_position = "right",
   repo_local_dir = NULL,
-  gsutil = "gsutil",
-  bucket = .STAGING_BUCKET,
   verbose = TRUE,
   epigen = FALSE
 )
@@ -44,15 +42,9 @@ does not imply \code{"metab-t-clinical"}.}
 
 \item{legend_position}{if include_legend == TRUE, position can be selected}
 
-\item{repo_local_dir}{character; a local path to cache downloaded
-differential analysis files in, relevant only if epigen is TRUE}
-
-\item{gsutil}{character; path to the gsutil executable, relevant only if
-epigen is TRUE}
-
-\item{bucket}{character; GCS prefix the epigenomics files are read from,
-relevant only if epigen is TRUE. Defaults to the staging bucket of the
-current precovid-repro release cycle.}
+\item{repo_local_dir}{Deprecated and ignored; passed through to
+\code{\link{load_differential_analysis}}, which prints a message if it is
+supplied.}
 
 \item{verbose}{logical; toggle to include verbose information}
 

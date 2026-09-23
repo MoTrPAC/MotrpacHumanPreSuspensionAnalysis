@@ -64,6 +64,22 @@
 "HUMAN_OME_COLORS"
 
 
+#' Color ramp for over-representation analysis (ORA) heatmaps
+#'
+#' Two-color ramp for ORA significance heatmaps, from white at no enrichment to
+#' purple at the strongest \code{-log10(p)}. Pass it as the \code{colors}
+#' argument of \code{TMSig::enrichmap()}.
+#'
+#' @usage ORA_COLORS
+#' @format A named character vector of length 2: \code{low} (\code{"white"}) and
+#'   \code{high} (\code{"#543483"}).
+#' @examples
+#' \dontrun{
+#' TMSig::enrichmap(ora_results, colors = ORA_COLORS)
+#' }
+"ORA_COLORS"
+
+
 
 #' @title Fuzzy c-means clustering and enrichment analysis results
 #'

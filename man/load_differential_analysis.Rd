@@ -10,8 +10,6 @@ load_differential_analysis(
   single_matrix = FALSE,
   epigen = FALSE,
   repo_local_dir = NULL,
-  gsutil = "gsutil",
-  bucket = .STAGING_BUCKET,
   combine_with_featgene = FALSE,
   verbose = TRUE,
   load_clinical = FALSE
@@ -29,31 +27,12 @@ load_differential_analysis(
 
 \item{epigen}{logical; a toggle of TRUE/FALSE if epigenetics data is desired.
 The epigenomics tables are not shipped in the package; they are downloaded
-from \code{bucket} at run time, which requires gsutil read access and is
-very slow due to file sizes.
+from the public c2.0 release on the MoTrPAC CloudFront distribution at run
+time. No credentials are needed, but downloads are not cached and are slow
+due to file sizes.}
 
-Reading over gsutil is a temporary arrangement. The epigenomics DA tables
-are being re-uploaded to the AWS CloudFront distribution, and once that
-lands this loader will read from the CDN again as it did before v2.0.2.
-\code{repo_local_dir} and \code{gsutil} will stop being required at that
-point, and consortium bucket access will no longer be needed to load
-epigenomics results.}
-
-\item{repo_local_dir}{character; local directory used as the download cache
-for the epigenomics files. Files are written under its \code{data/tmp/}
-subdirectory, which is created if absent. Required when \code{epigen} is
-\code{TRUE} and unused otherwise.}
-
-\item{gsutil}{character; path to the gsutil executable. Defaults to
-\code{"gsutil"}, which assumes it is on the PATH. Only used when
-\code{epigen} is \code{TRUE}.}
-
-\item{bucket}{character; GCS prefix the epigenomics files are read from.
-Defaults to the staging bucket the current precovid-repro release cycle
-writes (\code{config/pipeline.env}, \code{STAGING_BUCKET}). Pass a release
-prefix such as
-\code{"gs://motrpac-data-hub/analysis/human-precovid-sed-adu/c1.3"} to read
-published data instead. Only used when \code{epigen} is \code{TRUE}.}
+\item{repo_local_dir}{Deprecated and ignored. Epigenomics files are no longer
+downloaded to a local cache; supplying it only prints a message.}
 
 \item{combine_with_featgene}{logical; whether to include columns from
 \code{HUMAN_FEATURE_TO_GENE} in the output.}
@@ -136,11 +115,7 @@ names(DA_list)
 
 # Include epigen data
 \dontrun{
-repo_local_dir <- "path/to/some/directory"
-DA_list <- load_differential_analysis(
-  repo_local_dir = repo_local_dir,
-  epigen = TRUE
-)
+DA_list <- load_differential_analysis(epigen = TRUE)
 }
 
 }

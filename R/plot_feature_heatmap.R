@@ -554,21 +554,23 @@ plot_feature_heatmap <- function(feature_ids = NULL,
 
 }
 
+# TMSig::enrichmap() re-parents layer_fun to its own frame, so this package's
+# imports are not visible here; qualify every call.
 .feature_layer_fun <- function(j, i, x, y, w, h, f) {
-  grid.rect(x = x, y = y, width = w, height = h,
-            gp = gpar(col = heatmap_args[["rect_gp"]][["col"]],
-                      fill = f)
+  grid::grid.rect(x = x, y = y, width = w, height = h,
+                  gp = grid::gpar(col = heatmap_args[["rect_gp"]][["col"]],
+                                  fill = f)
   )
-  gb = textGrob("*")
-  gb_w = convertWidth(grobWidth(gb), "mm")
-  gb_h = convertHeight(grobHeight(gb), "mm")
-  grid.text("*",
-            x = x,
-            y = y - gb_h*0.5 + gb_w*0.4,
-            #r = pindex(dmat, i, j) / 2 * cell_size,
-            # Significant bubbles get a black outline to separate from padj_fill
-            gp = gpar(col = ifelse(pindex(padj_mat, i, j) < padj_cutoff,
-                                   "black", NA))
+  gb = grid::textGrob("*")
+  gb_w = grid::convertWidth(grid::grobWidth(gb), "mm")
+  gb_h = grid::convertHeight(grid::grobHeight(gb), "mm")
+  grid::grid.text("*",
+                  x = x,
+                  y = y - gb_h*0.5 + gb_w*0.4,
+                  #r = pindex(dmat, i, j) / 2 * cell_size,
+                  # Significant bubbles get a black outline to separate from padj_fill
+                  gp = grid::gpar(col = ifelse(ComplexHeatmap::pindex(padj_mat, i, j) < padj_cutoff,
+                                               "black", NA))
   )
 }
 
