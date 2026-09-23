@@ -75,6 +75,10 @@
   pkgdown site build ran, and only after a merge, so a failing test could reach `main`
   unseen.
 
+- The roxygen2 hook in `R/zzz.R` calls `utils::getFromNamespace()` with its namespace,
+  clearing the "no visible global function definition for 'getFromNamespace'" NOTE that
+  `R CMD check` has reported since before 2.0.
+
 ## Documentation
 
 - The 2.0.0 entry below gains the collection-level provenance behind the v2.0 regeneration
