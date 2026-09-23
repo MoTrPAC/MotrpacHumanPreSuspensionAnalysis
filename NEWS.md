@@ -62,6 +62,13 @@
   `load_differential_analysis()` and `plot_single_feature()` drop the `gsutil` and `bucket`
   arguments; `repo_local_dir` is kept but ignored, with a message.
 
+## Internals
+
+- A GitHub Actions workflow, `R-CMD-check.yaml`, now runs `R CMD check` — tests and
+  vignettes included — on every pull request and on pushes to `main`. Until now only the
+  pkgdown site build ran, and only after a merge, so a failing test could reach `main`
+  unseen.
+
 ## Documentation
 
 - The 2.0.0 entry below gains the collection-level provenance behind the v2.0 regeneration
