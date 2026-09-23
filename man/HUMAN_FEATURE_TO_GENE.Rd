@@ -5,7 +5,7 @@
 \alias{HUMAN_FEATURE_TO_GENE}
 \title{Human Feature to Gene Conversion Table}
 \format{
-A sorted \code{data.table} with 1,920,618 rows and 13 columns:
+A sorted \code{data.table} with 1,920,618 rows and 12 columns:
 
 \describe{
 \item{assay}{character; the assay (ome). One of "epigen-atac-seq", "epigen-methylcap-seq", "metab", "prot-clinical", "prot-ol", "prot-ph", "prot-pr", or "transcript-rna-seq".}
@@ -20,7 +20,6 @@ A sorted \code{data.table} with 1,920,618 rows and 13 columns:
 \item{custom_annotation}{factor; the region of the assigned gene the peak falls in — one of "Promoter (<=1kb)", "Promoter (1-2kb)", "5' UTR", "3' UTR", "Exon", "Intron", "Overlaps Gene", "Upstream (<5kb)", "Downstream (<5kb)" or "Distal Intergenic". \code{NA} unless assay is "epigen-atac-seq" or "epigen-methylcap-seq".}
 \item{relationship_to_gene}{numeric; the signed distance in base pairs from the peak to the assigned gene, \code{0} where the peak overlaps it. \code{NA} unless assay is "epigen-atac-seq" or "epigen-methylcap-seq".}
 \item{flanking_sequence}{factor; flanking sequence. Only applicable if assay is "prot-ph".}
-\item{confident_site}{logical; whether the phosphosite is confidently localized. \code{NA} unless assay is "prot-ph". Collapsed across tissues: \code{TRUE} only where the site is confidently localized in every tissue that measured it, because this table is keyed on \code{(assay, feature_id)} and has no tissue column. Read \code{*_PROT_PH_QC$feature_metadata} in \pkg{MotrpacHumanPreSuspensionData} for the exact per-tissue value.}
 }
 }
 \source{
@@ -43,8 +42,7 @@ identifiers.
 ATAC-seq or MethylCap-seq peak sits relative to the gene it was assigned to. Without
 them a peak in a promoter and a peak 40 kb into an intron are indistinguishable once
 mapped, since both carry only the gene. Both are derived from the peak coordinates in
-the \code{feature_id} rather than measured per tissue, so — unlike
-\code{confident_site} — they take the same value in every tissue a peak appears in and
-need no collapsing.
+the \code{feature_id} rather than measured per tissue, so they take the same value in
+every tissue a peak appears in.
 }
 \keyword{datasets}
