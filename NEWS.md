@@ -1,5 +1,11 @@
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 
+## New data
+
+- `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts, one `cmapR`
+  `GCT` per tissue (muscle 506 x 6, adipose 437 x 2): NES in `mat`, p-values, FDR and
+  signature overlap in `rdesc`. Provenance in `data-raw/PTMSEA/README.md`.
+
 ## Removed data
 
 - **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
