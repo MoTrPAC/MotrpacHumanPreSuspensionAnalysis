@@ -1,6 +1,6 @@
-# Retired: precovid-repro builds this now.
+# Retired: motrpac-human-presuspension-repro builds this now.
 #
-#   precovid-repro/scripts/10_build_data/04_build_set_to_id/SET_TO_ID.R
+#   motrpac-human-presuspension-repro/scripts/10_build_data/04_build_set_to_id/SET_TO_ID.R
 #
 # The objects this script used to write into data/ are produced by the
 # pipeline and carried in by its Stage 3 (30_update_relevant_packages), so

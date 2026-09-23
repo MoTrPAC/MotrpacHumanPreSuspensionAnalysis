@@ -200,7 +200,7 @@ plot_cluster_enrichment <- function(x,
       contrast_column = "cluster",
       padj_column = "adj_p_value",
       padj_legend_title = "BH Adjusted\nP-Value",
-      colors = c("white", "#543483"),
+      colors = MotrpacHumanPreSuspensionAnalysis::ORA_COLORS,
       padj_cutoff = padj_cutoff,
       heatmap_args = list(
         na_col = "grey95",

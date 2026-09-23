@@ -40,5 +40,5 @@ S4 class defined by the \code{cmapR} package. This package does not depend on
 \code{cmapR} attached. The slots are reachable as \verb{@mat}, \verb{@rdesc}, \verb{@cdesc},
 \verb{@rid} and \verb{@cid} either way.
 }
-\keyword{datasets,}
+\keyword{datasets}
 \keyword{proteomics}
