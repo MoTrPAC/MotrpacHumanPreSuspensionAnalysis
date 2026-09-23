@@ -519,7 +519,29 @@ plot_enrich_heatmap(
 )
 ```
 
-## 5.4 Cluster Enrichment Heatmaps
+## 5.4 Cluster Trajectory Plots
+
+`plot_cmeans()` draws the feature trajectories of each fuzzy c-means
+cluster, colored by membership probability, with the centroid in black.
+
+```{r plot-cmeans, eval = FALSE}
+# Note: filename is required — the plot is saved directly to PDF.
+plot_cmeans(
+  FCM = FCM_CLUSTERS[["adipose"]],
+  filename = "adipose_clusters.pdf",
+  min_membership = 0.3,
+  ncol = 4
+)
+```
+
+Key parameters:
+
+- `keep_clusters` — subset to specific cluster numbers
+- `min_membership` — minimum membership probability for display
+- `common_ylim` — use the same y-axis across all cluster panels
+- `modality` — show "both", "Endur" only, or "Resist" only
+
+## 5.5 Cluster Enrichment Heatmaps
 
 `plot_cluster_enrichment()` generates bubble heatmaps for cluster-level
 enrichment results (from `run_cluster_cameraPR()` or
@@ -589,6 +611,24 @@ per tissue.
 ```{r fcm-clusters, eval = FALSE}
 names(FCM_CLUSTERS)  # one element per tissue
 ```
+
+`run_cmeans()` reruns the clustering. With the defaults (13 clusters for
+adipose, 12 for blood and muscle, both modalities) it uses the settings
+that built `FCM_CLUSTERS`.
+
+```{r run-cmeans, eval = FALSE}
+FCM <- run_cmeans()
+
+# A single modality
+FCM_endur <- run_cmeans(
+  selected_tissues = "muscle",
+  modality = "Endur"
+)
+```
+
+Features are scaled by their standard deviation (including pre-exercise
+zeros) before clustering. Clusters are reordered by hierarchical
+clustering of centroids so that similar trajectories appear adjacent.
 
 ## 7.1 Cluster-Level Enrichment with CAMERA-PR
 

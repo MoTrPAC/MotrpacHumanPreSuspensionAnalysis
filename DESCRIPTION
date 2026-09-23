@@ -57,12 +57,15 @@ Imports:
     utils,
     tidyr,
     ggplot2,
+    ggpubr,
     grDevices,
     grid,
     ComplexHeatmap,
     latex2exp,
+    Biobase,
     scales,
     stringr,
+    Mfuzz,
     TMSig (>= 1.0.0)
 Suggests:
     here,

@@ -66,11 +66,6 @@
 - `plot_feature_heatmap()`: `multi_tissue_clust_rows = TRUE` works (it referenced an undefined
   object); new `right_annotation`, `heatmap_args`, `draw_args` and `return_drawing` arguments.
 
-## Removed
-
-- `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
-  `FCM_CLUSTERS`. Mfuzz, Biobase and ggpubr are no longer imported.
-
 ## Data objects
 
 - `COVARIATES_FILE` drops the `BMI` and `codedsiteid` rows for `epigen-methylcap-seq`, which

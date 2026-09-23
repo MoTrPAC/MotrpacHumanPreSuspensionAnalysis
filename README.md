@@ -109,7 +109,7 @@ subject-level data — access-gated         aggregate results — public
 ## Important: Bioconductor Dependencies
 
 This package relies on several Bioconductor packages
-(e.g. ComplexHeatmap, TMSig). You must set the correct Bioconductor
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct Bioconductor
 version for your R installation before installing. Using the wrong
 Bioconductor version will cause dependency failures.
 
