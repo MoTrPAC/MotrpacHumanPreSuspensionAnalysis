@@ -2,6 +2,9 @@
 
 ## New data
 
+- `ORA_COLORS` — the white-to-`#543483` ramp for ORA heatmaps, as `c(low, high)`; pass it to
+  `TMSig::enrichmap(colors = )`. `plot_cluster_enrichment()` now reads it.
+
 - `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts, one `cmapR`
   `GCT` per tissue (muscle 506 x 6, adipose 437 x 2): NES in `mat`, p-values, FDR and
   signature overlap in `rdesc`. Provenance in `data-raw/PTMSEA/README.md`.

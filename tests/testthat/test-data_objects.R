@@ -37,6 +37,11 @@ test_that("HUMAN_OME_COLORS is a named character vector", {
   expect_true(length(HUMAN_OME_COLORS) >= 4L)
 })
 
+test_that("ORA_COLORS is a low/high color ramp", {
+  expect_type(ORA_COLORS, "character")
+  expect_identical(names(ORA_COLORS), c("low", "high"))
+})
+
 # --- Reference tables ---
 
 test_that("CONTRAST_CONVERTER has expected structure", {
