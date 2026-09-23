@@ -2,12 +2,12 @@
 #
 #   METABOLOMICS_CVS
 #
-# Builds the metabolite coefficient-of-variation table. precovid-repro stages its copy from the production bucket's metabolite-cv tier, which is why the shipped object can be newer than what this script last produced.
+# Builds the metabolite coefficient-of-variation table. motrpac-human-presuspension-repro stages its copy from the production bucket's metabolite-cv tier, which is why the shipped object can be newer than what this script last produced.
 #
-# precovid-repro STAGES these rather than rebuilding them — its Stage 1 copies
+# motrpac-human-presuspension-repro STAGES these rather than rebuilding them — its Stage 1 copies
 # the object through verbatim, so the pipeline is a carrier here, not a
 # producer. That is the distinction that matters: a regenerated object has its
-# generator in precovid-repro and this repo's copy was retired; a staged one
+# generator in motrpac-human-presuspension-repro and this repo's copy was retired; a staged one
 # has its generator HERE and nowhere else. Retiring this file would leave the
 # object with no way to be rebuilt at all.
 

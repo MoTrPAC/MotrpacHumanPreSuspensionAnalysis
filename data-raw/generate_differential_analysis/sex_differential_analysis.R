@@ -16,7 +16,7 @@ differential_analysis_scripts = c(differential_analysis_scripts, file.path(here(
 lapply(differential_analysis_scripts, source)
 
 #-----first we find the qualifying omes + tissues to actually do the analysis on------
-# repeated code from `MotrpacHumanPreSuspensionAcute` to generate table s1, but split by sex.
+# repeated code from `motrpac-human-presuspension-acute` to generate table s1, but split by sex.
 
 #largely speaking, if we want at least n = 3 per sex + grp + tp, we include, for Muscle + Blood:
 #  metab (most platforms), transcriptomics
