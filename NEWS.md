@@ -11,7 +11,7 @@
 
 ## Removed data
 
-- **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
+- The vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
   current snapshot. `inspectdf` is available again, so the snapshot has been retired in
@@ -41,7 +41,7 @@
   `prot-pr` and `prot-ph` from `pnnl` to `broad_prot`). Every `assay_short_text` is
   unchanged, so no existing figure label moves.
 
-- **Breaking**: `load_differential_analysis(epigen = TRUE)` reads the c2.0 epigenomics DA
+- `load_differential_analysis(epigen = TRUE)` reads the c2.0 epigenomics DA
   from the public CloudFront release again, with no bucket access or local cache.
   `load_differential_analysis()` and `plot_single_feature()` drop the `gsutil` and `bucket`
   arguments; `repo_local_dir` is kept but ignored, with a message.
@@ -68,7 +68,7 @@
 
 ## Removed
 
-- **Breaking**: `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
+- `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
   `FCM_CLUSTERS`. Mfuzz, Biobase and ggpubr are no longer imported.
 
 ## Data objects
@@ -93,7 +93,7 @@
 
 - `UTORONTO_TFs` is now the prot-ph TF regulator pool — 1,381 rows, `feature_id` and
   `gene_symbol` — where it was the raw UToronto extract, 2,765 rows and 28 columns keyed by
-  Ensembl gene ID. **Breaking**: the annotation columns are gone and a row is a phosphosite,
+  Ensembl gene ID. The annotation columns are gone and a row is a phosphosite,
   not a gene.
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.4
@@ -149,7 +149,7 @@
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.2
 
-## Breaking changes
+## Changes
 
 - `load_differential_analysis(epigen = TRUE)` reads the epigenomics tables from Google
   Cloud Storage via gsutil instead of the public CloudFront release, and defaults to the
@@ -161,7 +161,7 @@
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
-## Breaking changes to data objects
+## Data objects
 
 - The `*_SUM_STATS` objects are named, ordered and keyed the way the `*_DA` objects are.
   Every metabolomics platform is now labelled `assay = "metab"` with the platform
@@ -193,7 +193,7 @@
   `clinical_ome_list()` by name and `"all"` includes them, matching how
   `load_differential_analysis()` treats clinical chemistry.
 
-  Breaking: a request that names another ome no longer returns clinical chemistry
+  A request that names another ome no longer returns clinical chemistry
   alongside it, and `"metab"` no longer implies `"metab-t-clinical"`. Analytes
   measured both clinically and on a research platform, such as Cortisol and
   Lactate, return only what was asked for.
