@@ -30,5 +30,5 @@
 #'
 #' @source \url{https://motrpac-data.org/}
 #'
-#' @keywords datasets, proteomics
+#' @keywords datasets proteomics
 "PTMSEA_INPUT"

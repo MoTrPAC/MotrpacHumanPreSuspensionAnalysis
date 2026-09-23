@@ -37,5 +37,5 @@ it, but the \code{cmapR} accessors and its \code{write_gct()} need \code{cmapR} 
 The slots are reachable as \verb{@mat}, \verb{@rdesc}, \verb{@cdesc}, \verb{@rid} and \verb{@cid}
 either way.
 }
-\keyword{datasets,}
+\keyword{datasets}
 \keyword{proteomics}

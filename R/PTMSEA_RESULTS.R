@@ -33,5 +33,5 @@
 #' @source Muscle: precovid-analyses `figures/muscle/Figure5/` (Natalie Clark).
 #'   Adipose: Cheehoon Ahn. Provenance in `data-raw/PTMSEA/README.md`.
 #'
-#' @keywords datasets, proteomics
+#' @keywords datasets proteomics
 "PTMSEA_RESULTS"
