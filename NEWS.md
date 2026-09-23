@@ -6,6 +6,23 @@
   `height` and `n_sets` instead of writing a PDF, and `filename` is optional. It also names
   any `set_ids` it drops.
 
+## Dependencies
+
+- MotrpacBicQC is required at `>= 1.9.0`, the `v1.9.0` release tag (2026-09-23), and
+  `DESCRIPTION` declares `Remotes: MoTrPAC/MotrpacBicQC@v1.9.0` so `pak` resolves it from
+  GitHub. Its `inspectdf` import is archived on CRAN; the README gives the archive install.
+
+- `cmapR` (Bioconductor) is added to `Suggests`: `PTMSEA_INPUT` is a list of `cmapR::GCT`
+  objects, and without `cmapR` installed `R CMD check` warned while inspecting the data.
+
+## Internals
+
+- `R-CMD-check.yaml` runs `R CMD check`, tests and vignettes included, on every pull request
+  and on pushes to `main`.
+
+- The roxygen2 hook in `R/zzz.R` calls `utils::getFromNamespace()`, clearing a long-standing
+  `R CMD check` NOTE.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 
 ## New data
@@ -22,9 +39,21 @@
 - The vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
-  current snapshot. `inspectdf` is available again, so the snapshot has been retired in
-  favour of reading upstream live. Code that referenced
+  current snapshot. `inspectdf` is still archived (since 2026-04-10), but it installs from
+  the CRAN archive and MotrpacBicQC installs normally once it is present, so the snapshot
+  has been retired in favour of reading upstream live. Code that referenced
   `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
+
+## Data objects
+
+- `HUMAN_FEATURE_TO_GENE` drops `confident_site` and has 12 columns where 2.0.3 gave it 13.
+  The flag is measured per tissue, and this table is keyed on `(assay, feature_id)` with no
+  tissue column, so the only value it could carry was the collapse across tissues — not the
+  measurement for either tissue on the 859 of 7,865 shared prot-ph sites where muscle and
+  adipose disagree. Read the per-tissue value from `*_PROT_PH_QC$feature_metadata` in
+  `MotrpacHumanPreSuspensionData`, which is what `preprocess_PTMSEA()` does; `PTMSEA_INPUT`
+  never read this table and is unaffected. All 1,920,618 rows and the other 11 columns are
+  unchanged from 2.0.3.
 
 ## Dependencies
 
@@ -140,6 +169,8 @@
     and adipose. Read `*_PROT_PH_QC$feature_metadata` in
     `MotrpacHumanPreSuspensionData` when tissue-specific localization matters;
     `preprocess_PTMSEA()` already does, and is unaffected by this addition.
+    **Removed again in 2.0.7** for the reason given there: a collapse across tissues is not
+    the measurement for either tissue.
 
 ## Documentation
 

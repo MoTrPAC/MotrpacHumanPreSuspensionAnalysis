@@ -19,6 +19,7 @@ library(MotrpacHumanPreSuspensionAnalysis)
 # MotrpacHumanPreSuspensionAnalysis
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -155,6 +156,25 @@ pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 
 You can check your R version with `R.version.string` and your Bioconductor
 version with `BiocManager::version()`.
+
+## GitHub-only dependency: MotrpacBicQC
+
+This package imports [MotrpacBicQC](https://github.com/MoTrPAC/MotrpacBicQC)
+(>= 1.9.0), which is not on CRAN or Bioconductor. `DESCRIPTION` declares it in
+`Remotes`, so the `pak::pak()` command above installs it from GitHub
+automatically. If you install with `remotes` instead, install it first:
+
+```{r install-bicqc, eval = FALSE}
+remotes::install_github("MoTrPAC/MotrpacBicQC@v1.9.0")
+```
+
+MotrpacBicQC imports `inspectdf`, which was archived on CRAN in April 2026. If
+installation stops with an error about `inspectdf`, install it from the CRAN
+archive and retry:
+
+```{r install-inspectdf, eval = FALSE}
+remotes::install_version("inspectdf", version = "0.0.12.1")
+```
 
 We recommend building the vignettes when installing
 (use `vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse them).

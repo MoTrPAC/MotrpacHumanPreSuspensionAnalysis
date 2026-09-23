@@ -208,7 +208,7 @@ load_differential_analysis <- function(selected_omes = "all",
   if(verbose & "metab" %in% selected_omes){
     message("Please remember that the lowest CV Metabolite is chosen and the
             relevant refmet name is used. If you're not able to find your desired
-            metabolite, look through the METABOLOMICS_CV object for the relevant
+            metabolite, look through the METABOLOMICS_CVS object for the relevant
             refmet/feature name.")
   }
   # Split epigen platforms from non-epigen, load epigen via old functionality

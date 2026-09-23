@@ -34,11 +34,11 @@ RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org')"
 # Install Bioconductor dependencies (from Remotes)
 # Mfuzz depends on e1071 and Biobase; install its deps first
 RUN R -e "install.packages('e1071', repos='https://cloud.r-project.org')"
-RUN R -e "BiocManager::install(c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition'), ask=FALSE, update=TRUE, force=TRUE)"
+RUN R -e "BiocManager::install(c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition', 'cmapR'), ask=FALSE, update=TRUE, force=TRUE)"
 
 # Verify all Bioconductor packages installed
 RUN R -e " \
-  pkgs <- c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition'); \
+  pkgs <- c('ComplexHeatmap', 'Biobase', 'Mfuzz', 'TMSig', 'variancePartition', 'cmapR'); \
   missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; \
   if (length(missing)) stop('Failed to install: ', paste(missing, collapse=', ')) \
 "
@@ -57,8 +57,10 @@ RUN R -e "install.packages(c( \
 
 # Install GitHub Remotes
 RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
-# RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC', upgrade='never')"
-# motrpacbic qc is currently not needed and needs to fix a package dependency.
+# inspectdf (imported by MotrpacBicQC) is archived on CRAN; install it from the archive
+RUN R -e "remotes::install_version('inspectdf', version='0.0.12.1', repos='https://cloud.r-project.org', upgrade='never')"
+# MotrpacBicQC >= 1.9.0 is a hard Import and lives on GitHub only; pinned to the v1.9.0 release tag
+RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC@v1.9.0', upgrade='never')"
 
 # Copy the package source
 COPY . /tmp/package
