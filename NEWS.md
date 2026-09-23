@@ -267,6 +267,14 @@ version suffixes. See the MoTrPAC Knowledge Center for the release and versionin
   `metadata_samples` and was therefore dropped at the modelling stage. Differences in the
   refit differential analysis are minimal.
 
+- **Metabolite names follow a frozen RefMet snapshot with updated overrides.** 78
+  metabolomics `feature_id`s in the `*_METAB_DA` objects are renamed from v1.3, so joins on
+  v1.3 names will miss them. The curated overrides gain `13 HODE` -> `13-HODE` and `20-HETE`
+  entries that previously resolved to `NA` (adipose `13-HODE` now enters the DA). Other
+  renames: `*` suffixes dropped (`FA 18:1;O*` -> `FA 18:1;O`), `NAGly` -> `NA-Gly`, `NAD+`
+  -> `NAD`, `DHA` -> `Docosahexaenoic acid`, `Edetic acid` -> `EDTA`, `13-Oxo-ODE` ->
+  `13-OxoODE`.
+
 ## Reference and enrichment objects
 
 - `CAMERA_RESULTS` has 1,016,991 rows, 1,869 fewer than v1.3, the losses concentrated in
