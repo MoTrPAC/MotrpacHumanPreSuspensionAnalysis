@@ -8,10 +8,11 @@
 #'   was sampled at `post_3.5_4_hr` only.
 #'
 #'   Each element is the combined PTM-SEA output parsed into a `GCT` object, the
-#'   S4 class defined by the `cmapR` package. This package does not depend on
-#'   `cmapR`: the object loads without it, but the `cmapR` accessors need
-#'   `cmapR` attached. The slots are reachable as `@mat`, `@rdesc`, `@cdesc`,
-#'   `@rid` and `@cid` either way.
+#'   S4 class defined by the `cmapR` package. `cmapR` is in Suggests, not
+#'   Imports: the object loads without it and its slots are reachable as
+#'   `@mat`, `@rdesc`, `@cdesc`, `@rid` and `@cid`, but anything that
+#'   dispatches on the class — printing the object, the `cmapR` accessors —
+#'   needs `cmapR` installed, as does `R CMD check` to inspect the data.
 #'
 #' @usage
 #' PTMSEA_RESULTS

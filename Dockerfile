@@ -32,11 +32,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN R -e "install.packages('BiocManager', repos='https://cloud.r-project.org')"
 
 # Install Bioconductor dependencies (from Remotes)
-RUN R -e "BiocManager::install(c('ComplexHeatmap', 'TMSig', 'variancePartition'), ask=FALSE, update=TRUE, force=TRUE)"
+RUN R -e "BiocManager::install(c('ComplexHeatmap', 'TMSig', 'variancePartition', 'cmapR'), ask=FALSE, update=TRUE, force=TRUE)"
 
 # Verify all Bioconductor packages installed
 RUN R -e " \
-  pkgs <- c('ComplexHeatmap', 'TMSig', 'variancePartition'); \
+  pkgs <- c('ComplexHeatmap', 'TMSig', 'variancePartition', 'cmapR'); \
   missing <- pkgs[!sapply(pkgs, requireNamespace, quietly=TRUE)]; \
   if (length(missing)) stop('Failed to install: ', paste(missing, collapse=', ')) \
 "

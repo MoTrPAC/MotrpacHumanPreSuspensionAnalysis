@@ -41,6 +41,12 @@
   is not sufficient. MotrpacBicQC imports `inspectdf`, which is archived on CRAN; the README
   gives the archive install command if it fails to resolve.
 
+- `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` and `PTMSEA_RESULTS` are
+  lists of `cmapR::GCT` S4 objects, and on a machine without `cmapR` `R CMD check` failed
+  its data inspection with a WARNING ("unable to load required package 'cmapR'") because
+  no field declared the package. The objects still load and their slots are reachable
+  without `cmapR`; printing them or using the `cmapR` accessors needs it installed.
+
 ## Changes
 
 - `plot_single_feature()` reads `MotrpacBicQC::assay_codes` directly. Upstream 1.9.0 adds
