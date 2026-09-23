@@ -55,10 +55,8 @@ RUN R -e "install.packages(c( \
 
 # Install GitHub Remotes
 RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')"
-# inspectdf (imported by MotrpacBicQC) is archived on CRAN; install it from the archive
-RUN R -e "remotes::install_version('inspectdf', version='0.0.12.1', repos='https://cloud.r-project.org', upgrade='never')"
-# MotrpacBicQC >= 1.9.0 is a hard Import and lives on GitHub only; pinned to the v1.9.0 release tag
-RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC@v1.9.0', upgrade='never')"
+# MotrpacBicQC >= 2.0.0 is a hard Import and lives on GitHub only; pinned to the v2.0.0 release tag
+RUN R -e "remotes::install_github('MoTrPAC/MotrpacBicQC@v2.0.0', upgrade='never')"
 
 # Copy the package source
 COPY . /tmp/package

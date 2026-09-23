@@ -153,21 +153,13 @@ Bioconductor version with `BiocManager::version()`.
 ## GitHub-only dependency: MotrpacBicQC
 
 This package imports
-[MotrpacBicQC](https://github.com/MoTrPAC/MotrpacBicQC) (\>= 1.9.0),
+[MotrpacBicQC](https://github.com/MoTrPAC/MotrpacBicQC) (\>= 2.0.0),
 which is not on CRAN or Bioconductor. `DESCRIPTION` declares it in
 `Remotes`, so the `pak::pak()` command above installs it from GitHub
 automatically. If you install with `remotes` instead, install it first:
 
 ``` r
-remotes::install_github("MoTrPAC/MotrpacBicQC@v1.9.0")
-```
-
-MotrpacBicQC imports `inspectdf`, which was archived on CRAN in April
-2026. If installation stops with an error about `inspectdf`, install it
-from the CRAN archive and retry:
-
-``` r
-remotes::install_version("inspectdf", version = "0.0.12.1")
+remotes::install_github("MoTrPAC/MotrpacBicQC@v2.0.0")
 ```
 
 We recommend building the vignettes when installing (use

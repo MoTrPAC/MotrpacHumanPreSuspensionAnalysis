@@ -14,9 +14,8 @@
 - **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
-  current snapshot. `inspectdf` is still archived (since 2026-04-10), but it installs from
-  the CRAN archive and MotrpacBicQC installs normally once it is present, so the snapshot
-  has been retired in favour of reading upstream live. Code that referenced
+  current snapshot. MotrpacBicQC 2.0.0 no longer imports `inspectdf`, so the snapshot has
+  been retired in favour of reading upstream live. Code that referenced
   `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
 
 ## Data objects
@@ -32,14 +31,16 @@
 
 ## Dependencies
 
-- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 1.9.0`, reversing the 2.0.2
-  demotion. 1.9.0 is the MotrpacBicQC release that carries the clinical assay codes this
-  package reads, published as the `v1.9.0` tag on 2026-09-23. `DESCRIPTION` declares
-  `Remotes: MoTrPAC/MotrpacBicQC@v1.9.0`, so
+- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 2.0.0`, reversing the 2.0.2
+  demotion. MotrpacBicQC 1.9.0 added the clinical assay codes this package reads, and
+  2.0.0 removed its `inspectdf` import: `inspectdf` has been archived on CRAN since
+  2026-04-10, which made MotrpacBicQC impossible to resolve from a clean library (`pak` in
+  GitHub Actions failed with "Can't find package called inspectdf"). Both are in the
+  `v2.0.0` tag, published 2026-09-23. `DESCRIPTION` declares
+  `Remotes: MoTrPAC/MotrpacBicQC@v2.0.0`, so
   `pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")` resolves it from GitHub without a
-  separate install step. The previous tag, `v1.8.0`, still carries the old 44-row table and
-  is not sufficient. MotrpacBicQC imports `inspectdf`, which is archived on CRAN; the README
-  gives the archive install command if it fails to resolve.
+  separate install step. The `v1.8.0` tag still carries the old 44-row table and is not
+  sufficient.
 
 - `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` and `PTMSEA_RESULTS` are
   lists of `cmapR::GCT` S4 objects, and on a machine without `cmapR` `R CMD check` failed

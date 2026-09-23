@@ -29,15 +29,6 @@ jobs:
           r-version: release
           use-public-rspm: true
 
-      # inspectdf, imported by MotrpacBicQC, is archived on CRAN, so the
-      # dependency resolver below cannot find it in the source index.
-      # Install it from the CRAN archive first.
-      - name: Install inspectdf from the CRAN archive
-        shell: Rscript {0}
-        run: |
-          install.packages("remotes")
-          remotes::install_version("inspectdf", version = "0.0.12.1", repos = "https://cloud.r-project.org", upgrade = "never")
-
       # Resolves Imports, Suggests and the Remotes entry for MotrpacBicQC,
       # including the Bioconductor packages (ComplexHeatmap, TMSig,
       # variancePartition) for the R release in use.
