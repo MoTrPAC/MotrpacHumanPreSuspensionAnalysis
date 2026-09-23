@@ -15,7 +15,3 @@ Git blob hashes: muscle `0a1e149bea9a30b0e8d943876f08d0903b5bec5b`, adipose
 
 The adipose run in precovid-analyses PR #104 (`figures/adipose/Files/PTMSEA_v2.0/`)
 is not used.
-
-Neither file came with a parameters file. The smallest signature overlap in
-every contrast of both files is 5 sites, consistent with `min.overlap = 5`. The
-input z-matrix for each run is not recorded.
