@@ -37,6 +37,13 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # Mfuzz loads Tk, which warns at install time without a display.
+      - name: Start a virtual display
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 &
+          echo "DISPLAY=:99" >> "$GITHUB_ENV"
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           args: 'c("--no-manual")'

@@ -8,6 +8,14 @@
 
 ## Dependencies
 
+- MotrpacBicQC is required at `>= 2.0.0`, the `v2.0.0` release tag (2026-09-23), and
+  `DESCRIPTION` declares `Remotes: MoTrPAC/MotrpacBicQC@v2.0.0` so `pak` resolves it from
+  GitHub. 2.0.0 drops the `inspectdf` import, which is archived on CRAN and made
+  MotrpacBicQC unresolvable from a clean library; `assay_codes` is unchanged from 1.9.0.
+
+- `gridtext` is added to `Imports`: `plot_feature_heatmap()` renders its column title with
+  `ComplexHeatmap::gt_render()`, which needs it, and ComplexHeatmap only suggests it.
+
 - `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` is a list of `cmapR::GCT`
   S4 objects, and on a machine without `cmapR` `R CMD check` failed its data inspection
   with a WARNING ("unable to load required package 'cmapR'") because no field declared
@@ -25,6 +33,9 @@
   clearing the "no visible global function definition for 'getFromNamespace'" NOTE that
   `R CMD check` has reported since before 2.0.
 
+- `R-CMD-check.yaml` runs the check under a virtual display (Xvfb): Mfuzz loads Tk, which
+  otherwise warns at install time on a headless runner.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 
 ## New data
@@ -41,9 +52,9 @@
 - The vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
-  current snapshot. MotrpacBicQC 2.0.0 no longer imports `inspectdf`, so the snapshot has
-  been retired in favour of reading upstream live. Code that referenced
-  `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read `MotrpacBicQC::assay_codes`.
+  current snapshot. The snapshot has been retired in favour of reading upstream live. Code
+  that referenced `MotrpacHumanPreSuspensionAnalysis::assay_codes` should read
+  `MotrpacBicQC::assay_codes`.
 
 ## Data objects
 
@@ -55,19 +66,6 @@
   `MotrpacHumanPreSuspensionData`, which is what `preprocess_PTMSEA()` does; `PTMSEA_INPUT`
   never read this table and is unaffected. All 1,920,618 rows and the other 11 columns are
   unchanged from 2.0.3.
-
-## Dependencies
-
-- MotrpacBicQC moves from `Suggests` to `Imports` at `>= 2.0.0`, reversing the 2.0.2
-  demotion. MotrpacBicQC 1.9.0 added the clinical assay codes this package reads, and
-  2.0.0 removed its `inspectdf` import: `inspectdf` has been archived on CRAN since
-  2026-04-10, which made MotrpacBicQC impossible to resolve from a clean library (`pak` in
-  GitHub Actions failed with "Can't find package called inspectdf"). Both are in the
-  `v2.0.0` tag, published 2026-09-23. `DESCRIPTION` declares
-  `Remotes: MoTrPAC/MotrpacBicQC@v2.0.0`, so
-  `pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")` resolves it from GitHub without a
-  separate install step. The `v1.8.0` tag still carries the old 44-row table and is not
-  sufficient.
 
 ## Changes
 

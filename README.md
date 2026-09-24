@@ -91,12 +91,12 @@ analysis code) is kept clear of them.
                                        ▼
                                   manuscripts
 
-| Repository | What it holds | Access |
-|----|----|----|
-| [`motrpac-human-presuspension-repro`](https://github.com/MoTrPAC/motrpac-human-presuspension-repro) | the end-to-end rebuild pipeline and its pinned software environment | code; a full run needs consortium bucket access |
-| [`MotrpacHumanPreSuspensionData`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData) | subject-level molecular and phenotypic data objects | formal data-access request to the consortium |
-| [`MotrpacHumanPreSuspensionAnalysis`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis) | differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions | public |
-| [`motrpac-human-presuspension-acute`](https://github.com/MoTrPAC/motrpac-human-presuspension-acute) | per-manuscript figure code and QC vignettes | code public; some panels need Data access |
+| Repository                                                                                          | What it holds                                                                                                    | Access                                          |
+|-----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| [`motrpac-human-presuspension-repro`](https://github.com/MoTrPAC/motrpac-human-presuspension-repro) | the end-to-end rebuild pipeline and its pinned software environment                                              | code; a full run needs consortium bucket access |
+| [`MotrpacHumanPreSuspensionData`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData)         | subject-level molecular and phenotypic data objects                                                              | formal data-access request to the consortium    |
+| [`MotrpacHumanPreSuspensionAnalysis`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis) | differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions | public                                          |
+| [`motrpac-human-presuspension-acute`](https://github.com/MoTrPAC/motrpac-human-presuspension-acute) | per-manuscript figure code and QC vignettes                                                                      | code public; some panels need Data access       |
 
 ------------------------------------------------------------------------
 
@@ -110,9 +110,9 @@ analysis code) is kept clear of them.
 ## Important: Bioconductor Dependencies
 
 This package relies on several Bioconductor packages
-(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct Bioconductor
-version for your R installation before installing. Using the wrong
-Bioconductor version will cause dependency failures.
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct
+Bioconductor version for your R installation before installing. Using
+the wrong Bioconductor version will cause dependency failures.
 
 | R version | Bioconductor version |
 |-----------|----------------------|
@@ -149,6 +149,23 @@ pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 
 You can check your R version with `R.version.string` and your
 Bioconductor version with `BiocManager::version()`.
+
+## macOS: install XQuartz first
+
+**On macOS, install [XQuartz](https://www.xquartz.org) before installing
+this package**, then log out and back in. Windows and Linux do not need
+it.
+
+The macOS builds of R link Tcl/Tk and the cairo graphics device against
+the X11 libraries XQuartz provides. This package imports Mfuzz, which
+imports `tcltk`, so without XQuartz the installation fails when R
+test-loads the package, with an error like:
+
+    unable to load shared object '.../library/tcltk/libs/tcltk.so':
+      Library not loaded: /opt/X11/lib/libX11.6.dylib
+
+`plot_enrich_heatmap()` and `plot_cluster_enrichment()` also write PDFs
+with `cairo_pdf()`, which needs XQuartz on macOS.
 
 ## GitHub-only dependency: MotrpacBicQC
 
