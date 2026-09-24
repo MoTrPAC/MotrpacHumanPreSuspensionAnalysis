@@ -2,10 +2,14 @@
 #'   PTM-SEA results
 #'
 #' @description Create a heatmap of molecular signatures for a given tissue,
-#'   ome, and contrast type combination. Only works with CAMERA-PR or PTM-SEA
-#'   results.
+#'   ome, and contrast type combination from CAMERA-PR results
+#'   (\code{CAMERA_RESULTS} or the output of \code{run_cameraPR()}) or PTM-SEA
+#'   results (\code{PTMSEA_RESULTS}).
 #'
-#' @param x a \code{data.frame} of CAMERA-PR or PTM-SEA results.
+#' @param x a \code{data.frame} of CAMERA-PR results with a \code{z.std}
+#'   column, such as \code{CAMERA_RESULTS} or the output of
+#'   \code{run_cameraPR()}, or PTM-SEA results with an \code{NES} column, such
+#'   as \code{PTMSEA_RESULTS}.
 #' @param set_ids character or \code{NULL}; one or more of \code{x$set_id}. The
 #'   dataset \code{x} will be filtered to these sets. If \code{NULL}, the top 6
 #'   most significant sets from each contrast will be selected.
@@ -23,16 +27,24 @@
 #'   selected.
 #' @param zscore_colors character; length 2 vector of colors for the smallest
 #'   and largest z-scores. Default is "#3366ff" (blue) and "darkred".
-#' @param filename character; path to a PDF file to save the heatmap.
+#' @param filename character; path to a PDF file to save the heatmap. Ignored
+#'   if \code{return_drawing = TRUE}.
+#' @param return_drawing logical; if \code{TRUE}, nothing is drawn or saved.
+#'   Instead a list is returned so the caller controls the graphics device.
 #'
-#' @returns Nothing. The heatmap is saved to a PDF file.
+#' @returns If \code{return_drawing = FALSE} (default), nothing; the heatmap is
+#'   saved to \code{filename}. If \code{return_drawing = TRUE}, a list with
+#'   components \code{draw}, a function with no arguments that draws the
+#'   heatmap on the current device without starting a new page; \code{width}
+#'   and \code{height}, the suggested page size in inches; and \code{n_sets},
+#'   the number of sets drawn.
 #'
 #' @author Tyler Sagendorf
 #'
 #' @export plot_enrich_heatmap
 #'
 #' @import ComplexHeatmap
-#' @importFrom dplyr %>% filter slice_min pull distinct mutate left_join arrange rename count
+#' @importFrom dplyr %>% filter slice_head pull distinct mutate left_join arrange rename count
 #' @importFrom grDevices dev.off cairo_pdf
 #' @importFrom grid convertUnit unit gpar
 #' @importFrom latex2exp TeX
@@ -55,8 +67,12 @@ plot_enrich_heatmap <- function(x,
                                 padj_cutoff = 0.05,
                                 n_top = 6L,
                                 zscore_colors = c("#3366ff", "darkred"),
-                                filename)
+                                filename = NULL,
+                                return_drawing = FALSE)
 {
+  if (!return_drawing && is.null(filename))
+    stop("`filename` is required unless `return_drawing = TRUE`.")
+
   # Allow users with older R versions to still use the package
   check_package_installation(pkg = "TMSig", fun = "plot_bubble_heatmap")
 
@@ -75,7 +91,7 @@ plot_enrich_heatmap <- function(x,
                                          "baseline",
                                          "control_only"))
 
-  ## Prepare CAMERA-PR results ----
+  ## Prepare CAMERA-PR or PTM-SEA results ----
   required_cols <- c("tissue", "assay", "contrast", "contrast_type",
                      "set_id", "set", "set_short", "p_value", "adj_p_value")
 
@@ -86,9 +102,11 @@ plot_enrich_heatmap <- function(x,
          paste(missing_cols, collapse = ", "))
 
   if (!any(c("z.std", "NES") %in% colnames(x)))
-    stop("`x` must include a 'z.std' or 'NES' column, depending on ",
-         "whether it was produced by run_cameraPR or run_PTMSEA, ",
-         "respectively.")
+    stop("`x` must include a 'z.std' or 'NES' column, as in CAMERA_RESULTS ",
+         "or PTMSEA_RESULTS, respectively.")
+
+  # If FALSE, assume PTM-SEA results
+  is_camera <- !is.null(x[["z.std"]])
 
   x <- x %>%
     dplyr::filter(contrast_type == !!contrast_type,
@@ -120,30 +138,43 @@ plot_enrich_heatmap <- function(x,
 
     n_top <- max(1L, n_top, na.rm = FALSE)
 
-    set_ids <- x %>%
-      dplyr::filter(adj_p_value < padj_cutoff) %>%
-      # p_value used for ordering to avoid ties
-      dplyr::slice_min(p_value,
-                by = c(tissue, contrast),
-                n = n_top) %>%
+    # p_value used for ordering. PTM-SEA p-values floor at the permutation
+    # limit, so ties are broken by the absolute statistic.
+    top_sets <- dplyr::filter(x, adj_p_value < padj_cutoff)
+    top_sets <- top_sets[order(top_sets$p_value,
+                               -abs(top_sets[[if (is_camera) "z.std" else "NES"]])), ]
+
+    set_ids <- top_sets %>%
+      dplyr::slice_head(by = c(tissue, contrast),
+                        n = n_top) %>%
       dplyr::pull(set_id) %>%
       unique() %>%
       as.character()
   } else {
     if (!is.character(set_ids))
       stop("`set_ids` must be NULL or a character vector of set identifiers ",
-           "selected from SET_TO_ID$set_id")
+           "selected from `x$set_id`")
 
-    # Strip away any non digit characters (e.g. special formatting chars)
-    set_ids <- gsub("[^[:digit:]]", "", set_ids)
     set_ids <- unique(set_ids)
-    set_ids <- as.numeric(set_ids)
-    set_ids <- sprintf("%05d", set_ids)
+
+    # CAMERA-PR set IDs are zero-padded integers (SET_TO_ID$set_id).
+    # Strip away any non digit characters (e.g. special formatting chars)
+    if (is_camera) {
+      set_ids <- gsub("[^[:digit:]]", "", set_ids)
+      set_ids <- as.numeric(set_ids)
+      set_ids <- sprintf("%05d", set_ids)
+    }
 
     if (all(!set_ids %in% x$set_id)) {
       stop("None of the `set_ids` are valid. Check `set_ids` and the values ",
            "of `selected_ome`, `selected_tissues`, and `padj_cutoff`.")
     }
+
+    missing_set_ids <- setdiff(set_ids, x$set_id)
+
+    if (length(missing_set_ids))
+      message(length(missing_set_ids), " of ", length(set_ids), " `set_ids` ",
+              "not drawn: ", paste(sort(missing_set_ids), collapse = ", "))
   }
 
   x <- dplyr::filter(x, set_id %in% set_ids)
@@ -152,9 +183,6 @@ plot_enrich_heatmap <- function(x,
   contrast_df <- .add_contrast_labels() %>%
     dplyr::filter(contrast %in% levels(x$contrast)) %>%
     droplevels.data.frame()
-
-  # If FALSE, assume PTM-SEA results
-  is_camera <- !is.null(x[["z.std"]])
 
   ## Create heatmap ----
   column_df <- distinct(x, tissue, contrast) %>%
@@ -275,14 +303,6 @@ plot_enrich_heatmap <- function(x,
     breaks <- c(extended_range[1], 0, extended_range[2])
   }
 
-  on.exit(invisible(dev.off())) # close device after drawing heatmap
-
-  # Use cairo_pdf so that the ">=" symbol renders properly on Mac
-  grDevices::cairo_pdf(
-    filename = filename, height = height, width = width,
-    onefile = FALSE, fallback_resolution = 300
-  )
-
   # If at least one set is not measured in >= 50% of contrasts across tissues,
   # turn off row clustering because there is a chance it will fail anyway.
   cluster_rows <- x %>%
@@ -309,39 +329,62 @@ plot_enrich_heatmap <- function(x,
     )
   }
 
+  # The caller's device is already open
+  if (return_drawing)
+    draw_args[["newpage"]] <- FALSE
+
   # Bubble heatmap
-  TMSig::enrichmap(
-    x = x,
-    n_top = Inf,
-    set_column = "set_short",
-    statistic_column = statistic_column,
-    contrast_column = "contrast2",
-    padj_column = "adj_p_value",
-    padj_cutoff = padj_cutoff,
-    plot_sig_only = TRUE,
-    heatmap_color_fun = .enrich_heatmap_color_function,
-    colors = zscore_colors,
-    padj_legend_title = "BH Adjusted\nP-Value",
-    draw_args = draw_args,
-    heatmap_args = list(
-      na_col = "grey95",
-      rect_gp = gpar(fill = "white",
-                     col = "grey85"),
-      cluster_rows = cluster_rows,
-      column_split = column_split,
-      row_labels = latex2exp::TeX(levels(x$set_short)),
-      column_labels = column_df$contrast_labels,
-      show_column_names = show_column_names,
-      column_names_side = "top",
-      column_title_gp = gpar(fontsize = 0),
-      top_annotation = top_annotation,
-      heatmap_legend_param = list(
-        title = heatmap_title,
-        at = breaks,
-        labels = breaks
+  draw_heatmap <- function() {
+    TMSig::enrichmap(
+      x = x,
+      n_top = Inf,
+      set_column = "set_short",
+      statistic_column = statistic_column,
+      contrast_column = "contrast2",
+      padj_column = "adj_p_value",
+      padj_cutoff = padj_cutoff,
+      plot_sig_only = TRUE,
+      heatmap_color_fun = .enrich_heatmap_color_function,
+      colors = zscore_colors,
+      padj_legend_title = "BH Adjusted\nP-Value",
+      draw_args = draw_args,
+      heatmap_args = list(
+        na_col = "grey95",
+        rect_gp = gpar(fill = "white",
+                       col = "grey85"),
+        cluster_rows = cluster_rows,
+        column_split = column_split,
+        row_labels = latex2exp::TeX(levels(x$set_short)),
+        column_labels = column_df$contrast_labels,
+        show_column_names = show_column_names,
+        column_names_side = "top",
+        column_title_gp = gpar(fontsize = 0),
+        top_annotation = top_annotation,
+        heatmap_legend_param = list(
+          title = heatmap_title,
+          at = breaks,
+          labels = breaks
+        )
       )
     )
+  }
+
+  if (return_drawing) {
+    return(list(draw = draw_heatmap, width = width, height = height,
+                n_sets = n_sets))
+  }
+
+  on.exit(invisible(dev.off())) # close device after drawing heatmap
+
+  # Use cairo_pdf so that the ">=" symbol renders properly on Mac
+  grDevices::cairo_pdf(
+    filename = filename, height = height, width = width,
+    onefile = FALSE, fallback_resolution = 300
   )
+
+  draw_heatmap()
+
+  return(invisible(NULL))
 }
 
 

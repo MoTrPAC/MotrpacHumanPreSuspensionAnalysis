@@ -14,6 +14,18 @@ metabolomics platforms.
 A character vector containing the targeted and untargeted
 metabolomics platforms.
 }
+\details{
+These are the research metabolomics platforms.
+
+\code{"metab-t-clinical"} is deliberately NOT here, though it is a
+targeted metabolomics platform and a valid choice in
+\code{\link{ome_available_list}()}. It is clinical chemistry, and the
+loaders gate it behind \code{load_clinical} rather than folding it into
+the research platforms — see \code{\link{clinical_ome_list}()}.
+}
 \examples{
 metab_only_list()
+}
+\seealso{
+\code{\link[=ome_available_list]{ome_available_list()}}, \code{\link[=clinical_ome_list]{clinical_ome_list()}}
 }

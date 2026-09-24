@@ -1,20 +1,11 @@
-library(dplyr)
-# File downloaded 2025-01-23 from https://maayanlab.cloud/Enrichr/#libraries and
-# compressed with R.utils::gzip
-path <- file.path("data-raw", "gmt_processing", "CellMarker_2024.txt.gz")
+# Retired: motrpac-human-presuspension-repro builds this now.
+#
+#   motrpac-human-presuspension-repro/scripts/00_preflight/data-raw/gmt_processing/GMT_CellMarker.R
+#
+# The objects this script used to write into data/ are produced by the
+# pipeline and carried in by its Stage 3 (30_update_relevant_packages), so
+# running anything here would write a second, unversioned copy from inputs
+# the release no longer reads. The code is removed rather than left runnable
+# beside the thing that replaced it: two live generators for one object is
+# how a package ends up shipping data nobody can trace.
 
-cellmarker <- TMSig::readGMT(path, check = FALSE)
-cellmarker <- cellmarker[grepl("human", names(cellmarker),
-                               ignore.case = TRUE)]
-
-names(cellmarker) <- paste0("CELLMARKER_", names(cellmarker))
-
-# Write named list to a GMT file
-gmt_file <- file.path("data-raw", "gmt_processing", "gmt_files",
-                      "cellmarker.v2024.symbols.gmt")
-
-MotrpacHumanPreSuspensionAnalysis:::.writeGMT(x = cellmarker,
-                                            path = gmt_file)
-
-# Compress file
-R.utils::gzip(gmt_file)

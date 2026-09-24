@@ -6,8 +6,9 @@
 #'
 #' @param DA_list list; a named list of \code{data.frame} objects, each
 #'   containing differential analysis results for a specific tissue/assay
-#'   combination. The list must be nested, with tissues at the top level and
-#'   omes within tissues. If \code{NULL} (default), the differential analysis
+#'   combination. The list is nested, with tissues at the top level and omes
+#'   within tissues, or already flattened with names of the form
+#'   \code{"tissue.assay"}. If \code{NULL} (default), the differential analysis
 #'   results will be generated with
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{load_differential_analysis}}.
 #'   Unless wishing to analyze DA results that are not in
@@ -242,6 +243,8 @@ run_cameraPR <- function(DA_list = NULL,
 #' @param convert_features logical; whether features should be converted to gene
 #'   symbols, flanking sequences, or RefMet metabolite names. \code{TRUE} for
 #'   enrichment analysis, \code{FALSE} for fuzzy c-means clustering.
+#' @param .contrast_type character or \code{NULL}; if not \code{NULL}, keep only
+#'   contrasts of these types. Used by \code{run_cmeans()}.
 #'
 #' @returns a list of z-statistic matrices with features or gene symbols, RefMet
 #'   metabolite IDs, or flanking sequences as rows and contrasts as columns.
@@ -300,8 +303,9 @@ run_cameraPR <- function(DA_list = NULL,
   #   return(tissue_i)
   # })
 
-  # Unnest list and collapse tissue and ome with a "."
-  DA_list <- unlist(DA_list, recursive = FALSE)
+  # Unnest list and collapse tissue and ome with a "." (skipped if already flat)
+  if (!all(vapply(DA_list, is.data.frame, logical(1L))))
+    DA_list <- unlist(DA_list, recursive = FALSE)
 
   keep_tissues <- sub("\\..*", "", names(DA_list)) %in% selected_tissues
   keep_omes <- sub(".*\\.", "", names(DA_list)) %in% selected_omes
@@ -309,7 +313,7 @@ run_cameraPR <- function(DA_list = NULL,
   DA_list <- DA_list[keep_tissues & keep_omes]
   DA_names <- names(DA_list)
 
-  if (is.null(DA_names))
+  if (!length(DA_names))
     stop("`DA_list` must be a named list of differential analysis results ",
          "tables with names of the form 'tissue.assay'.")
 
@@ -317,13 +321,13 @@ run_cameraPR <- function(DA_list = NULL,
   if (!is.null(.contrast_type)) {
     DA_list <- lapply(DA_list, function(xi) {
       xi %>%
-        dplyr::select(-any_of(c("contrast_type", "contrast_short"))) %>%
+        dplyr::select(-dplyr::any_of(c("contrast_type", "contrast_short"))) %>%
         dplyr::mutate(
           contrast = factor(contrast,
                             levels = levels(MotrpacHumanPreSuspensionAnalysis::CONTRAST_CONVERTER$contrast))
         ) %>%
         dplyr::left_join(MotrpacHumanPreSuspensionAnalysis::CONTRAST_CONVERTER,
-                  by = "contrast") %>%
+                         by = "contrast") %>%
         dplyr::filter(contrast_type %in% .contrast_type) %>%
         dplyr::arrange(contrast) %>%
         droplevels.data.frame()

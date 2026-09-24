@@ -18,8 +18,9 @@ run_cameraPR(
 \arguments{
 \item{DA_list}{list; a named list of \code{data.frame} objects, each
 containing differential analysis results for a specific tissue/assay
-combination. The list must be nested, with tissues at the top level and
-omes within tissues. If \code{NULL} (default), the differential analysis
+combination. The list is nested, with tissues at the top level and omes
+within tissues, or already flattened with names of the form
+\code{"tissue.assay"}. If \code{NULL} (default), the differential analysis
 results will be generated with
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{load_differential_analysis}}.
 Unless wishing to analyze DA results that are not in

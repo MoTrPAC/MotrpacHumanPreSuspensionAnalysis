@@ -18,3 +18,13 @@ test_that("run_cmeans returns named list with fclust objects", {
   expect_true("input" %in% names(fclust_obj))
   expect_equal(nrow(fclust_obj[["centers"]]), 3L)
 })
+
+test_that("run_cmeans rejects more than one cluster number per tissue", {
+  skip_if_not_installed("Mfuzz")
+  skip_if_not_installed("Biobase")
+
+  expect_error(
+    run_cmeans(selected_tissues = "adipose", num_clusters_adipose = 3:5),
+    "single cluster number per tissue"
+  )
+})

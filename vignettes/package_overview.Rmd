@@ -105,6 +105,13 @@ Group-level means and standard deviations for normalized expression data
 are stored as `*_SUM_STATS` objects (e.g., `MUSCLE_PROT_PR_SUM_STATS`).
 Use `load_summary_stats()` to access these.
 
+There is one object per tissue and assay, named the way the `*_DA` objects
+are named. The research metabolomics platforms are stacked into a single
+`{TISSUE}_METAB_SUM_STATS` per tissue carrying `assay = "metab"` and a
+`platform` column, matching `{TISSUE}_METAB_DA`.
+`BLOOD_METAB_T_CLINICAL_SUM_STATS` is clinical chemistry and stays its own
+object.
+
 ## 2.3 Contrast Converter
 
 The `CONTRAST_CONVERTER` table maps all **33 contrasts** used in
@@ -382,8 +389,10 @@ for normalized expression data.
 ## Load all summary statistics
 sum_stats <- load_summary_stats()
 
-## Load metabolomics only
+## Load metabolomics only. One table per tissue, every platform in it,
+## with the platform in the `platform` column.
 metab_stats <- load_summary_stats(selected_omes = "metab")
+unique(metab_stats[["blood"]][["metab"]][["platform"]])
 
 ## Load as a single combined table
 adipose_rna <- load_summary_stats(
@@ -475,8 +484,10 @@ Key parameters:
 
 ## 5.3 Enrichment Heatmaps
 
-`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR or
-PTM-SEA results, showing enrichment z-scores with significance bubbles.
+`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR results
+(`CAMERA_RESULTS` or the output of `run_cameraPR()`), showing enrichment
+z-scores with significance bubbles. It also takes `PTMSEA_RESULTS`, which
+shares that layout, and plots the PTM-SEA NES instead.
 
 ```{r plot-enrich-heatmap, eval = FALSE}
 # Note: filename is required — the heatmap is saved directly to PDF.
@@ -498,19 +509,25 @@ plot_enrich_heatmap(
   selected_ome = "transcript-rna-seq",
   filename = "selected_pathways.pdf"
 )
+
+# PTM-SEA results (prot-ph, muscle and adipose)
+plot_enrich_heatmap(
+  x = PTMSEA_RESULTS,
+  selected_tissues = c("adipose", "muscle"),
+  selected_ome = "prot-ph",
+  filename = "ptmsea_heatmap.pdf"
+)
 ```
 
 ## 5.4 Cluster Trajectory Plots
 
-After running fuzzy c-means clustering, use `plot_cmeans()` to visualize
-cluster trajectories as line plots colored by membership probability.
+`plot_cmeans()` draws the feature trajectories of each fuzzy c-means
+cluster, colored by membership probability, with the centroid in black.
 
 ```{r plot-cmeans, eval = FALSE}
 # Note: filename is required — the plot is saved directly to PDF.
-FCM <- run_cmeans(selected_tissues = "adipose")
-
 plot_cmeans(
-  FCM = FCM[["adipose"]],
+  FCM = FCM_CLUSTERS[["adipose"]],
   filename = "adipose_clusters.pdf",
   min_membership = 0.3,
   ncol = 4
@@ -586,24 +603,23 @@ Pre-computed results are available as `CAMERA_RESULTS`.
 
 # 7. Fuzzy C-Means Clustering
 
-`run_cmeans()` performs fuzzy c-means (FCM) clustering on z-score
-matrices from differential analysis, grouping features with similar
-temporal response patterns.
+`FCM_CLUSTERS` holds pre-computed fuzzy c-means (FCM) clustering of the
+differential analysis z-score matrices, grouping features with similar
+temporal response patterns. It is a named list with one `fclust` object
+per tissue.
 
-```{r run-cmeans-default, eval = FALSE}
-# Run with defaults (13 clusters for adipose/blood, 12 for muscle)
-FCM <- run_cmeans()
-names(FCM)  # one element per tissue
+```{r fcm-clusters, eval = FALSE}
+names(FCM_CLUSTERS)  # one element per tissue
 ```
 
-```{r run-cmeans-explore, eval = FALSE}
-# Explore optimal cluster numbers
-FCM_explore <- run_cmeans(
-  selected_tissues = "adipose",
-  num_clusters_adipose = 3:14
-)
+`run_cmeans()` reruns the clustering. With the defaults (13 clusters for
+adipose, 12 for blood and muscle, both modalities) it uses the settings
+that built `FCM_CLUSTERS`.
 
-# Run for a single modality
+```{r run-cmeans, eval = FALSE}
+FCM <- run_cmeans()
+
+# A single modality
 FCM_endur <- run_cmeans(
   selected_tissues = "muscle",
   modality = "Endur"
@@ -614,16 +630,13 @@ Features are scaled by their standard deviation (including pre-exercise
 zeros) before clustering. Clusters are reordered by hierarchical
 clustering of centroids so that similar trajectories appear adjacent.
 
-Pre-computed clustering results are available as `FCM_CLUSTERS`.
-
 ## 7.1 Cluster-Level Enrichment with CAMERA-PR
 
 `run_cluster_cameraPR()` tests whether molecular signatures localize to
 specific cluster centroids using modified signed rank tests.
 
 ```{r run-cluster-cameraPR, eval = FALSE}
-FCM <- run_cmeans()
-cluster_camera <- run_cluster_cameraPR(FCM = FCM)
+cluster_camera <- run_cluster_cameraPR(FCM = FCM_CLUSTERS)
 head(cluster_camera)
 ```
 
@@ -636,9 +649,8 @@ over-represented molecular signatures among features with high
 membership probabilities.
 
 ```{r run-cluster-ora, eval = FALSE}
-FCM <- run_cmeans()
 cluster_ora <- run_cluster_ORA(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   min_prob = 0.3
 )
 head(cluster_ora)
@@ -686,23 +698,13 @@ plot_enrich_heatmap(
   filename = "muscle_prot_enrichment.pdf"
 )
 
-# 5. Perform clustering
-FCM <- run_cmeans(selected_tissues = "muscle")
-
-# 6. Visualize clusters
-plot_cmeans(
-  FCM = FCM[["muscle"]],
-  filename = "muscle_clusters.pdf",
-  min_membership = 0.3
-)
-
-# 7. Cluster-level enrichment
+# 5. Cluster-level enrichment on the pre-computed clusters
 cluster_res <- run_cluster_cameraPR(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   selected_tissues = "muscle"
 )
 
-# 8. Visualize cluster enrichment
+# 6. Visualize cluster enrichment
 plot_cluster_enrichment(
   x = cluster_res,
   selected_ome = "prot-pr",

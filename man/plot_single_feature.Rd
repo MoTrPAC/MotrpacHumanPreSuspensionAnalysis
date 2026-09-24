@@ -14,6 +14,7 @@ plot_single_feature(
   color_time_labels = FALSE,
   include_legend = TRUE,
   legend_position = "right",
+  repo_local_dir = NULL,
   verbose = TRUE,
   epigen = FALSE
 )
@@ -23,7 +24,11 @@ plot_single_feature(
 
 \item{selected_tissues}{character; one of tissue_available_list.}
 
-\item{selected_omes}{character; one of ome_available_list.}
+\item{selected_omes}{character; one of ome_available_list. The clinical
+chemistry omes in \code{\link{clinical_ome_list}()} are plotted only when
+they are requested, either by name or through \code{"all"}; asking for
+another ome no longer returns clinical chemistry alongside it. \code{"metab"}
+does not imply \code{"metab-t-clinical"}.}
 
 \item{p_level}{Numeric threshold for adjusted p value significance in differential analysis (so this would make individual points highlighted in black if below this threshold)}
 
@@ -36,6 +41,10 @@ plot_single_feature(
 \item{include_legend}{toggle TRUE/FALSE to include a legend}
 
 \item{legend_position}{if include_legend == TRUE, position can be selected}
+
+\item{repo_local_dir}{Deprecated and ignored; passed through to
+\code{\link{load_differential_analysis}}, which prints a message if it is
+supplied.}
 
 \item{verbose}{logical; toggle to include verbose information}
 

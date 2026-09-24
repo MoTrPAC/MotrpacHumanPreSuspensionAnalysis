@@ -1,124 +1,98 @@
+# Public CloudFront release of the c2.0 epigenomics differential analysis.
+.AWS_EPIGEN_DA_URL = "https://d1yw74buhe0ts0.cloudfront.net/data/analysis/human_presuspension_sed_adu/c2.0/epigenomics/da/"
+
+# Method tag and file version of each epigenomics DA table in the c2.0 release.
+# Versions are per file; the CDN has no directory listing to resolve them from.
+.AWS_EPIGEN_DA_FILES = list(
+  "epigen-atac-seq" = c(method = "dream-acute", version = "2.1"),
+  "epigen-methylcap-seq" = c(method = "malax-glmm-acute", version = "1.2")
+)
+
 #' @title Load Epigenomic Differential Analysis Results from AWS
 #'
 #' @description
-#' Loads publicly released epigenomic differential analysis (DA) results for
-#' selected tissues and omes directly from an AWS-backed content delivery
-#' network (CDN). These datasets are hosted on Amazon CloudFront and are
-#' accessed via HTTPS without requiring authentication or AWS credentials.
-#' Only needed for epigenetic files because these are too large for the package.
+#' Loads the publicly released epigenomic differential analysis (DA) results
+#' for the selected tissues and omes from the MoTrPAC CloudFront distribution
+#' over HTTPS. No credentials are required. Only the epigenomics tier is read
+#' this way; every other ome ships inside the package.
 #'
-#' This function iterates over the requested tissue–ome combinations and
-#' retrieves each corresponding DA table using
-#' \code{\link{.load_single_ome_tissue_AWS}}. The returned object mirrors the
-#' nested list structure used elsewhere in the package, with tissues at the
-#' top level and omes at the second level.
+#' Files are downloaded on every call and are not cached. The muscle ATAC-seq
+#' table is about 2.5 GB.
 #'
-#' The AWS-hosted files correspond to the public release of the human
-#' pre-suspension sedentary adult epigenomics analyses.
-#'
-#' @param selected_omes character vector; one or more epigenomic omes to load
-#'   (e.g., \code{"epigen-methylcap-seq"}, \code{"epigen-atac-seq"}).
-#' @param selected_tissues character vector; one or more tissues for which
-#'   differential analysis results should be retrieved.
+#' @param selected_tissues character vector; tissues to retrieve.
+#' @param selected_omes character vector; epigenomic omes to load (e.g.
+#'   \code{"epigen-methylcap-seq"}, \code{"epigen-atac-seq"}).
 #'
 #' @returns
-#' A nested list of \code{data.frame} objects. The top-level names correspond to
-#' tissues, and the second-level names correspond to omes. Each entry contains
-#' a differential analysis table loaded from the AWS public release.
-#'
-#' @details
-#' Files are served via Amazon CloudFront and downloaded on demand at runtime.
-#' Connection timeouts are increased internally to accommodate large epigenomic
-#' result files.
+#' A nested list of \code{data.frame} objects: tissues at the top level, omes at
+#' the second. Tissue-ome combinations that were not measured are absent.
 #'
 #' @author Christopher Jin
 #'
-#' @seealso
-#' \code{\link{.load_single_ome_tissue_AWS}}
-#' \code{\link{load_differential_analysis}}
+#' @seealso \code{\link{load_differential_analysis}}
 #'
-#' @examples
-#' \dontrun{
-#' DA_epigen <- load_DA_from_AWS(
-#'   selected_omes = c("epigen-methylcap-seq"),
-#'   selected_tissues = c("muscle", "adipose")
-#' )
-#' }
-load_DA_from_AWS = function(selected_tissues,
-                            selected_omes){
+#' @noRd
+.load_DA_from_AWS = function(selected_tissues,
+                             selected_omes) {
   epigen_list = list()
-  for(tissue in selected_tissues){
-    for(ome in selected_omes){
-      epigen_list[[tissue]][[ome]] = .load_single_ome_tissue_AWS(
-        selected_ome = ome,
-        selected_tissue = tissue
-      )
+  for (tissue in selected_tissues) {
+    for (ome in selected_omes) {
+      loaded = .load_single_ome_tissue_AWS(selected_ome = ome,
+                                           selected_tissue = tissue)
+      if (is.null(loaded)) next
+      epigen_list[[tissue]][[ome]] = loaded
     }
   }
   return(epigen_list)
 }
 
-#' @title Load a Single Epigenomic DA Table from AWS
+#' @title URL of a Single Epigenomic DA Table on AWS
 #'
-#' @description
-#' Downloads and loads a single epigenomic differential analysis (DA) result
-#' table for a specified tissue and ome from the public AWS release. Files are
-#' hosted on Amazon CloudFront and accessed via a static HTTPS URL.
-#'
-#' This function is intended for internal use and is called by
-#' \code{\link{load_DA_from_AWS}} to populate tissue–ome combinations.
-#'
-#' @param selected_ome character; epigenomic ome to load (e.g.,
-#'   \code{"epigen-methylcap-seq"} or \code{"epigen-atac-seq"}).
+#' @param selected_ome character; epigenomic ome.
 #' @param selected_tissue character; tissue identifier.
-#' @param data_category character; analysis category, default is \code{"da"}
-#'   for differential analysis.
-#' @param version character; dataset version identifier appended to the file
-#'   name
 #'
-#' @returns
-#' A \code{data.frame} containing the differential analysis results for the
-#' specified tissue and ome. If no matching tissue–ome combination is found,
-#' the function returns \code{NULL}.
+#' @returns A length-1 character URL, or \code{NULL} if the tissue-ome
+#'   combination was not measured.
 #'
-#' @details
-#' The underlying files are part of the public AWS release of the human
-#' pre-suspension sedentary adult epigenomics analyses. File naming conventions
-#' vary slightly across epigenomic assays and are handled internally.
-#'
-#' To accommodate large epigenomic result files, the global R connection
-#' timeout is temporarily increased within this function.
-#'
-#' @author Christopher Jin
-#'
-#' @keywords internal
-
-.load_single_ome_tissue_AWS = function(selected_ome,
-                                       selected_tissue,
-                                       data_category = "da",
-                                       version = "1.2"){
-  #the download for the larger epigen files takes quite a while.
-  options(timeout = 1200)
-
-  AWS_header = "https://d1yw74buhe0ts0.cloudfront.net/data/analysis/human_presuspension_sed_adu/v1.3/epigenomics/da/"
-  all_file_header = "human-precovid-sed-adu" #this is the base structure for all files within the phase.
+#' @noRd
+.aws_epigen_da_url = function(selected_ome,
+                              selected_tissue) {
   tissue_code = MotrpacHumanPreSuspensionAnalysis::OME_TISSUE_CODE %>%
     dplyr::filter(ome == selected_ome,
                   tissue == selected_tissue) %>%
     dplyr::pull(tissue_code)
-  if(length(tissue_code) == 0) return(NULL)
+  if (length(tissue_code) == 0) return(NULL)
 
-  #we had some special naming conventions based on the methods. this is a bit hard coded but since only the epigen data needs to be private,
-  #it doesn't end up being too bad.
-  if(selected_ome == "epigen-methylcap-seq") data_details = "malax-glmm-acute"
-  if(selected_ome == "epigen-atac-seq") data_details = "dream-acute"
-
-  file_name = paste(all_file_header, tissue_code, selected_ome, data_category, data_details, sep = "_")
-  file_name = paste0(AWS_header, file_name, "_v", version, ".txt")
-
-  loaded_file = read.csv(file_name,
-                         sep = "\t")
-  return(loaded_file)
+  file_spec = .AWS_EPIGEN_DA_FILES[[selected_ome]]
+  file_name = paste("human-precovid-sed-adu", tissue_code, selected_ome, "da",
+                    file_spec[["method"]], sep = "_")
+  file_url = paste0(.AWS_EPIGEN_DA_URL, file_name, "_v", file_spec[["version"]],
+                    ".txt")
+  return(file_url)
 }
 
+#' @title Load a Single Epigenomic DA Table from AWS
+#'
+#' @param selected_ome character; epigenomic ome to load.
+#' @param selected_tissue character; tissue identifier.
+#'
+#' @returns A \code{data.frame}, or \code{NULL} if the tissue-ome combination
+#'   was not measured.
+#'
+#' @importFrom utils read.csv
+#'
+#' @noRd
+.load_single_ome_tissue_AWS = function(selected_ome,
+                                       selected_tissue) {
+  file_url = .aws_epigen_da_url(selected_ome = selected_ome,
+                                selected_tissue = selected_tissue)
+  if (is.null(file_url)) return(NULL)
 
+  old_timeout = options(timeout = max(3600, getOption("timeout")))
+  on.exit(options(old_timeout), add = TRUE)
+
+  loaded_file = read.csv(file_url,
+                         sep = "\t",
+                         check.names = FALSE)
+  return(loaded_file)
+}

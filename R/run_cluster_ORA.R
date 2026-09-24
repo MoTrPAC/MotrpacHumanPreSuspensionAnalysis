@@ -52,7 +52,8 @@
 #'     cluster.}
 #'   }
 #'
-#' @seealso \code{\link{run_cmeans}}, \code{\link{run_cluster_cameraPR}},
+#' @seealso \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
+#'   \code{\link{run_cmeans}}, \code{\link{run_cluster_cameraPR}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 #'
@@ -65,10 +66,8 @@
 #'
 #' @examples
 #' \dontrun{
-#'   FCM <- run_cmeans()
-#'
 #'   # Run ORA with all available molecular signatures
-#'   cluster_res <- run_cluster_ORA(FCM = FCM)
+#'   cluster_res <- run_cluster_ORA(FCM = FCM_CLUSTERS)
 #'   head(cluster_res)
 #' }
 

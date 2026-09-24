@@ -1,7 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 0.2.4
-Date: 2026-07-20
+Version: 2.0.8
+Date: 2026-09-23
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -51,13 +51,16 @@ Imports:
     data.table (>= 1.15.0),
     dplyr,
     magrittr,
+    MotrpacBicQC (>= 2.0.0),
     stats,
     tibble,
     utils,
     tidyr,
     ggplot2,
     ggpubr,
+    grDevices,
     grid,
+    gridtext,
     ComplexHeatmap,
     latex2exp,
     Biobase,
@@ -68,6 +71,7 @@ Imports:
 Suggests:
     here,
     knitr,
+    patchwork,
     pkgdown,
     pheatmap,
     rmarkdown,
@@ -77,9 +81,8 @@ Suggests:
     testthat (>= 3.0.0),
     variancePartition,
     RColorBrewer,
-    doParallel,
-    parallel,
-    randomForest
+    cmapR
+Remotes: MoTrPAC/MotrpacBicQC@v2.0.0
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 Config/roxygen2/version: 8.0.0

@@ -5,7 +5,7 @@
 \alias{OUTLIERS}
 \title{List of outliers designated by the Pre-CAWG working group.}
 \format{
-An object of class \code{data.frame} with 154 rows and 4 columns.
+An object of class \code{data.frame} with 160 rows and 4 columns.
 }
 \usage{
 OUTLIERS

@@ -1,14 +1,20 @@
 #' @title Fuzzy C-Means (FCM) Clustering
 #'
+#' @description Fuzzy c-means clustering of features by the shape of their
+#'   z-score trajectories across the \code{"exercise_with_controls"} contrasts
+#'   (the two \code{during} contrasts excluded). The pre-computed
+#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}} was built
+#'   with the default arguments.
+#'
 #' @inheritParams run_cameraPR
 #' @param selected_omes character; one or more of \code{"transcript-rna-seq"},
 #'   \code{"prot-pr"}, \code{"prot-ol"}, \code{"prot-ph"}, or \code{"metab"}.
 #' @param num_clusters_adipose,num_clusters_blood,num_clusters_muscle integer;
-#'   the number of clusters desired for each tissue. Defaults to 13 for adipose,
-#'   13 for blood, and 12 for muscle. If more than one number is provided,
-#'   \code{Mfuzz::Dmin} will be used to generate a plot of the minimum centroid
-#'   distances, and the user will be asked to specify the optimal cluster number
-#'   in the console for each tissue.
+#'   the number of clusters for each tissue, a single value each. Defaults to
+#'   13 for adipose, 12 for blood, and 12 for muscle, the values used for
+#'   \code{FCM_CLUSTERS}. They were chosen from a sweep of cluster numbers in
+#'   the motrpac-human-presuspension-repro pipeline (step 13), which plots the
+#'   minimum centroid distance and related diagnostics for each tissue.
 #' @param modality character; which exercise modalities should be used for FCM?
 #'   One of \code{"both"}, \code{"Endur"}, or \code{"Resist"}.
 #'
@@ -19,13 +25,14 @@
 #'
 #' @author Tyler Sagendorf, Christopher Jin
 #'
-#' @seealso \code{\link{plot_cmeans}}, \code{\link{run_cluster_cameraPR}},
+#' @seealso \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
+#'   \code{\link{plot_cmeans}}, \code{\link{run_cluster_cameraPR}},
 #'   \code{\link{run_cluster_ORA}}
 #'
 #' @importFrom data.table rbindlist
 #' @importFrom stats complete.cases
 #' @importFrom Biobase ExpressionSet exprs
-#' @importFrom Mfuzz mestimate mfuzz Dmin
+#' @importFrom Mfuzz mestimate mfuzz
 #'
 #' @export run_cmeans
 #'
@@ -34,27 +41,31 @@
 #'   x1 <- run_cmeans()
 #'   names(x1) # list available components
 #'
-#'   # Try a range of cluster numbers for one tissue
-#'   x2 <- run_cmeans(selected_tissues = "adipose",
-#'                    num_clusters_adipose = 3:14)
+#'   # Reuse differential analysis results already in memory
+#'   DA_list <- load_differential_analysis(selected_tissues = "adipose")
+#'   x2 <- run_cmeans(DA_list = DA_list,
+#'                    selected_tissues = "adipose")
 #'
 #'   # FCM for a single modality
 #'   x3 <- run_cmeans(selected_tissues = "adipose",
 #'                    modality = "Endur")
 #' }
 
-run_cmeans <- function(selected_tissues = c("all", "adipose",
+run_cmeans <- function(DA_list = NULL,
+                       selected_tissues = c("all", "adipose",
                                             "blood", "muscle"),
                        selected_omes = c("transcript-rna-seq",
                                          "prot-pr", "prot-ol",
                                          "prot-ph", "metab"),
                        num_clusters_adipose = 13L,
-                       num_clusters_blood = 13L,
+                       num_clusters_blood = 12L,
                        num_clusters_muscle = 12L,
                        modality = c("both", "Endur", "Resist"))
 {
   on.exit(gc())
   set.seed(0)
+  # These attach Mfuzz, and with it e1071, which Mfuzz::mfuzz() needs on the
+  # search path to find cmeans().
   check_package_installation(pkg = "Mfuzz", fun = "run_cmeans")
   check_package_installation(pkg = "Biobase", fun = "run_cmeans")
 
@@ -80,8 +91,13 @@ run_cmeans <- function(selected_tissues = c("all", "adipose",
     sort(unique(as.integer(pmax(2L, nc, na.rm = TRUE))))
   })
 
+  bad_k <- names(num_clusters)[lengths(num_clusters) > 1L]
+  if (length(bad_k))
+    stop("run_cmeans() needs a single cluster number per tissue; got more ",
+         "than one for ", paste(bad_k, collapse = ", "), ".")
+
   ## Prepare DA results ----
-  DA_list <- .prepare_DA_results(DA_list = NULL,
+  DA_list <- .prepare_DA_results(DA_list = DA_list,
                                  selected_omes = selected_omes,
                                  selected_tissues = selected_tissues,
                                  convert_features = FALSE,
@@ -153,37 +169,8 @@ run_cmeans <- function(selected_tissues = c("all", "adipose",
 
     num_clusters_i <- num_clusters[[tissue_i]]
 
-    if (length(num_clusters_i) > 1L) {
-      message("Determining optimal number of clusters for ", tissue_i, "...")
-      min_centroid_dist <- Mfuzz::Dmin(
-        eset = eset_i,
-        m = m_i,
-        crange = num_clusters_i,
-        repeats = 1L,
-        visu = FALSE
-      )
-
-      plot(x = num_clusters_i, y = min_centroid_dist,
-           xlab = "Number of clusters",
-           ylab = "Min. centroid dist.",
-           main = tissue_i)
-
-      num_clusters_i <- ""
-
-      while (num_clusters_i %in% c("", "0", "1")) {
-        num_clusters_i <- readline(
-          prompt = sprintf(
-            "Enter the optimal number of clusters (>= 2) for %s: ",
-            tissue_i
-          )
-        )
-        num_clusters_i <- gsub("[^[:digit:].]", "", num_clusters_i)
-        num_clusters_i <- sub("\\..*", "", num_clusters_i)
-        num_clusters_i <- sub("^[0]+", "", num_clusters_i)
-      }
-
-      num_clusters_i <- as.integer(num_clusters_i)
-    }
+    message(sprintf("FCM: %s, %d features x %d contrasts, k = %d, m = %.4f",
+                    tissue_i, nrow(eset_i), ncol(eset_i), num_clusters_i, m_i))
 
     # FCM clustering
     FCM_i <- Mfuzz::mfuzz(

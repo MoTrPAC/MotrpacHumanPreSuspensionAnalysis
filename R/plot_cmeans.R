@@ -4,8 +4,9 @@
 #'   a different color scheme that saves a plot to a file, rather than
 #'   displaying it.
 #'
-#' @param FCM one of the elements of the list produced by
-#'   \code{\link{run_cmeans}}. See examples.
+#' @param FCM an object of class \code{fclust}: one tissue's element of
+#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}} or of the
+#'   list returned by \code{\link{run_cmeans}}. See examples.
 #' @param keep_clusters integer; the identifier numbers of clusters to include
 #'   in the plot. Defaults to all clusters.
 #' @param min_membership numeric; to be included in the plot, the probability
@@ -21,7 +22,8 @@
 #'
 #' @author Tyler Sagendorf
 #'
-#' @seealso \code{\link{run_cmeans}}
+#' @seealso \code{\link{run_cmeans}},
+#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}}
 #'
 #' @import ggplot2
 #' @importFrom dplyr %>% mutate across inner_join arrange filter
@@ -34,12 +36,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' # FCM results
-#' FCM <- run_cmeans(selected_tissues = "adipose")
-#'
-#' plot_cmeans(FCM = FCM[["adipose"]],
+#' # Pre-computed FCM results
+#' plot_cmeans(FCM = FCM_CLUSTERS[["adipose"]],
 #'             filename = "adipose_clusters.pdf",
 #'             min_membership = 0.3)
+#'
+#' # New FCM results
+#' FCM <- run_cmeans(selected_tissues = "adipose", modality = "Endur")
+#'
+#' plot_cmeans(FCM = FCM[["adipose"]],
+#'             filename = "adipose_endur_clusters.pdf",
+#'             modality = "Endur")
 #' }
 
 plot_cmeans <- function(FCM,

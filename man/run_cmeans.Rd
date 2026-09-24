@@ -5,15 +5,26 @@
 \title{Fuzzy C-Means (FCM) Clustering}
 \usage{
 run_cmeans(
+  DA_list = NULL,
   selected_tissues = c("all", "adipose", "blood", "muscle"),
   selected_omes = c("transcript-rna-seq", "prot-pr", "prot-ol", "prot-ph", "metab"),
   num_clusters_adipose = 13L,
-  num_clusters_blood = 13L,
+  num_clusters_blood = 12L,
   num_clusters_muscle = 12L,
   modality = c("both", "Endur", "Resist")
 )
 }
 \arguments{
+\item{DA_list}{list; a named list of \code{data.frame} objects, each
+containing differential analysis results for a specific tissue/assay
+combination. The list is nested, with tissues at the top level and omes
+within tissues, or already flattened with names of the form
+\code{"tissue.assay"}. If \code{NULL} (default), the differential analysis
+results will be generated with
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{load_differential_analysis}}.
+Unless wishing to analyze DA results that are not in
+MotrpacHumanPreSuspensionAnalysis, this should remain \code{NULL}.}
+
 \item{selected_tissues}{character; passed to
 \code{\link[MotrpacHumanPreSuspensionAnalysis]{load_differential_analysis}}.
 One or more of the following: \code{"all"}, \code{"muscle"},
@@ -23,11 +34,11 @@ One or more of the following: \code{"all"}, \code{"muscle"},
 \code{"prot-pr"}, \code{"prot-ol"}, \code{"prot-ph"}, or \code{"metab"}.}
 
 \item{num_clusters_adipose, num_clusters_blood, num_clusters_muscle}{integer;
-the number of clusters desired for each tissue. Defaults to 13 for adipose,
-13 for blood, and 12 for muscle. If more than one number is provided,
-\code{Mfuzz::Dmin} will be used to generate a plot of the minimum centroid
-distances, and the user will be asked to specify the optimal cluster number
-in the console for each tissue.}
+the number of clusters for each tissue, a single value each. Defaults to
+13 for adipose, 12 for blood, and 12 for muscle, the values used for
+\code{FCM_CLUSTERS}. They were chosen from a sweep of cluster numbers in
+the motrpac-human-presuspension-repro pipeline (step 13), which plots the
+minimum centroid distance and related diagnostics for each tissue.}
 
 \item{modality}{character; which exercise modalities should be used for FCM?
 One of \code{"both"}, \code{"Endur"}, or \code{"Resist"}.}
@@ -39,16 +50,21 @@ matrix of scaled z-scores used as input for FCM (both modalities included,
 even when \code{modality != "both"}).
 }
 \description{
-Fuzzy C-Means (FCM) Clustering
+Fuzzy c-means clustering of features by the shape of their
+z-score trajectories across the \code{"exercise_with_controls"} contrasts
+(the two \code{during} contrasts excluded). The pre-computed
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}} was built
+with the default arguments.
 }
 \examples{
 \dontrun{
   x1 <- run_cmeans()
   names(x1) # list available components
 
-  # Try a range of cluster numbers for one tissue
-  x2 <- run_cmeans(selected_tissues = "adipose",
-                   num_clusters_adipose = 3:14)
+  # Reuse differential analysis results already in memory
+  DA_list <- load_differential_analysis(selected_tissues = "adipose")
+  x2 <- run_cmeans(DA_list = DA_list,
+                   selected_tissues = "adipose")
 
   # FCM for a single modality
   x3 <- run_cmeans(selected_tissues = "adipose",
@@ -56,6 +72,7 @@ Fuzzy C-Means (FCM) Clustering
 }
 }
 \seealso{
+\code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
 \code{\link{plot_cmeans}}, \code{\link{run_cluster_cameraPR}},
 \code{\link{run_cluster_ORA}}
 }
