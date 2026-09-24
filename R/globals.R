@@ -126,6 +126,7 @@ utils::globalVariables(
     "dist_downstream",
     "geneEnd",
     "relationship_to_gene",
-    "geneStrand"
+    "geneStrand",
+    "Value"
   )
 )
