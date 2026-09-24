@@ -4,8 +4,6 @@
 
 - [`CAMERA_RESULTS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CAMERA_RESULTS.md)
   : CAMERA enrichment analysis results
-- [`CLIN_CHEMISTRY_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CLIN_CHEMISTRY_DA.md)
-  : Clinical Chemistry Differential analysis
 - [`CONTRAST_CONVERTER`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/CONTRAST_CONVERTER.md)
   : Contrast Converter
 - [`COVARIATES_FILE`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/COVARIATES_FILE.md)
@@ -16,6 +14,8 @@
   [`ADIPOSE_TRNSCRPT_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
   [`BLOOD_METAB_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
   [`BLOOD_PROT_OL_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
+  [`BLOOD_METAB_T_CLINICAL_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
+  [`BLOOD_PROT_CLINICAL_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
   [`BLOOD_TRNSCRPT_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
   [`MUSCLE_METAB_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
   [`MUSCLE_PROT_PH_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/DA_RESULTS.md)
@@ -46,66 +46,42 @@
   : Molecular pathway signatures
 - [`OME_TISSUE_CODE`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/OME_TISSUE_CODE.md)
   : Tissue codes relevant for a given ome
+- [`ORA_COLORS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/ORA_COLORS.md)
+  : Color ramp for over-representation analysis (ORA) heatmaps
 - [`OUTLIERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/OUTLIERS.md)
   : List of outliers designated by the Pre-CAWG working group.
+- [`PTMSEA_INPUT`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/PTMSEA_INPUT.md)
+  : PTM-SEA Input Matrices
+- [`PTMSEA_RESULTS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/PTMSEA_RESULTS.md)
+  : PTM-SEA Results
 - [`SET_TO_ID`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SET_TO_ID.md)
   : Gene set ID to pathway name mapping
 - [`SPLICING_DA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SPLICING_DA.md)
   : Differential Alternative Splicing Results
 - [`ADIPOSE_EPIGEN_METHYLCAP_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_ACOA_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_AMINES_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_TCA_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_NUC_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_KA_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_T_OXYLIPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_HILICPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_IONPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_LRPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_LRPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_RPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`ADIPOSE_METAB_U_RPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
+  [`ADIPOSE_METAB_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`ADIPOSE_PROT_PH_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`ADIPOSE_PROT_PR_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`ADIPOSE_TRANSCRIPT_RNA_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`BLOOD_EPIGEN_METHYLCAP_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_T_AMINES_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_T_TCA_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_T_CONV_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_T_OXYLIPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_HILICPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_IONPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_LRPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_LRPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_RPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_METAB_U_RPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
+  [`BLOOD_METAB_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`BLOOD_PROT_OL_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
+  [`BLOOD_METAB_T_CLINICAL_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
+  [`BLOOD_PROT_CLINICAL_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`BLOOD_TRANSCRIPT_RNA_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`BLOOD_EPIGEN_ATAC_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`MUSCLE_EPIGEN_METHYLCAP_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_T_AMINES_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_T_TCA_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_T_NUC_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_T_OXYLIPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_HILICPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_IONPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_LRPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_LRPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_RPNEG_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
-  [`MUSCLE_METAB_U_RPPOS_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
+  [`MUSCLE_METAB_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`MUSCLE_PROT_PH_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`MUSCLE_PROT_PR_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`MUSCLE_TRANSCRIPT_RNA_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   [`MUSCLE_EPIGEN_ATAC_SEQ_SUM_STATS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/SUM_STATS_RESULTS.md)
   : Summary Statistics by Tissue, Assay, and Platform
 - [`UTORONTO_TFs`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/UTORONTO_TFs.md)
-  : Pre-specified transcription Factors from the UToronto dataset
-- [`assay_codes`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/assay_codes.md)
-  : Assay code lookup table (vendored copy of MotrpacBicQC::assay_codes)
+  : Transcription-Factor Phosphosite Regulator Pool
 - [`check_package_installation()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/check_package_installation.md)
   : Check package installation
-- [`load_DA_from_AWS()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_DA_from_AWS.md)
-  : Load Epigenomic Differential Analysis Results from AWS
+- [`clinical_ome_list()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/clinical_ome_list.md)
+  : List the Clinical Omes
 - [`load_differential_analysis()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_differential_analysis.md)
   : Load Differential Analysis Results
 - [`load_summary_stats()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_summary_stats.md)
@@ -132,9 +108,6 @@
   : Single feature plot function
 - [`run_ORA()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_ORA.md)
   : Over-Representation Analysis (ORA)
-- [`run_SCION()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_SCION.md)
-  : @title SCION implementation for preCAWG. Combines preprocessing and
-  network inference into one function
 - [`run_cameraPR()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cameraPR.md)
   : Wrapper for CAMERA-PR
 - [`run_cluster_ORA()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_ORA.md)
@@ -143,7 +116,5 @@
   : Analyze Fuzzy C-Means Clustering Results with CAMERA-PR
 - [`run_cmeans()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md)
   : Fuzzy C-Means (FCM) Clustering
-- [`scion_run_cmeans()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/scion_run_cmeans.md)
-  : Clustering for the scion function
 - [`tissue_available_list()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/tissue_available_list.md)
   : List the Available Tissues

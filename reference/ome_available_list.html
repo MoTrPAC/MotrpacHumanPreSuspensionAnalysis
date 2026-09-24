@@ -9,7 +9,7 @@ are the "full names" for each of the assays.'></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,17 +53,41 @@ are the "full names" for each of the assays.</p>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A character vector containing all available omes.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This vector is the vocabulary every accessor gates on:
+<code>load_qc()</code>, <code><a href="load_summary_stats.html">load_summary_stats()</a></code> and
+<code><a href="load_differential_analysis.html">load_differential_analysis()</a></code> all resolve <code>"all"</code> through it and
+reject anything absent from it, so an ome missing here is an ome no
+accessor can return. It must therefore track what the pipeline actually
+builds, which is recorded in <code>OME_TISSUE_CODE</code>.</p>
+<p>Two clinical omes are included as of v2.0. Clinical chemistry was a single
+<code>"clinical-chemistry"</code> assay in v1.3 and is now split into
+<code>"metab-t-clinical"</code> and <code>"prot-clinical"</code>, each with its own QC,
+differential-analysis and summary-statistic objects.</p>
+<p><code>"metab-meta-reg"</code> was removed. It was dropped from the pipeline
+entirely, so no object was ever produced under that name and every accessor
+offered it as a choice that returned nothing.</p>
+<p>The <code>lab-*</code> tiers in <code>OME_TISSUE_CODE</code> are deliberately absent.
+They are the raw clinical laboratory inputs, distributed as the
+<code>cln_chemistry_*</code> tables rather than as omes.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="metab_only_list.html">metab_only_list()</a></code>, <code><a href="tissue_available_list.html">tissue_available_list()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ome_available_list</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "prot-ol"              "prot-ph"              "prot-pr"             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "metab-t-amines"       "metab-t-conv"         "metab-t-imm-crt"     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "metab-t-oxylipneg"    "metab-t-tca"          "metab-t-nuc"         </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "metab-t-acoa"         "metab-t-ka"           "metab-meta-reg"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "prot-clinical"        "transcript-rna-seq"   "epigen-methylcap-seq"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "epigen-atac-seq"      "metab-u-hilicpos"     "metab-u-ionpneg"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "metab-u-lrpneg"       "metab-u-lrppos"       "metab-u-rpneg"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "metab-u-rppos"        "metab-t-amines"       "metab-t-conv"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "metab-t-imm-crt"      "metab-t-oxylipneg"    "metab-t-tca"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "metab-t-nuc"          "metab-t-acoa"         "metab-t-ka"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [22] "metab-t-clinical"    </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

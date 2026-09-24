@@ -17,7 +17,7 @@ centroid."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,9 +74,10 @@ centroid.</p>
 
 
 <dl><dt id="arg-fcm">FCM<a class="anchor" aria-label="anchor" href="#arg-fcm"></a></dt>
-<dd><p>fuzzy c-means (FCM) clustering results. Output of
-<code><a href="run_cmeans.html">run_cmeans</a></code>. This should be a named list of objects of class
-<code>fclust</code>.</p></dd>
+<dd><p>fuzzy c-means (FCM) clustering results: a named list of objects
+of class <code>fclust</code>, one per tissue, such as
+<code><a href="FCM_RESULTS.html">FCM_CLUSTERS</a></code> or the
+output of <code><a href="run_cmeans.html">run_cmeans</a></code>.</p></dd>
 
 
 <dt id="arg-selected-omes">selected_omes<a class="anchor" aria-label="anchor" href="#arg-selected-omes"></a></dt>
@@ -188,7 +189,8 @@ cluster.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="run_cmeans.html">run_cmeans</a></code>, <code><a href="run_cluster_ORA.html">run_cluster_ORA</a></code>,
+    <div class="dont-index"><p><code><a href="FCM_RESULTS.html">FCM_CLUSTERS</a></code>,
+<code><a href="run_cmeans.html">run_cmeans</a></code>, <code><a href="run_cluster_ORA.html">run_cluster_ORA</a></code>,
 <code><a href="MOLECULAR_SIGNATURES.html">MOLECULAR_SIGNATURES</a></code>,
 <code><a href="SET_TO_ID.html">SET_TO_ID</a></code></p></div>
     </div>
@@ -200,10 +202,8 @@ cluster.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span>  <span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_cmeans.html">run_cmeans</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Run CAMERA-PR with all available molecular signatures</span></span></span>
-<span class="r-in"><span>  <span class="va">cluster_res</span> <span class="op">&lt;-</span> <span class="fu">run_cluster_cameraPR</span><span class="op">(</span>FCM <span class="op">=</span> <span class="va">FCM</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">cluster_res</span> <span class="op">&lt;-</span> <span class="fu">run_cluster_cameraPR</span><span class="op">(</span>FCM <span class="op">=</span> <span class="va">FCM_CLUSTERS</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cluster_res</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

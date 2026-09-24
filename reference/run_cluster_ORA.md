@@ -22,9 +22,11 @@ run_cluster_ORA(
 
 - FCM:
 
-  fuzzy c-means (FCM) clustering results. Output of
+  fuzzy c-means (FCM) clustering results: a named list of objects of
+  class `fclust`, one per tissue, such as
+  [`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md)
+  or the output of
   [`run_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md).
-  This should be a named list of objects of class `fclust`.
 
 - selected_omes:
 
@@ -168,6 +170,7 @@ An object of class `data.frame` with the following columns:
 
 ## See also
 
+[`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md),
 [`run_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md),
 [`run_cluster_cameraPR`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_cameraPR.md),
 [`MOLECULAR_SIGNATURES`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/MOLECULAR_SIGNATURES.md),
@@ -181,10 +184,8 @@ Tyler Sagendorf
 
 ``` r
 if (FALSE) { # \dontrun{
-  FCM <- run_cmeans()
-
   # Run ORA with all available molecular signatures
-  cluster_res <- run_cluster_ORA(FCM = FCM)
+  cluster_res <- run_cluster_ORA(FCM = FCM_CLUSTERS)
   head(cluster_res)
 } # }
 ```

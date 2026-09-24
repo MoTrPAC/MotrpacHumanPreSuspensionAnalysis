@@ -26,9 +26,10 @@ run_cameraPR(
 
   list; a named list of `data.frame` objects, each containing
   differential analysis results for a specific tissue/assay combination.
-  The list must be nested, with tissues at the top level and omes within
-  tissues. If `NULL` (default), the differential analysis results will
-  be generated with
+  The list is nested, with tissues at the top level and omes within
+  tissues, or already flattened with names of the form `"tissue.assay"`.
+  If `NULL` (default), the differential analysis results will be
+  generated with
   [`load_differential_analysis`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_differential_analysis.md).
   Unless wishing to analyze DA results that are not in
   MotrpacHumanPreSuspensionAnalysis, this should remain `NULL`.

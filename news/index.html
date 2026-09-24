@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,6 +36,190 @@
 
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.8" id="motrpachumanpresuspensionanalysis-208">MotrpacHumanPreSuspensionAnalysis 2.0.8<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-208"></a></h2>
+<div class="section level3">
+<h3 id="changes-2-0-8">Changes<a class="anchor" aria-label="anchor" href="#changes-2-0-8"></a></h3>
+<ul><li>
+<code><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> gains <code>return_drawing</code>: with <code>TRUE</code> it returns <code>draw</code>, <code>width</code>, <code>height</code> and <code>n_sets</code> instead of writing a PDF, and <code>filename</code> is optional. It also names any <code>set_ids</code> it drops.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="dependencies-2-0-8">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-2-0-8"></a></h3>
+<ul><li><p>MotrpacBicQC is required at <code>&gt;= 2.0.0</code>, the <code>v2.0.0</code> release tag (2026-09-23), and <code>DESCRIPTION</code> declares <code>Remotes: MoTrPAC/MotrpacBicQC@v2.0.0</code> so <code>pak</code> resolves it from GitHub. 2.0.0 drops the <code>inspectdf</code> import, which is archived on CRAN and made MotrpacBicQC unresolvable from a clean library; <code>assay_codes</code> is unchanged from 1.9.0.</p></li>
+<li><p><code>gridtext</code> is added to <code>Imports</code>: <code><a href="../reference/plot_feature_heatmap.html">plot_feature_heatmap()</a></code> renders its column title with <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/gt_render.html" class="external-link">ComplexHeatmap::gt_render()</a></code>, which needs it, and ComplexHeatmap only suggests it.</p></li>
+<li><p><code>cmapR</code> (Bioconductor) is added to <code>Suggests</code>. <code>PTMSEA_INPUT</code> is a list of <code>cmapR::GCT</code> S4 objects, and on a machine without <code>cmapR</code> <code>R CMD check</code> failed its data inspection with a WARNING (“unable to load required package ‘cmapR’”) because no field declared the package. The object still loads and its slots are reachable without <code>cmapR</code>; printing it or using the <code>cmapR</code> accessors needs it installed.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="internals-2-0-8">Internals<a class="anchor" aria-label="anchor" href="#internals-2-0-8"></a></h3>
+<ul><li><p>A GitHub Actions workflow, <code>R-CMD-check.yaml</code>, now runs <code>R CMD check</code> — tests and vignettes included — on every pull request and on pushes to <code>main</code>. Until now only the pkgdown site build ran, and only after a merge, so a failing test could reach <code>main</code> unseen.</p></li>
+<li><p>The roxygen2 hook in <code>R/zzz.R</code> calls <code><a href="https://rdrr.io/r/utils/getFromNamespace.html" class="external-link">utils::getFromNamespace()</a></code> with its namespace, clearing the “no visible global function definition for ‘getFromNamespace’” NOTE that <code>R CMD check</code> has reported since before 2.0.</p></li>
+<li><p><code>R-CMD-check.yaml</code> runs the check under a virtual display (Xvfb): Mfuzz loads Tk, which otherwise warns at install time on a headless runner.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.7" id="motrpachumanpresuspensionanalysis-207">MotrpacHumanPreSuspensionAnalysis 2.0.7<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-207"></a></h2>
+<div class="section level3">
+<h3 id="new-data-2-0-7">New data<a class="anchor" aria-label="anchor" href="#new-data-2-0-7"></a></h3>
+<ul><li><p><code>ORA_COLORS</code> — the white-to-<code>#543483</code> ramp for ORA heatmaps, as <code>c(low, high)</code>; pass it to <code>TMSig::enrichmap(colors = )</code>. <code><a href="../reference/plot_cluster_enrichment.html">plot_cluster_enrichment()</a></code> now reads it.</p></li>
+<li><p><code>PTMSEA_RESULTS</code> — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts (muscle 506 signatures x 6 contrasts, adipose 437 x 2), in the long layout of <code>CAMERA_RESULTS</code> with <code>NES</code> in place of <code>t</code>, <code>df</code> and <code>z.std</code>. Provenance in <code>data-raw/PTMSEA/README.md</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="removed-data-2-0-7">Removed data<a class="anchor" aria-label="anchor" href="#removed-data-2-0-7"></a></h3>
+<ul><li>The vendored <code>assay_codes</code> object is removed, along with its man page and <code>data-raw/assay_codes.R</code>. It was a 44-row snapshot of <code><a href="https://motrpac.github.io/MotrpacBicQC/reference/assay_codes.html" class="external-link">MotrpacBicQC::assay_codes</a></code>, taken when <code>inspectdf</code> was archived on CRAN and MotrpacBicQC could not be installed from a current snapshot. The snapshot has been retired in favour of reading upstream live. Code that referenced <code>MotrpacHumanPreSuspensionAnalysis::assay_codes</code> should read <code><a href="https://motrpac.github.io/MotrpacBicQC/reference/assay_codes.html" class="external-link">MotrpacBicQC::assay_codes</a></code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-objects-2-0-7">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-7"></a></h3>
+<ul><li>
+<code>HUMAN_FEATURE_TO_GENE</code> drops <code>confident_site</code> and has 12 columns where 2.0.3 gave it 13. The flag is measured per tissue, and this table is keyed on <code>(assay, feature_id)</code> with no tissue column, so the only value it could carry was the collapse across tissues — not the measurement for either tissue on the 859 of 7,865 shared prot-ph sites where muscle and adipose disagree. Read the per-tissue value from <code>*_PROT_PH_QC$feature_metadata</code> in <code>MotrpacHumanPreSuspensionData</code>, which is what <code>preprocess_PTMSEA()</code> does; <code>PTMSEA_INPUT</code> never read this table and is unaffected. All 1,920,618 rows and the other 11 columns are unchanged from 2.0.3.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-2-0-7">Changes<a class="anchor" aria-label="anchor" href="#changes-2-0-7"></a></h3>
+<ul><li><p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> reads <code><a href="https://motrpac.github.io/MotrpacBicQC/reference/assay_codes.html" class="external-link">MotrpacBicQC::assay_codes</a></code> directly. Upstream 1.9.0 adds rows for <code>metab-t-clinical</code>, <code>prot-clinical</code>, <code>metab-t-conv</code> and <code>metab-t-imm-crt</code>, none of which existed in the vendored snapshot, so the hard-coded label fallback for the clinical omes is deleted — those facet strips are now labelled from upstream and read <code>Clin. Chem</code> rather than <code>Clin. Chem.</code>. The <code>metab-t-conv</code> label is still overridden to <code>Conv. Metab (log2)</code>: upstream labels it <code>Conv(T)</code> in the <code>LAB</code> family, which does not distinguish it from its log2 twin <code>metab-t-clinical</code>.</p></li>
+<li><p>Upstream also revises the 44 pre-existing rows in two columns this package does not display: <code>assay_name</code> punctuation on six rows (comma to hyphen) and <code>cas_code</code> on four (<code>transcript-rna-seq</code> and <code>transcript-rna-seq-splicing</code> from <code>mssm</code> to <code>stanford</code>, <code>prot-pr</code> and <code>prot-ph</code> from <code>pnnl</code> to <code>broad_prot</code>). Every <code>assay_short_text</code> is unchanged, so no existing figure label moves.</p></li>
+<li><p><code>load_differential_analysis(epigen = TRUE)</code> reads the c2.0 epigenomics DA from the public CloudFront release again, with no bucket access or local cache. <code><a href="../reference/load_differential_analysis.html">load_differential_analysis()</a></code> and <code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> drop the <code>gsutil</code> and <code>bucket</code> arguments; <code>repo_local_dir</code> is kept but ignored, with a message.</p></li>
+<li><p><code><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> accepts <code>PTMSEA_RESULTS</code> again, plotting NES; <code>set_ids</code> takes PTMsigDB signature IDs for PTM-SEA input. <code>n_top</code> breaks p-value ties by the absolute statistic, so PTM-SEA’s permutation-floor p-values no longer pull in every tied set.</p></li>
+<li><p><code>data-raw/google_cloud_bucket_checks/</code> is removed; the bucket validation pipeline lives in motrpac-human-presuspension-repro.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-2-0-7">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-0-7"></a></h3>
+<ul><li>The 2.0.0 entry below gains the collection-level provenance behind the v2.0 regeneration and the versioning policy that governs it. Those objects have shipped since 2.0.0; only the record of them is new.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.6" id="motrpachumanpresuspensionanalysis-206">MotrpacHumanPreSuspensionAnalysis 2.0.6<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-206"></a></h2>
+<div class="section level3">
+<h3 id="changes-2-0-6">Changes<a class="anchor" aria-label="anchor" href="#changes-2-0-6"></a></h3>
+<ul><li>
+<code><a href="../reference/plot_feature_heatmap.html">plot_feature_heatmap()</a></code>: <code>multi_tissue_clust_rows = TRUE</code> works (it referenced an undefined object); new <code>right_annotation</code>, <code>heatmap_args</code>, <code>draw_args</code> and <code>return_drawing</code> arguments.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-objects-2-0-6">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-6"></a></h3>
+<ul><li>
+<code>COVARIATES_FILE</code> drops the <code>BMI</code> and <code>codedsiteid</code> rows for <code>epigen-methylcap-seq</code>, which the MALAX model (<code>~0 + group_timepoint + age + sex + (1 | pid)</code>) never included.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.5" id="motrpachumanpresuspensionanalysis-205">MotrpacHumanPreSuspensionAnalysis 2.0.5<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-205"></a></h2>
+<div class="section level3">
+<h3 id="new-data-2-0-5">New data<a class="anchor" aria-label="anchor" href="#new-data-2-0-5"></a></h3>
+<ul><li>
+<code>PTMSEA_INPUT</code> — the prot-ph differential-analysis z-statistics as a PTM-SEA input, one <code>GCT</code> per tissue, from the confidently localized sites. <code>GCT</code> is <code>cmapR</code>’s S4 class; attach <code>cmapR</code> to use its accessors.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="data-objects-2-0-5">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-5"></a></h3>
+<ul><li><p>The thirteen <code>*_DA</code> objects gain <code>CI.L_calculated</code> and <code>CI.R_calculated</code>, the 95% confidence interval on <code>logFC</code>, computed against each contrast’s own residual degrees of freedom. No existing column or row changed. <code>topTable</code>’s <code>CI.L</code>/<code>CI.R</code> remain unshipped: for a <code>dream</code> fit they bound every contrast by the first contrast’s degrees of freedom.</p></li>
+<li><p><code>UTORONTO_TFs</code> is now the prot-ph TF regulator pool — 1,381 rows, <code>feature_id</code> and <code>gene_symbol</code> — where it was the raw UToronto extract, 2,765 rows and 28 columns keyed by Ensembl gene ID. The annotation columns are gone and a row is a phosphosite, not a gene.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.4" id="motrpachumanpresuspensionanalysis-204">MotrpacHumanPreSuspensionAnalysis 2.0.4<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-204"></a></h2>
+<div class="section level3">
+<h3 id="data-objects-2-0-4">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-4"></a></h3>
+<ul><li>
+<code>FCM_CLUSTERS</code> clusters blood into 12 clusters where it had 13; adipose (13) and muscle
+<ol start="12" style="list-style-type: decimal"><li>are unchanged and reproduce bit for bit. <code>FCM_CAMERA</code> and <code>FCM_ORA</code> follow the new clustering and have 434,337 rows where they had 444,806. Cluster numbers are a trajectory order, not identities, so blood cluster N in 2.0.4 is not blood cluster N in 2.0.3 — against the outgoing objects blood scores an adjusted Rand index of 0.711.</li>
+</ol></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.3" id="motrpachumanpresuspensionanalysis-203">MotrpacHumanPreSuspensionAnalysis 2.0.3<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-203"></a></h2>
+<div class="section level3">
+<h3 id="data-objects-2-0-3">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-3"></a></h3>
+<ul><li>
+<p><code>HUMAN_FEATURE_TO_GENE</code> gains three columns and has 13 where it had 10. No row and no existing column changed: all 1,920,618 rows and all ten previously shipped columns are identical to 2.0.2, so nothing that reads the table today reads anything different. Code selecting columns by position has to be updated; code selecting by name does not.</p>
+<ul><li>
+<p><code>custom_annotation</code> (factor) and <code>relationship_to_gene</code> (numeric) say where an ATAC-seq or MethylCap-seq peak sits relative to the gene it was assigned to — the region it falls in (<code>"Promoter (&lt;=1kb)"</code>, <code>"Intron"</code>, <code>"Distal Intergenic"</code>, and seven others) and the signed base-pair distance to that gene, <code>0</code> where the peak overlaps it. Both were produced by the pipeline all along and dropped before the table was built, so an epigenomics feature arrived carrying only a gene: a peak in a promoter and a peak 40 kb into an intron were indistinguishable once mapped. They are populated for all 1,852,716 epigenomics rows and <code>NA</code> everywhere else.</p>
+<p>Unlike <code>confident_site</code> they are not a per-tissue measurement — they are derived from the peak coordinates in the <code>feature_id</code> — so they take the same value in every tissue a peak appears in and are not collapsed. This was checked rather than assumed: none of the 306,788 ATAC or 1,545,930 MethylCap feature identifiers shared between tissues disagree.</p>
+</li>
+<li><p><code>confident_site</code> (logical) is the phosphosite localization flag, <code>NA</code> outside <code>prot-ph</code>. It is <strong>collapsed across tissues</strong> — <code>TRUE</code> only where a site is confidently localized in every tissue that measured it — because this table is keyed on <code>(assay, feature_id)</code> and has no tissue column, and 859 sites disagree between muscle and adipose. Read <code>*_PROT_PH_QC$feature_metadata</code> in <code>MotrpacHumanPreSuspensionData</code> when tissue-specific localization matters; <code>preprocess_PTMSEA()</code> already does, and is unaffected by this addition. <strong>Removed again in 2.0.7</strong> for the reason given there: a collapse across tissues is not the measurement for either tissue.</p></li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-2-0-3">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-0-3"></a></h3>
+<ul><li><p><code><a href="../reference/HUMAN_FEATURE_TO_GENE.html">?HUMAN_FEATURE_TO_GENE</a></code> documented <code>assay</code> as a factor. It is a character vector, and has been for as long as the table has been built this way.</p></li>
+<li><p>The documented <code>assay</code> values did not include <code>"prot-clinical"</code>, which the 2.0 split of clinical chemistry into a metabolomics and a proteomics assay introduced. All eight values the column actually takes are now listed.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.2" id="motrpachumanpresuspensionanalysis-202">MotrpacHumanPreSuspensionAnalysis 2.0.2<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-202"></a></h2>
+<div class="section level3">
+<h3 id="changes-2-0-2">Changes<a class="anchor" aria-label="anchor" href="#changes-2-0-2"></a></h3>
+<ul><li>
+<code>load_differential_analysis(epigen = TRUE)</code> reads the epigenomics tables from Google Cloud Storage via gsutil instead of the public CloudFront release, and defaults to the current motrpac-human-presuspension-repro staging bucket. It now requires <code>repo_local_dir</code>, and gains <code>gsutil</code> and <code>bucket</code> arguments; <code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> passes all three through.</li>
+<li>The unexported <code>load_DA_from_AWS()</code> and <code>.load_single_ome_tissue_AWS()</code> are removed. Its pinned <code>version = "1.2"</code> no longer matched the atac-seq tables, which are at v2.0.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.1" id="motrpachumanpresuspensionanalysis-201">MotrpacHumanPreSuspensionAnalysis 2.0.1<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-201"></a></h2>
+<div class="section level3">
+<h3 id="data-objects-2-0-1">Data objects<a class="anchor" aria-label="anchor" href="#data-objects-2-0-1"></a></h3>
+<ul><li>
+<p>The <code>*_SUM_STATS</code> objects are named, ordered and keyed the way the <code>*_DA</code> objects are. Every metabolomics platform is now labelled <code>assay = "metab"</code> with the platform in its own <code>platform</code> column, where before the platform was written into <code>assay</code> and there was no <code>platform</code> column.</p>
+<p>There are 17 objects where there were 46. The research metabolomics platforms are no longer one object each: they are stacked into a single <code>{TISSUE}_METAB_SUM_STATS</code> per tissue</p>
+</li>
+<li><p><code><a href="../reference/load_summary_stats.html">load_summary_stats()</a></code> returns the research metabolomics platforms as a single <code>"metab"</code> element per tissue rather than one element per platform — the nesting <code><a href="../reference/load_differential_analysis.html">load_differential_analysis()</a></code> returns, so the two tiers can be walked together. Naming one platform still loads them all, as before.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-2-0-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-0-1"></a></h3>
+<ul><li><p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> draws the same legend for every tissue, whether or not that tissue has a timepoint below the p threshold. Combining plots with <code>patchwork::plot_layout(guides = "collect")</code> previously produced a repeated p threshold legend, because collection only merges guides that are identical and a tissue with nothing significant contributed a one-key legend. A single plot with no significant timepoints now shows both p threshold keys rather than only <code>adj p &gt;=</code>.</p></li>
+<li>
+<p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> plots clinical chemistry only when a clinical ome is requested. It previously appended the clinical rows whenever the feature name matched an analyte, so <code>selected_omes = "transcript-rna-seq"</code> with <code>"Glucose"</code> returned a clinical chemistry plot. <code>selected_omes</code> now accepts the omes in <code><a href="../reference/clinical_ome_list.html">clinical_ome_list()</a></code> by name and <code>"all"</code> includes them, matching how <code><a href="../reference/load_differential_analysis.html">load_differential_analysis()</a></code> treats clinical chemistry.</p>
+<p>A request that names another ome no longer returns clinical chemistry alongside it, and <code>"metab"</code> no longer implies <code>"metab-t-clinical"</code>. Analytes measured both clinically and on a research platform, such as Cortisol and Lactate, return only what was asked for.</p>
+</li>
+<li>
+<p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> loads every non-epigenetic tissue and ome once and filters afterwards, rather than assembling the request ome by ome. Clinical chemistry is no longer a special case appended after the load, and the differential analysis and the summary statistics are put in one vocabulary before either is filtered.</p>
+<p><code>plot_single_feature("VEGFA")</code> works again. The default <code>selected_omes = "all"</code> was broken for every non-metab feature by <code>filter(platform != "metab-t-conv")</code>: <code>platform</code> is NA on non-metab rows and <code>filter</code> drops NA, so the filter deleted the whole non-metab payload and the feature was reported as absent from the data.</p>
+</li>
+<li><p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> no longer excludes the <code>metab-t-conv</code> platform, which is now plotted and labelled <code>Conv. Metab (log2)</code>. It has no <code>assay_codes</code> row, so without that fallback its facet strip read <code>NA</code>. Note that it is the <code>metab-t-clinical</code> measurement on a log2 scale, so Glucose, Glycerol, KET and NEFA in blood now return a panel from each.</p></li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="2.0.0" id="motrpachumanpresuspensionanalysis-200">MotrpacHumanPreSuspensionAnalysis 2.0.0<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-200"></a></h2>
+<p>Data objects regenerated by the motrpac-human-presuspension-repro pipeline for the v2.0 data collection.</p>
+<div class="section level3">
+<h3 id="versioning-2-0-0">Versioning<a class="anchor" aria-label="anchor" href="#versioning-2-0-0"></a></h3>
+<p><strong>Package versions and data collection versions are not the same thing.</strong> This package is versioned independently of the freeze it carries: the 2.0.x series all ships the v2.0 collection, and a package release may change nothing about the data at all. Cite the collection version, not the package version, when describing which data an analysis used.</p>
+<p>Within the collection, versioning is per file: a file is bumped to v2.0 only where its content actually changed, so a v2.0 collection legitimately contains files carrying earlier version suffixes. See the MoTrPAC Knowledge Center for the release and versioning policy: <a href="https://motrpac-data.org/knowledge-center" class="external-link uri">https://motrpac-data.org/knowledge-center</a>.</p>
+</div>
+<div class="section level3">
+<h3 id="why-the-v20-objects-differ-from-v13-2-0-0">Why the v2.0 objects differ from v1.3<a class="anchor" aria-label="anchor" href="#why-the-v20-objects-differ-from-v13-2-0-0"></a></h3>
+<ul><li><p><strong>Sample misalignment in QC-norm batch correction, affecting transcriptomics and Olink.</strong> <code><a href="https://rdrr.io/pkg/limma/man/removeBatchEffect.html" class="external-link">limma::removeBatchEffect()</a></code> pairs covariate row <em>i</em> with matrix column <em>i</em> positionally. The covariate table was built with <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code>, which returns rows sorted by <code>vialLabel</code>, and was passed against a matrix whose columns were in count-file order (transcriptomics) or pivot order (Olink). The two orders are not the same, so each sample was batch-corrected using another sample’s batch, site and plate assignment. Median per-feature correlation against v1.3 is 0.925 for transcriptomics (0.908-0.944 across the three tissues) and 0.900 for <code>prot-ol</code>. Every differential-analysis and summary-statistic object on those two omes moves with it: counted at each feature’s best post-exercise timepoint on the endurance exercise-vs-control contrasts, blood <code>prot-ol</code> goes from 103 to 146 significant features of 1,417 Olink targets.</p></li>
+<li><p><strong>Replicate averaging in muscle proteomics (<code>prot-pr</code>, <code>prot-ph</code>).</strong> Muscle samples measured twice are meant to be merged by averaging the pair and dropping the now-redundant column. For intra-site pairs the mean was written into the column that was about to be deleted, so the value that survived was the first measurement on its own rather than the mean of the two. Inter-site pairs were averaged correctly, which is what made this easy to miss. Batch correction and replicate handling also ran in a different order in <code>prot-pr</code> than in <code>prot-ph</code>, so the two omes were not processed identically.</p></li>
+<li><p><strong>Feature metadata rebuilt.</strong> Each ome’s <code>metadata_features</code> is now a self-contained feature-to-gene mapping that matches its QC-norm matrix exactly. This is why every <code>*_QC</code> object in <code>MotrpacHumanPreSuspensionData</code> differs from v1.3 while only six have a <code>qc_norm</code> matrix whose values differ.</p></li>
+<li><p><strong>ATAC differential analysis refit.</strong> The released DA tables were built against an earlier feature set than the QC-norm matrices they accompany; the two are reconciled here. Muscle ATAC moves from 1,584 to 1,521 significant features on the delta-delta contrasts — 87 gained, 149 lost, <code>logFC</code> correlating 0.992 with the release. Blood (<code>t05-pbmc</code>) has no significant peaks, as in v1.3.</p></li>
+<li><p><strong>Six ATAC samples removed as sample mix-ups.</strong> <code>OUTLIERS</code> has 160 rows where v1.3 had 154; the six added are <code>epigen-atac-seq</code> samples, four blood and two muscle, now excluded from the analysis. No row was dropped.</p></li>
+<li><p><strong>One muscle <code>transcript-rna-seq</code> sample restored.</strong> It was missing from <code>metadata_samples</code> and was therefore dropped at the modelling stage. Differences in the refit differential analysis are minimal.</p></li>
+<li><p><strong>Metabolite names follow a frozen RefMet snapshot with updated overrides.</strong> 78 metabolomics <code>feature_id</code>s in the <code>*_METAB_DA</code> objects are renamed from v1.3, so joins on v1.3 names will miss them. The curated overrides gain <code>13 HODE</code> -&gt; <code>13-HODE</code> and <code>20-HETE</code> entries that previously resolved to <code>NA</code> (adipose <code>13-HODE</code> now enters the DA). Other renames: <code>*</code> suffixes dropped (<code>FA 18:1;O*</code> -&gt; <code>FA 18:1;O</code>), <code>NAGly</code> -&gt; <code>NA-Gly</code>, <code>NAD+</code> -&gt; <code>NAD</code>, <code>DHA</code> -&gt; <code>Docosahexaenoic acid</code>, <code>Edetic acid</code> -&gt; <code>EDTA</code>, <code>13-Oxo-ODE</code> -&gt; <code>13-OxoODE</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="reference-and-enrichment-objects-2-0-0">Reference and enrichment objects<a class="anchor" aria-label="anchor" href="#reference-and-enrichment-objects-2-0-0"></a></h3>
+<ul><li><p><code>CAMERA_RESULTS</code> has 1,016,991 rows, 1,869 fewer than v1.3, the losses concentrated in blood <code>prot-ol</code> (-1,419), adipose <code>prot-pr</code> (-270) and muscle <code>prot-pr</code> (-189): the gene universe moved with the feature-metadata rebuild, and a set that no longer intersects it is not scored. The ranking is largely intact — Spearman 0.957 to 1.000 on the signed statistic.</p></li>
+<li><p><code>METABOLOMICS_CVS</code> has 4,000 rows where the v1.3 object had 3,878, and the 122 rows are mostly a v1.3 defect rather than a v2.0 change: the v1.3 <code>.rda</code> was staler than the v1.3 <code>.txt</code> it was meant to mirror, which already published 4,000 keys. The change that actually propagates downstream is 69 <code>lowest_CV</code> flips and 93 <code>refmet_name</code> corrections, which together decide which copy of a duplicated RefMet name survives de-duplication.</p></li>
+<li><p><code>OME_TISSUE_CODE</code> has 53 rows where it had 49: it gains the two clinical omes (<code>metab-t-clinical</code>, <code>prot-clinical</code>) and the five <code>lab-*</code> plasma-chemistry tiers, and loses <code>metab-meta-reg</code> in all three tissues. The <code>lab-*</code> codes are inputs to the clinical omes and are deliberately absent from <code><a href="../reference/ome_available_list.html">ome_available_list()</a></code>; do not pass them to a loader.</p></li>
+<li><p><code>"metab-meta-reg"</code> is gone from <code><a href="../reference/ome_available_list.html">ome_available_list()</a></code>, <code>OME_TISSUE_CODE</code> and <code>HUMAN_OME_COLORS</code> (31 entries where there were 32). No object was ever built under that name, so every accessor offered it as a choice that returned nothing. Passing it to a loader now errors at <code><a href="https://rdrr.io/r/base/match.arg.html" class="external-link">match.arg()</a></code>, and <code>HUMAN_OME_COLORS[["metab-meta-reg"]]</code> returns <code>NULL</code>.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="split-data-2-0-0">Split data<a class="anchor" aria-label="anchor" href="#split-data-2-0-0"></a></h3>
+<ul><li>
+<code>BLOOD_CLINICAL_CHEMISTRY_SUM_STATS</code> — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_SUM_STATS and BLOOD_PROT_CLINICAL_SUM_STATS.</li>
+<li>
+<code>BLOOD_EPIGEN_ATAC_SEQ_SUM_STATS</code> — no blood ATAC feature is significant at adj_p_value &lt; 0.05 this cycle, and epigenomics summary statistics carry significant features only, so no object is built.</li>
+<li>
+<code>CLIN_CHEMISTRY_DA</code> — replaced by the v2.0 split into BLOOD_METAB_T_CLINICAL_DA and BLOOD_PROT_CLINICAL_DA.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="new-data-2-0-0">New data<a class="anchor" aria-label="anchor" href="#new-data-2-0-0"></a></h3>
+<ul><li>
+<p>BLOOD_METAB_T_CLINICAL_DA, BLOOD_METAB_T_CLINICAL_SUM_STATS, BLOOD_PROT_CLINICAL_DA, BLOOD_PROT_CLINICAL_SUM_STATS</p>
+<p>Clinical chemistry, one assay in v1.3, is split into a metabolomics and a proteomics assay.</p>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="changes-to-data-objects-2-0-0">Changes to data objects<a class="anchor" aria-label="anchor" href="#changes-to-data-objects-2-0-0"></a></h3>
+<ul><li><p>11 objects drop the <code>CI.L</code>, <code>CI.R</code> columns; code that selects them will error: ADIPOSE_METAB_DA, ADIPOSE_PROT_PH_DA, ADIPOSE_PROT_PR_DA, ADIPOSE_TRNSCRPT_DA, BLOOD_METAB_DA, BLOOD_PROT_OL_DA, BLOOD_TRNSCRPT_DA, MUSCLE_METAB_DA, MUSCLE_PROT_PH_DA, MUSCLE_PROT_PR_DA, MUSCLE_TRNSCRPT_DA.</p></li>
+<li><p>HUMAN_FEATURE_TO_GENE gains the <code>flanking_sequence</code> column.</p></li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.4" id="motrpachumanpresuspensionanalysis-024">MotrpacHumanPreSuspensionAnalysis 0.2.4<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-024"></a></h2>
 <p>This release addresses installation failures on R 4.6 and removes the <code>Remotes:</code> field that was breaking dependency resolution.</p>

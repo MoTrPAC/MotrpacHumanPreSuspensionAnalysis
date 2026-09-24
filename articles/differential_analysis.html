@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,9 +87,10 @@ through MoTrPAC data access procedures.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DA_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_differential_analysis.html">load_differential_analysis</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span></code></pre></div>
 <p>This loads all available tissues and omes using lazily loaded package
 data. Results are returned as a nested list, organized by tissue and
@@ -109,10 +110,10 @@ assay.</p>
 <span><span class="co">#&gt;  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 6 6 6 6 6 6 6 6 6 6 ...</span></span>
 <span><span class="co">#&gt;  $ feature_id        : chr  "O00287" "Q8TE02" "Q8NHG8" "P10912" ...</span></span>
 <span><span class="co">#&gt;  $ logFC             : num  0.74 0.578 0.609 -0.857 -0.71 ...</span></span>
-<span><span class="co">#&gt;  $ CI.L              : num  0.533 0.414 0.463 -1.087 -0.933 ...</span></span>
-<span><span class="co">#&gt;  $ CI.R              : num  0.946 0.742 0.756 -0.627 -0.487 ...</span></span>
-<span><span class="co">#&gt;  $ degrees_of_freedom: num  30.3 19.5 21.2 19.4 12.7 ...</span></span>
-<span><span class="co">#&gt;  $ logLik            : num  -15.5 -20.1 -40.5 -32.2 -32.7 ...</span></span>
+<span><span class="co">#&gt;  $ CI.L_calculated   : num  0.533 0.414 0.463 -1.087 -0.933 ...</span></span>
+<span><span class="co">#&gt;  $ CI.R_calculated   : num  0.946 0.742 0.756 -0.627 -0.487 ...</span></span>
+<span><span class="co">#&gt;  $ degrees_of_freedom: num  27 24 16.1 22.7 24 ...</span></span>
+<span><span class="co">#&gt;  $ logLik            : num  11.02 15.87 20.89 2.42 6.32 ...</span></span>
 <span><span class="co">#&gt;  $ t                 : num  7.31 7.21 8.75 -7.73 -6.52 ...</span></span>
 <span><span class="co">#&gt;  $ AveExpr           : num  0.0188 -1.1554 -0.2189 -0.205 -0.5905 ...</span></span>
 <span><span class="co">#&gt;  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...</span></span>
@@ -145,12 +146,13 @@ metabolite of interest appears to be missing.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ome_available_list.html">ome_available_list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "prot-ol"              "prot-ph"              "prot-pr"             </span></span>
-<span><span class="co">#&gt;  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     </span></span>
-<span><span class="co">#&gt;  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      </span></span>
-<span><span class="co">#&gt; [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       </span></span>
-<span><span class="co">#&gt; [13] "metab-t-amines"       "metab-t-conv"         "metab-t-imm-crt"     </span></span>
-<span><span class="co">#&gt; [16] "metab-t-oxylipneg"    "metab-t-tca"          "metab-t-nuc"         </span></span>
-<span><span class="co">#&gt; [19] "metab-t-acoa"         "metab-t-ka"           "metab-meta-reg"</span></span>
+<span><span class="co">#&gt;  [4] "prot-clinical"        "transcript-rna-seq"   "epigen-methylcap-seq"</span></span>
+<span><span class="co">#&gt;  [7] "epigen-atac-seq"      "metab-u-hilicpos"     "metab-u-ionpneg"     </span></span>
+<span><span class="co">#&gt; [10] "metab-u-lrpneg"       "metab-u-lrppos"       "metab-u-rpneg"       </span></span>
+<span><span class="co">#&gt; [13] "metab-u-rppos"        "metab-t-amines"       "metab-t-conv"        </span></span>
+<span><span class="co">#&gt; [16] "metab-t-imm-crt"      "metab-t-oxylipneg"    "metab-t-tca"         </span></span>
+<span><span class="co">#&gt; [19] "metab-t-nuc"          "metab-t-acoa"         "metab-t-ka"          </span></span>
+<span><span class="co">#&gt; [22] "metab-t-clinical"</span></span>
 <span><span class="fu"><a href="../reference/tissue_available_list.html">tissue_available_list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; The available tissues are placed into overarching categories. For example, an assay using PBMCs would be categorized as blood.</span></span>
 <span><span class="co">#&gt; [1] "adipose" "blood"   "muscle"</span></span></code></pre></div>
@@ -195,9 +197,10 @@ instead, if you find that to be easier to work with.</p>
 <span>  single_matrix <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -211,9 +214,10 @@ gene-level annotations where applicable.</p>
 <span>  combine_with_featgene <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span></code></pre></div>
 <p>This is particularly useful for transcriptomic and proteomic assays
 when integrating results across omes.</p>

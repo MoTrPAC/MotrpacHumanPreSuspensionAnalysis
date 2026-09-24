@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,7 @@
 <div class="page-header"><h1 id="motrpachumanpresuspensionanalysis">MotrpacHumanPreSuspensionAnalysis<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis"></a>
 </h1></div>
 <!-- badges: start -->
-<!-- badges: end -->
+
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -92,8 +92,65 @@
 <h3 id="versioning-note">Versioning note<a class="anchor" aria-label="anchor" href="#versioning-note"></a>
 </h3>
 <p>The functions in version 0.2.0 were those used to generate the initial bioRxiv pre-print. Over the course of reviews and additional analysis, modifications may occur—refer to previous release history if you need to exactly recreate pre-print Figures. We will aim to provide version information via the GitHub “Releases” section for major version milestones.</p>
-<hr>
 </div>
+</div>
+<div class="section level2">
+<h2 id="how-this-repo-fits-with-the-others">How this repo fits with the others<a class="anchor" aria-label="anchor" href="#how-this-repo-fits-with-the-others"></a>
+</h2>
+<p>The Pre-Suspension human work is split across four repositories. Individual-level molecular and phenotypic data cannot be distributed publicly, so they live in a separate, access-gated package, and everything that <em>can</em> be released publicly (aggregate results, all analysis code) is kept clear of them.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>                  MoTrPAC BIC — consortium GCS buckets</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>                        (raw assay data, gated)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>                                   │</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                   motrpac<span class="sc">-</span>human<span class="sc">-</span>presuspension<span class="sc">-</span>repro</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>           normalizes omics data, applies statistical models,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>           builds every data object, versions it, uploads it,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                   and carries it into both packages</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                                   │</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                ┌──────────────────┴──────────────────┐</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>                ▼                                     ▼</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  MotrpacHumanPreSuspensionData       MotrpacHumanPreSuspensionAnalysis</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>subject<span class="sc">-</span>level data — access<span class="sc">-</span>gated         aggregate results — public</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>                └──────────────────┬──────────────────┘</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>                                   ▼</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>                   motrpac<span class="sc">-</span>human<span class="sc">-</span>presuspension<span class="sc">-</span>acute</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>                 manuscript figure code <span class="sc">+</span> QC vignettes</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>                                   ▼</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>                              manuscripts</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="38%">
+<col width="43%">
+<col width="18%">
+</colgroup>
+<thead><tr>
+<th>Repository</th>
+<th>What it holds</th>
+<th>Access</th>
+</tr></thead>
+<tbody>
+<tr>
+<td><a href="https://github.com/MoTrPAC/motrpac-human-presuspension-repro" class="external-link"><code>motrpac-human-presuspension-repro</code></a></td>
+<td>the end-to-end rebuild pipeline and its pinned software environment</td>
+<td>code; a full run needs consortium bucket access</td>
+</tr>
+<tr>
+<td><a href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData" class="external-link"><code>MotrpacHumanPreSuspensionData</code></a></td>
+<td>subject-level molecular and phenotypic data objects</td>
+<td>formal data-access request to the consortium</td>
+</tr>
+<tr>
+<td><a href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis" class="external-link"><code>MotrpacHumanPreSuspensionAnalysis</code></a></td>
+<td>differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions</td>
+<td>public</td>
+</tr>
+<tr>
+<td><a href="https://github.com/MoTrPAC/motrpac-human-presuspension-acute" class="external-link"><code>motrpac-human-presuspension-acute</code></a></td>
+<td>per-manuscript figure code and QC vignettes</td>
+<td>code public; some panels need Data access</td>
+</tr>
+</tbody>
+</table>
+<hr>
 </div>
 </div>
 <div class="section level1">
@@ -129,24 +186,40 @@
 </tbody>
 </table>
 <p><strong>For R 4.4:</strong></p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">"BiocManager"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"3.20"</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"MoTrPAC/MotrpacHumanPreSuspensionAnalysis"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>For R 4.5:</strong></p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">"BiocManager"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"3.22"</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"MoTrPAC/MotrpacHumanPreSuspensionAnalysis"</span><span class="op">)</span></span></code></pre></div>
 <p><strong>For R 4.6:</strong></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://bioconductor.github.io/BiocManager/" class="external-link">"BiocManager"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"3.23"</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://pak.r-lib.org/" class="external-link">"pak"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pak</span><span class="op">(</span><span class="st">"MoTrPAC/MotrpacHumanPreSuspensionAnalysis"</span><span class="op">)</span></span></code></pre></div>
 <p>You can check your R version with <code>R.version.string</code> and your Bioconductor version with <code><a href="https://bioconductor.github.io/BiocManager/reference/version.html" class="external-link">BiocManager::version()</a></code>.</p>
+</div>
+<div class="section level2">
+<h2 id="macos-install-xquartz-first">macOS: install XQuartz first<a class="anchor" aria-label="anchor" href="#macos-install-xquartz-first"></a>
+</h2>
+<p><strong>On macOS, install <a href="https://www.xquartz.org" class="external-link">XQuartz</a> before installing this package</strong>, then log out and back in. Windows and Linux do not need it.</p>
+<p>The macOS builds of R link Tcl/Tk and the cairo graphics device against the X11 libraries XQuartz provides. This package imports Mfuzz, which imports <code>tcltk</code>, so without XQuartz the installation fails when R test-loads the package, with an error like:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>unable to load shared object <span class="st">'.../library/tcltk/libs/tcltk.so'</span><span class="sc">:</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  Library not loaded<span class="sc">:</span> <span class="er">/</span>opt<span class="sc">/</span>X11<span class="sc">/</span>lib<span class="sc">/</span>libX11.<span class="fl">6.</span>dylib</span></code></pre></div>
+<p><code><a href="reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> and <code><a href="reference/plot_cluster_enrichment.html">plot_cluster_enrichment()</a></code> also write PDFs with <code><a href="https://rdrr.io/r/grDevices/cairo.html" class="external-link">cairo_pdf()</a></code>, which needs XQuartz on macOS.</p>
+</div>
+<div class="section level2">
+<h2 id="github-only-dependency-motrpacbicqc">GitHub-only dependency: MotrpacBicQC<a class="anchor" aria-label="anchor" href="#github-only-dependency-motrpacbicqc"></a>
+</h2>
+<p>This package imports <a href="https://github.com/MoTrPAC/MotrpacBicQC" class="external-link">MotrpacBicQC</a> (&gt;= 2.0.0), which is not on CRAN or Bioconductor. <code>DESCRIPTION</code> declares it in <code>Remotes</code>, so the <code>pak::pak()</code> command above installs it from GitHub automatically. If you install with <code>remotes</code> instead, install it first:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"MoTrPAC/MotrpacBicQC@v2.0.0"</span><span class="op">)</span></span></code></pre></div>
 <p>We recommend building the vignettes when installing (use <code>vignette(package = "MotrpacHumanPreSuspensionAnalysis")</code> to browse them).</p>
 <p>The vignette <code>package_overview</code> describes how to use the package functions in detail, but the most common functions for those just looking to view the results are also described here in this README.</p>
 </div>
@@ -156,24 +229,23 @@
 <ul>
 <li>
 <p><strong>macOS (especially Apple Silicon):</strong> If you see compilation errors or missing tools, install Xcode Command Line Tools first:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">--install</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="ex">xcode-select</span> <span class="at">--install</span></span></code></pre></div>
 </li>
 <li><p><strong>Bioconductor errors</strong> (e.g. version mismatch warnings or failed binaries): Re-run <code>BiocManager::install(version = "X.YZ")</code> with the correct version for your R installation (see table above) before the GitHub install.</p></li>
 </ul>
 <p>After installation, load the package:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/">MotrpacHumanPreSuspensionAnalysis</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="consortium-only-optional-features">Consortium-only optional features<a class="anchor" aria-label="anchor" href="#consortium-only-optional-features"></a>
 </h2>
 <p>Most functionality in this package is fully public and works without additional access. Some advanced workflows rely on the private package <code>MotrpacHumanPreSuspensionData</code> that is available only to MoTrPAC consortium members.</p>
-<p>At the moment, the primary functions with this optional dependency are:</p>
+<p>At the moment, the only function with this optional dependency is:</p>
 <ul>
-<li><code><a href="reference/run_SCION.html">run_SCION()</a></code></li>
 <li><code><a href="reference/plot_precovid_cca.html">plot_precovid_cca()</a></code></li>
 </ul>
-<p>If the private package is not installed, these functions will return a clear error message with access guidance.</p>
+<p>If the private package is not installed, it will return a clear error message with access guidance.</p>
 </div>
 <div class="section level2">
 <h2 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
@@ -190,7 +262,7 @@
 </h2>
 <p>See more documentation via <code><a href="reference/load_differential_analysis.html">?load_differential_analysis</a></code> or the vignette</p>
 <p>Note that the public release of epigenetic files is through AWS CDN, and the file sizes are quite a bit larger than the other omes, so setting <code>epigen = TRUE</code> can be very slow!</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">differential_analysis</span> <span class="op">=</span> <span class="fu"><a href="reference/load_differential_analysis.html">load_differential_analysis</a></span><span class="op">(</span></span>
 <span>  selected_omes <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  selected_tissues <span class="op">=</span> <span class="st">"all"</span>,</span>
@@ -199,9 +271,11 @@
 <span>  combine_with_featgene <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">differential_analysis</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "adipose" "blood"   "muscle"</span></span>
@@ -209,35 +283,37 @@
 <span><span class="co">#&gt; [1] "metab"              "prot-ol"            "transcript-rna-seq"</span></span></code></pre></div>
 <p>By default,<code>load_differential_analysis</code> loads in the dataset in a nested list first by tissue, then by ome. Choose whichever tissues or omes you’d like via <code>selected_omes</code> or <code>selected_tissues</code>. You can find available tissues via <code><a href="reference/tissue_available_list.html">tissue_available_list()</a></code> or <code><a href="reference/ome_available_list.html">ome_available_list()</a></code>. Or if you enter in a wrong mistaken tissue/ome, a warning or error will help.</p>
 <p>If you would instead like to stack the matrixes more easily, use the <code>single_matrix</code> function, which basically unlists the list and sticks everything into a data.frame object.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">single_matrix</span> <span class="op">=</span> <span class="fu"><a href="reference/load_differential_analysis.html">load_differential_analysis</a></span><span class="op">(</span>single_matrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">single_matrix</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "tissue"             "assay"              "platform"          </span></span>
 <span><span class="co">#&gt;  [4] "full_model"         "contrast"           "contrast_short"    </span></span>
 <span><span class="co">#&gt;  [7] "contrast_type"      "contrast_category"  "randomGroupCode"   </span></span>
 <span><span class="co">#&gt; [10] "Timepoint"          "feature_id"         "logFC"             </span></span>
-<span><span class="co">#&gt; [13] "CI.L"               "CI.R"               "degrees_of_freedom"</span></span>
+<span><span class="co">#&gt; [13] "CI.L_calculated"    "CI.R_calculated"    "degrees_of_freedom"</span></span>
 <span><span class="co">#&gt; [16] "logLik"             "t"                  "AveExpr"           </span></span>
 <span><span class="co">#&gt; [19] "z.std"              "p_value"            "adj_p_value"</span></span></code></pre></div>
 <p>For a quick explanation of each of the columns, you can find this via <code><a href="reference/load_differential_analysis.html">?load_differential_analysis</a></code></p>
 <p>Importantly, this loads the differential analysis for each of comparisons mentioned in the methods, including the comparison between the endurance or resistance group relative to time, fasting, biopsy, etc. matched controls, comparison between the endurance and resistance groups directly, and finally comparisons within group without a matched control.</p>
 <p>The majority of the analysis is done via exercise groups relative to the controls (“exercise_with_controls”). Make sure you filter to whichever category you prefer before continuing with analysis.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">single_matrix</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">contrast_type</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] exercise_with_controls exercise_no_controls   Endur_vs_Resist       </span></span>
 <span><span class="co">#&gt; [4] baseline               control_only          </span></span>
 <span><span class="co">#&gt; 5 Levels: exercise_with_controls exercise_no_controls ... control_only</span></span></code></pre></div>
 <p>If you’d like to display things in terms of the specific groups being compared instead, you can use the ‘contrast_category’ column. (EE-CON, RE-CON would be subsets of the ‘exercise_with_controls’ category from above, for example.)</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">single_matrix</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">contrast_category</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] EE-CON  RE-CON  EE-EE   RE-RE   EE-RE   CON-CON</span></span>
 <span><span class="co">#&gt; Levels: EE-CON RE-CON EE-EE RE-RE EE-RE CON-CON</span></span></code></pre></div>
 <p>The splicing data was processed in a separate analysis effort, but significant results (FDR &lt; 0.05) are available in this R package as well. The full set is available on the motrpac data hub, but is not included here because of file size limitations. See “Exercise modulation of the alternative splicing landscape in human tissues” for more information.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">SPLICING_DA</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "adipose" "blood"   "muscle"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">SPLICING_DA</span><span class="op">$</span><span class="va">adipose</span><span class="op">$</span><span class="va">`AS-rMATS`</span>, <span class="fl">3</span><span class="op">)</span></span>
@@ -266,34 +342,47 @@
 <h2 id="omic-modeling-summary-statistics">Omic modeling summary statistics<a class="anchor" aria-label="anchor" href="#omic-modeling-summary-statistics"></a>
 </h2>
 <p>See more documentation via <code><a href="reference/load_summary_stats.html">?load_summary_stats</a></code></p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">summary_stats</span> <span class="op">=</span> <span class="fu"><a href="reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span></span>
 <span>  selected_omes <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  selected_tissues <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  single_matrix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n &lt; 3 for any group are not included here.</span></span>
 <span><span class="co">#&gt; Epigenetics summary stats are trimmed to only show significant features due to file size limitations</span></span>
+<span><span class="co">#&gt; Metabolomics platforms are returned stacked in one table per tissue, with the</span></span>
+<span><span class="co">#&gt;             platform in the `platform` column and `assay` reading "metab", matching the</span></span>
+<span><span class="co">#&gt;             differential analysis. Please remember that the lowest CV metabolite is chosen and</span></span>
+<span><span class="co">#&gt;             the relevant refmet name is used. If you're not able to find your desired</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
+<span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">summary_stats</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "adipose" "blood"   "muscle"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">summary_stats</span><span class="op">[[</span><span class="st">"blood"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "epigen-atac-seq"      "epigen-methylcap-seq" "metab-t-amines"      </span></span>
-<span><span class="co">#&gt;  [4] "metab-t-conv"         "metab-t-oxylipneg"    "metab-t-tca"         </span></span>
-<span><span class="co">#&gt;  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      </span></span>
-<span><span class="co">#&gt; [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       </span></span>
-<span><span class="co">#&gt; [13] "prot-ol"              "transcript-rna-seq"</span></span></code></pre></div>
-<p>By default, load_summary_stats() loads group- and timepoint-level summary statistics for normalized expression data in a nested list structure, organized identically to the differential-analysis datasets. The top level corresponds to tissues, and the second level corresponds to molecular assays or platforms.</p>
+<span><span class="co">#&gt; [1] "epigen-methylcap-seq" "metab"                "prot-ol"             </span></span>
+<span><span class="co">#&gt; [4] "transcript-rna-seq"</span></span></code></pre></div>
+<p>By default, load_summary_stats() loads group- and timepoint-level summary statistics for normalized expression data in a nested list structure, organized identically to the differential-analysis datasets. The top level corresponds to tissues, and the second level corresponds to molecular assays.</p>
+<p>The research metabolomics platforms arrive as a single <code>metab</code> element per tissue, not one element per platform. That table reads <code>assay = "metab"</code> and names the platform in its own <code>platform</code> column, exactly as <code>{TISSUE}_METAB_DA</code> does, so a summary statistic and the differential-analysis row it belongs to agree on what the ome is called. Naming any one platform loads the whole stack. Clinical chemistry (<code>metab-t-clinical</code>) is not in it and stays its own object.</p>
 <p>You may subset the data using selected_tissues and selected_omes. Available options can be queried via <code><a href="reference/tissue_available_list.html">tissue_available_list()</a></code> and <code><a href="reference/ome_available_list.html">ome_available_list()</a></code>. If an invalid tissue or assay is supplied, informative warnings or errors are raised to guide correction.</p>
 <p>If a stacked representation is preferred, set <code>single_matrix = TRUE</code>. This unlists the nested structure and returns a single <code>data.frame</code> with all selected tissues and assays.</p>
 <p>Again - note that the sample level data is available for researchers upon request via the Motrpac Consortium.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">single_matrix</span> <span class="op">=</span> <span class="fu"><a href="reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span>single_matrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n &lt; 3 for any group are not included here.</span></span>
 <span><span class="co">#&gt; Epigenetics summary stats are trimmed to only show significant features due to file size limitations</span></span>
+<span><span class="co">#&gt; Metabolomics platforms are returned stacked in one table per tissue, with the</span></span>
+<span><span class="co">#&gt;             platform in the `platform` column and `assay` reading "metab", matching the</span></span>
+<span><span class="co">#&gt;             differential analysis. Please remember that the lowest CV metabolite is chosen and</span></span>
+<span><span class="co">#&gt;             the relevant refmet name is used. If you're not able to find your desired</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
+<span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">single_matrix</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          </span></span>
-<span><span class="co">#&gt; [5] "Mean"            "SD"              "tissue"          "assay"</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "tissue"          "assay"           "randomGroupCode" "Timepoint"      </span></span>
+<span><span class="co">#&gt; [5] "feature_id"      "Count"           "Mean"            "SD"             </span></span>
+<span><span class="co">#&gt; [9] "platform"</span></span></code></pre></div>
 <p>Summary statistics were filtered to only those that qualified for differential analysis. This means for proteomics/phosphoproteomics, samples required a paired n&gt;=3 to be included. See the methods in the manuscript for more information.</p>
 <p>For metabolomics assays, summary statistics are computed after filtering redundant metabolites. Details of this filtering procedure are described in the Methods section of the manuscript.</p>
 <p>For epigenetic assays (ATAC, methyl), only significant features are included, due to file size limitations.</p>
@@ -301,7 +390,7 @@
 <div class="section level2">
 <h2 id="enrichment-results">Enrichment Results<a class="anchor" aria-label="anchor" href="#enrichment-results"></a>
 </h2>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">CAMERA_RESULTS</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "tissue"         "assay"          "contrast_type"  "contrast"      </span></span>
 <span><span class="co">#&gt;  [5] "contrast_short" "collection"     "database"       "set_id"        </span></span>
@@ -314,33 +403,33 @@
 <div class="section level2">
 <h2 id="feature-to-gene-file">Feature to gene file<a class="anchor" aria-label="anchor" href="#feature-to-gene-file"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">HUMAN_FEATURE_TO_GENE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Key: &lt;assay, feature_id&gt;</span></span>
 <span><span class="co">#&gt;              assay               feature_id entrez_gene gene_symbol</span></span>
-<span><span class="co">#&gt;             &lt;fctr&gt;                   &lt;fctr&gt;      &lt;fctr&gt;      &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt;             &lt;char&gt;                   &lt;fctr&gt;      &lt;fctr&gt;      &lt;fctr&gt;</span></span>
 <span><span class="co">#&gt; 1: epigen-atac-seq chr1:100006105-100007013       23443     SLC35A3</span></span>
-<span><span class="co">#&gt; 2: epigen-atac-seq chr1:100009408-100009608       23443     SLC35A3</span></span>
-<span><span class="co">#&gt; 3: epigen-atac-seq   chr1:10001014-10001214      116362        RBP7</span></span>
-<span><span class="co">#&gt; 4: epigen-atac-seq chr1:100010489-100010728       23443     SLC35A3</span></span>
-<span><span class="co">#&gt; 5: epigen-atac-seq chr1:100021498-100021698       23443     SLC35A3</span></span>
-<span><span class="co">#&gt; 6: epigen-atac-seq chr1:100024572-100024772       23443     SLC35A3</span></span>
-<span><span class="co">#&gt;       ensembl_gene custom_annotation relationship_to_gene uniprot refmet_name</span></span>
-<span><span class="co">#&gt;             &lt;fctr&gt;            &lt;fctr&gt;                &lt;num&gt;  &lt;fctr&gt;      &lt;fctr&gt;</span></span>
-<span><span class="co">#&gt; 1: ENSG00000117620            Intron                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2: ENSG00000117620              Exon                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3: ENSG00000162444            Intron                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4: ENSG00000117620            Intron                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5: ENSG00000117620            Intron                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6: ENSG00000117620            3' UTR                    0    &lt;NA&gt;        &lt;NA&gt;</span></span>
-<span><span class="co">#&gt;    kegg_id flanking_sequence</span></span>
-<span><span class="co">#&gt;     &lt;fctr&gt;            &lt;fctr&gt;</span></span>
-<span><span class="co">#&gt; 1:    &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 2:    &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 3:    &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 4:    &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 5:    &lt;NA&gt;              &lt;NA&gt;</span></span>
-<span><span class="co">#&gt; 6:    &lt;NA&gt;              &lt;NA&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; 2: epigen-atac-seq chr1:100028803-100029458       23443     SLC35A3</span></span>
+<span><span class="co">#&gt; 3: epigen-atac-seq chr1:100037508-100038196        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4: epigen-atac-seq chr1:100038219-100039293        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5: epigen-atac-seq chr1:100046659-100047168        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6: epigen-atac-seq chr1:100071690-100072465        &lt;NA&gt;        &lt;NA&gt;</span></span>
+<span><span class="co">#&gt;       ensembl_gene uniprot refmet_name refmet_id kegg_id custom_annotation</span></span>
+<span><span class="co">#&gt;             &lt;fctr&gt;  &lt;fctr&gt;      &lt;fctr&gt;    &lt;fctr&gt;  &lt;fctr&gt;            &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt; 1: ENSG00000117620    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;            Intron</span></span>
+<span><span class="co">#&gt; 2: ENSG00000117620    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;            3' UTR</span></span>
+<span><span class="co">#&gt; 3: ENSG00000288826    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;  Promoter (&lt;=1kb)</span></span>
+<span><span class="co">#&gt; 4: ENSG00000283761    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;            5' UTR</span></span>
+<span><span class="co">#&gt; 5: ENSG00000283761    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;            Intron</span></span>
+<span><span class="co">#&gt; 6: ENSG00000283761    &lt;NA&gt;        &lt;NA&gt;      &lt;NA&gt;    &lt;NA&gt;            Intron</span></span>
+<span><span class="co">#&gt;    relationship_to_gene flanking_sequence</span></span>
+<span><span class="co">#&gt;                   &lt;num&gt;            &lt;fctr&gt;</span></span>
+<span><span class="co">#&gt; 1:                    0              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 2:                    0              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 3:                    0              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 4:                    0              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 5:                    0              &lt;NA&gt;</span></span>
+<span><span class="co">#&gt; 6:                    0              &lt;NA&gt;</span></span></code></pre></div>
 <p>The feature-to-gene map links each feature tested in differential analysis to a gene, using Ensembl version 105 (mapped to GENCODE 39) as the gene identifier source. Proteomics feature IDs (UniProt IDs) were mapped to gene symbols and Entrez IDs using UniProt’s mapping files. Epigenomics features were mapped to the nearest gene using the ChIPseeker::annotatePeak() function with Homo sapiens Ensembl release 105 gene annotations. Gene symbols, Entrez IDs, and Ensembl IDs were assigned to features using biomaRt version 2.58.2 (Bioconductor 3.18). This file links all of the features included in any ome/tissue in our analysis. Use this to see how some levels of omic analysis (e.g. ATAC, RNAseq) may link up in terms of ome names.</p>
 </div>
 </div>
@@ -351,19 +440,19 @@
 <h2 id="testing-installation-with-docker">Testing installation with Docker<a class="anchor" aria-label="anchor" href="#testing-installation-with-docker"></a>
 </h2>
 <p>A <code>Dockerfile</code> is included to verify that the package and all its dependencies install correctly in a clean Linux environment. This is useful for catching missing system libraries or silent dependency failures before release.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Build the image (installs all Imports, Suggests, and Remotes)</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> motrpac-presuspension-test .</span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co"># Run the container to confirm the package loads</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> motrpac-presuspension-test</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="co"># Build the image (installs all Imports, Suggests, and Remotes)</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="ex">docker</span> build <span class="at">-t</span> motrpac-presuspension-test .</span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co"># Run the container to confirm the package loads</span></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> motrpac-presuspension-test</span></code></pre></div>
 <p>To render vignettes inside the container:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-v</span> <span class="st">"</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">/vignette_output:/output"</span> motrpac-presuspension-test bash <span class="at">-c</span> <span class="st">"</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="st">  apt-get update &amp;&amp; apt-get install -y --no-install-recommends pandoc &amp;&amp;</span></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="st">  R -e </span><span class="dt">\"</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="st">    rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');</span></span>
-<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a><span class="st">    rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output')</span></span>
-<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a><span class="st">  </span><span class="dt">\"</span></span>
-<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="st">"</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-v</span> <span class="st">"</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">/vignette_output:/output"</span> motrpac-presuspension-test bash <span class="at">-c</span> <span class="st">"</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="st">  apt-get update &amp;&amp; apt-get install -y --no-install-recommends pandoc &amp;&amp;</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="st">  R -e </span><span class="dt">\"</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a><span class="st">    rmarkdown::render('vignettes/package_overview.Rmd', output_dir='/output');</span></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a><span class="st">    rmarkdown::render('vignettes/differential_analysis.Rmd', output_dir='/output')</span></span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a><span class="st">  </span><span class="dt">\"</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a><span class="st">"</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
@@ -412,7 +501,12 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>

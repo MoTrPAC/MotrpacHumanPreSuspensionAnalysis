@@ -26,9 +26,10 @@ through MoTrPAC data access procedures.
 
 DA_list <- load_differential_analysis()
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 ```
 
@@ -53,10 +54,10 @@ str(DA_list[["adipose"]][["prot-pr"]])
 #>  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 6 6 6 6 6 6 6 6 6 6 ...
 #>  $ feature_id        : chr  "O00287" "Q8TE02" "Q8NHG8" "P10912" ...
 #>  $ logFC             : num  0.74 0.578 0.609 -0.857 -0.71 ...
-#>  $ CI.L              : num  0.533 0.414 0.463 -1.087 -0.933 ...
-#>  $ CI.R              : num  0.946 0.742 0.756 -0.627 -0.487 ...
-#>  $ degrees_of_freedom: num  30.3 19.5 21.2 19.4 12.7 ...
-#>  $ logLik            : num  -15.5 -20.1 -40.5 -32.2 -32.7 ...
+#>  $ CI.L_calculated   : num  0.533 0.414 0.463 -1.087 -0.933 ...
+#>  $ CI.R_calculated   : num  0.946 0.742 0.756 -0.627 -0.487 ...
+#>  $ degrees_of_freedom: num  27 24 16.1 22.7 24 ...
+#>  $ logLik            : num  11.02 15.87 20.89 2.42 6.32 ...
 #>  $ t                 : num  7.31 7.21 8.75 -7.73 -6.52 ...
 #>  $ AveExpr           : num  0.0188 -1.1554 -0.2189 -0.205 -0.5905 ...
 #>  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...
@@ -101,12 +102,13 @@ If you forget which syntax is used for omes & tissues:
 
 ome_available_list()
 #>  [1] "prot-ol"              "prot-ph"              "prot-pr"             
-#>  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     
-#>  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      
-#> [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       
-#> [13] "metab-t-amines"       "metab-t-conv"         "metab-t-imm-crt"     
-#> [16] "metab-t-oxylipneg"    "metab-t-tca"          "metab-t-nuc"         
-#> [19] "metab-t-acoa"         "metab-t-ka"           "metab-meta-reg"
+#>  [4] "prot-clinical"        "transcript-rna-seq"   "epigen-methylcap-seq"
+#>  [7] "epigen-atac-seq"      "metab-u-hilicpos"     "metab-u-ionpneg"     
+#> [10] "metab-u-lrpneg"       "metab-u-lrppos"       "metab-u-rpneg"       
+#> [13] "metab-u-rppos"        "metab-t-amines"       "metab-t-conv"        
+#> [16] "metab-t-imm-crt"      "metab-t-oxylipneg"    "metab-t-tca"         
+#> [19] "metab-t-nuc"          "metab-t-acoa"         "metab-t-ka"          
+#> [22] "metab-t-clinical"
 tissue_available_list()
 #> The available tissues are placed into overarching categories. For example, an assay using PBMCs would be categorized as blood.
 #> [1] "adipose" "blood"   "muscle"
@@ -159,9 +161,10 @@ DA_matrix <- load_differential_analysis(
   single_matrix = TRUE
 )
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 ```
 
@@ -177,9 +180,10 @@ DA_list <- load_differential_analysis(
   combine_with_featgene = TRUE
 )
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 ```
 

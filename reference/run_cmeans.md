@@ -1,21 +1,38 @@
 # Fuzzy C-Means (FCM) Clustering
 
-Fuzzy C-Means (FCM) Clustering
+Fuzzy c-means clustering of features by the shape of their z-score
+trajectories across the `"exercise_with_controls"` contrasts (the two
+`during` contrasts excluded). The pre-computed
+[`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md)
+was built with the default arguments.
 
 ## Usage
 
 ``` r
 run_cmeans(
+  DA_list = NULL,
   selected_tissues = c("all", "adipose", "blood", "muscle"),
   selected_omes = c("transcript-rna-seq", "prot-pr", "prot-ol", "prot-ph", "metab"),
   num_clusters_adipose = 13L,
-  num_clusters_blood = 13L,
+  num_clusters_blood = 12L,
   num_clusters_muscle = 12L,
   modality = c("both", "Endur", "Resist")
 )
 ```
 
 ## Arguments
+
+- DA_list:
+
+  list; a named list of `data.frame` objects, each containing
+  differential analysis results for a specific tissue/assay combination.
+  The list is nested, with tissues at the top level and omes within
+  tissues, or already flattened with names of the form `"tissue.assay"`.
+  If `NULL` (default), the differential analysis results will be
+  generated with
+  [`load_differential_analysis`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_differential_analysis.md).
+  Unless wishing to analyze DA results that are not in
+  MotrpacHumanPreSuspensionAnalysis, this should remain `NULL`.
 
 - selected_tissues:
 
@@ -31,13 +48,12 @@ run_cmeans(
 
 - num_clusters_adipose, num_clusters_blood, num_clusters_muscle:
 
-  integer; the number of clusters desired for each tissue. Defaults to
-  13 for adipose, 13 for blood, and 12 for muscle. If more than one
-  number is provided,
-  [`Mfuzz::Dmin`](https://rdrr.io/pkg/Mfuzz/man/Dmin.html) will be used
-  to generate a plot of the minimum centroid distances, and the user
-  will be asked to specify the optimal cluster number in the console for
-  each tissue.
+  integer; the number of clusters for each tissue, a single value each.
+  Defaults to 13 for adipose, 12 for blood, and 12 for muscle, the
+  values used for `FCM_CLUSTERS`. They were chosen from a sweep of
+  cluster numbers in the motrpac-human-presuspension-repro pipeline
+  (step 13), which plots the minimum centroid distance and related
+  diagnostics for each tissue.
 
 - modality:
 
@@ -53,6 +69,7 @@ when `modality != "both"`).
 
 ## See also
 
+[`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md),
 [`plot_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/plot_cmeans.md),
 [`run_cluster_cameraPR`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_cameraPR.md),
 [`run_cluster_ORA`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_ORA.md)
@@ -68,9 +85,10 @@ if (FALSE) { # \dontrun{
   x1 <- run_cmeans()
   names(x1) # list available components
 
-  # Try a range of cluster numbers for one tissue
-  x2 <- run_cmeans(selected_tissues = "adipose",
-                   num_clusters_adipose = 3:14)
+  # Reuse differential analysis results already in memory
+  DA_list <- load_differential_analysis(selected_tissues = "adipose")
+  x2 <- run_cmeans(DA_list = DA_list,
+                   selected_tissues = "adipose")
 
   # FCM for a single modality
   x3 <- run_cmeans(selected_tissues = "adipose",

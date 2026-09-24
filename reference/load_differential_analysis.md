@@ -10,8 +10,10 @@ load_differential_analysis(
   selected_tissues = "all",
   single_matrix = FALSE,
   epigen = FALSE,
+  repo_local_dir = NULL,
   combine_with_featgene = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  load_clinical = FALSE
 )
 ```
 
@@ -34,9 +36,16 @@ load_differential_analysis(
 
 - epigen:
 
-  logical; a toggle of TRUE/FALSE if epigenetics data is desired.
-  Loading epigenetic data files is through AWS and is very slow due to
-  file sizes.
+  logical; a toggle of TRUE/FALSE if epigenetics data is desired. The
+  epigenomics tables are not shipped in the package; they are downloaded
+  from the public c2.0 release on the MoTrPAC CloudFront distribution at
+  run time. No credentials are needed, but downloads are not cached and
+  are slow due to file sizes.
+
+- repo_local_dir:
+
+  Deprecated and ignored. Epigenomics files are no longer downloaded to
+  a local cache; supplying it only prints a message.
 
 - combine_with_featgene:
 
@@ -46,6 +55,15 @@ load_differential_analysis(
 - verbose:
 
   logical; whether or not to display messages for some warnings.
+
+- load_clinical:
+
+  logical; whether to include the clinical chemistry omes
+  ([`clinical_ome_list()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/clinical_ome_list.md):
+  `"prot-clinical"` and `"metab-t-clinical"`). `FALSE` by default, so
+  `"all"` returns the research omes and nothing changes for callers
+  written before v2.0 split clinical chemistry out. Set `TRUE` to
+  include them; they are dropped even when named unless it is set.
 
 ## Value
 
@@ -59,11 +77,15 @@ possess the following columns:
 
 - assay:
 
-  factor; the ome.
+  factor; the assay family, not the platform. Every metabolomics table
+  reads `"metab"` — clinical chemistry included — so `assay` alone does
+  not separate `metab-t-clinical` from the research platforms, and five
+  analytes (Cortisol, Glucose, Glycerol, KET, NEFA) exist on both.
+  Include `platform` in any key that has to tell them apart.
 
 - platform:
 
-  factor; (metabolomics only) metabolomics platform.
+  factor; (metabolomics only) the metabolomics platform.
 
 - full_model:
 
@@ -96,17 +118,25 @@ possess the following columns:
 
   numeric; difference between the group means in the contrast.
 
-- CI.L:
+- CI.L_calculated:
 
-  numeric; lower confidence limit.
+  numeric; lower bound of the 95\\ interval on `logFC`, computed as
+  `logFC - (logFC / t) * qt(0.975, df)` against that contrast's own
+  residual degrees of freedom.
 
-- CI.R:
+- CI.R_calculated:
 
-  numeric; upper confidence limit.
+  numeric; upper bound of the same interval. The pair is named
+  `_calculated` to keep it distinct from `topTable`'s `CI.L`/`CI.R`,
+  which these tables do not carry: for a `dream` fit those bound every
+  contrast by the first contrast's degrees of freedom.
 
 - degrees_of_freedom:
 
-  numeric; degrees of freedom.
+  numeric; the per-feature residual degrees of freedom used to shrink
+  that feature's variance. Note this is NOT the degrees of freedom the
+  p-value was computed from, which is the per-contrast Satterthwaite
+  value plus the prior; p-values cannot be recomputed from this column.
 
 - logLik:
 
@@ -147,9 +177,10 @@ Tyler Sagendorf Christopher Jin
 ``` r
 DA_list <- load_differential_analysis() # default behavior
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 
 # Structure of a single object
@@ -166,10 +197,10 @@ str(DA_list[["adipose"]][["prot-pr"]])
 #>  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 6 6 6 6 6 6 6 6 6 6 ...
 #>  $ feature_id        : chr  "O00287" "Q8TE02" "Q8NHG8" "P10912" ...
 #>  $ logFC             : num  0.74 0.578 0.609 -0.857 -0.71 ...
-#>  $ CI.L              : num  0.533 0.414 0.463 -1.087 -0.933 ...
-#>  $ CI.R              : num  0.946 0.742 0.756 -0.627 -0.487 ...
-#>  $ degrees_of_freedom: num  30.3 19.5 21.2 19.4 12.7 ...
-#>  $ logLik            : num  -15.5 -20.1 -40.5 -32.2 -32.7 ...
+#>  $ CI.L_calculated   : num  0.533 0.414 0.463 -1.087 -0.933 ...
+#>  $ CI.R_calculated   : num  0.946 0.742 0.756 -0.627 -0.487 ...
+#>  $ degrees_of_freedom: num  27 24 16.1 22.7 24 ...
+#>  $ logLik            : num  11.02 15.87 20.89 2.42 6.32 ...
 #>  $ t                 : num  7.31 7.21 8.75 -7.73 -6.52 ...
 #>  $ AveExpr           : num  0.0188 -1.1554 -0.2189 -0.205 -0.5905 ...
 #>  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...
@@ -190,10 +221,6 @@ names(DA_list)
 
 # Include epigen data
 if (FALSE) { # \dontrun{
-repo_local_dir <- "path/to/some/directory"
-DA_list <- load_differential_analysis(
-  repo_local_dir = repo_local_dir,
-  epigen = TRUE
-)
+DA_list <- load_differential_analysis(epigen = TRUE)
 } # }
 ```

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,12 +122,13 @@ available.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ome_available_list.html">ome_available_list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "prot-ol"              "prot-ph"              "prot-pr"             </span></span>
-<span><span class="co">#&gt;  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     </span></span>
-<span><span class="co">#&gt;  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      </span></span>
-<span><span class="co">#&gt; [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       </span></span>
-<span><span class="co">#&gt; [13] "metab-t-amines"       "metab-t-conv"         "metab-t-imm-crt"     </span></span>
-<span><span class="co">#&gt; [16] "metab-t-oxylipneg"    "metab-t-tca"          "metab-t-nuc"         </span></span>
-<span><span class="co">#&gt; [19] "metab-t-acoa"         "metab-t-ka"           "metab-meta-reg"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [4] "prot-clinical"        "transcript-rna-seq"   "epigen-methylcap-seq"</span></span>
+<span><span class="co">#&gt;  [7] "epigen-atac-seq"      "metab-u-hilicpos"     "metab-u-ionpneg"     </span></span>
+<span><span class="co">#&gt; [10] "metab-u-lrpneg"       "metab-u-lrppos"       "metab-u-rpneg"       </span></span>
+<span><span class="co">#&gt; [13] "metab-u-rppos"        "metab-t-amines"       "metab-t-conv"        </span></span>
+<span><span class="co">#&gt; [16] "metab-t-imm-crt"      "metab-t-oxylipneg"    "metab-t-tca"         </span></span>
+<span><span class="co">#&gt; [19] "metab-t-nuc"          "metab-t-acoa"         "metab-t-ka"          </span></span>
+<span><span class="co">#&gt; [22] "metab-t-clinical"</span></span></code></pre></div>
 <p>To see only the metabolomics platforms:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/metab_only_list.html">metab_only_list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -158,6 +159,13 @@ should <strong>not</strong> be accessed directly. Instead, use the
 data are stored as <code>*_SUM_STATS</code> objects (e.g.,
 <code>MUSCLE_PROT_PR_SUM_STATS</code>). Use
 <code><a href="../reference/load_summary_stats.html">load_summary_stats()</a></code> to access these.</p>
+<p>There is one object per tissue and assay, named the way the
+<code>*_DA</code> objects are named. The research metabolomics platforms
+are stacked into a single <code>{TISSUE}_METAB_SUM_STATS</code> per
+tissue carrying <code>assay = "metab"</code> and a <code>platform</code>
+column, matching <code>{TISSUE}_METAB_DA</code>.
+<code>BLOOD_METAB_T_CLINICAL_SUM_STATS</code> is clinical chemistry and
+stays its own object.</p>
 </div>
 <div class="section level3">
 <h3 id="contrast-converter">2.3 Contrast Converter<a class="anchor" aria-label="anchor" href="#contrast-converter"></a>
@@ -477,9 +485,10 @@ colors</li>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DA_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_differential_analysis.html">load_differential_analysis</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span></code></pre></div>
 <p>This returns a nested list organized by tissue (top level) and ome
 (second level):</p>
@@ -504,7 +513,7 @@ including <code>tissue</code>, <code>assay</code>,
 <code>p_value</code>, <code>adj_p_value</code>, and more.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">DA_list</span><span class="op">[[</span><span class="st">"muscle"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"prot-pr"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   130137 obs. of  20 variables:</span></span>
+<span><span class="co">#&gt; Classes 'data.table' and 'data.frame':   130431 obs. of  20 variables:</span></span>
 <span><span class="co">#&gt;  $ tissue            : chr  "muscle" "muscle" "muscle" "muscle" ...</span></span>
 <span><span class="co">#&gt;  $ assay             : chr  "prot-pr" "prot-pr" "prot-pr" "prot-pr" ...</span></span>
 <span><span class="co">#&gt;  $ full_model        : Factor w/ 1 level "~ 0 + group_timepoint +  BMI + calculatedAge + Sex + (1 | pid)": 1 1 1 1 1 1 1 1 1 1 ...</span></span>
@@ -514,17 +523,17 @@ including <code>tissue</code>, <code>assay</code>,
 <span><span class="co">#&gt;  $ contrast_category : Factor w/ 6 levels "EE-CON","RE-CON",..: 1 1 1 1 1 1 1 1 1 1 ...</span></span>
 <span><span class="co">#&gt;  $ randomGroupCode   : chr  "ADUEndur" "ADUEndur" "ADUEndur" "ADUEndur" ...</span></span>
 <span><span class="co">#&gt;  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 5 5 5 5 5 5 5 5 5 5 ...</span></span>
-<span><span class="co">#&gt;  $ feature_id        : chr  "P46976-2" "Q9H3M7" "Q9NW81" "Q9Y3B4" ...</span></span>
-<span><span class="co">#&gt;  $ logFC             : num  0.419 -0.412 -0.327 0.138 0.346 ...</span></span>
-<span><span class="co">#&gt;  $ CI.L              : num  0.278 -0.6027 -0.5251 0.0533 0.1326 ...</span></span>
-<span><span class="co">#&gt;  $ CI.R              : num  0.56 -0.222 -0.13 0.223 0.56 ...</span></span>
-<span><span class="co">#&gt;  $ degrees_of_freedom: num  293 248 203 126 116 ...</span></span>
-<span><span class="co">#&gt;  $ logLik            : num  -310 -371 -414 -326 -295 ...</span></span>
-<span><span class="co">#&gt;  $ t                 : num  5.86 -4.27 -3.27 3.21 3.21 ...</span></span>
-<span><span class="co">#&gt;  $ AveExpr           : num  0.404 -0.785 0.471 -0.359 -0.404 ...</span></span>
-<span><span class="co">#&gt;  $ z.std             : num  5.66 -4.19 -3.21 3.17 3.14 ...</span></span>
-<span><span class="co">#&gt;  $ p_value           : num  1.55e-08 2.74e-05 1.32e-03 1.50e-03 1.72e-03 ...</span></span>
-<span><span class="co">#&gt;  $ adj_p_value       : num  9.62e-05 8.50e-02 1.00 1.00 1.00 ...</span></span>
+<span><span class="co">#&gt;  $ feature_id        : chr  "P46976-2" "Q9H3M7" "Q9Y3B4" "Q9NW81" ...</span></span>
+<span><span class="co">#&gt;  $ logFC             : num  0.42 -0.406 0.14 -0.33 -0.216 ...</span></span>
+<span><span class="co">#&gt;  $ CI.L_calculated   : num  0.2786 -0.5962 0.0563 -0.5295 -0.3485 ...</span></span>
+<span><span class="co">#&gt;  $ CI.R_calculated   : num  0.5605 -0.2168 0.2246 -0.1299 -0.0828 ...</span></span>
+<span><span class="co">#&gt;  $ degrees_of_freedom: num  217 270 333 199 221 ...</span></span>
+<span><span class="co">#&gt;  $ logLik            : num  -15.96 -72.42 237.89 -9.56 15.37 ...</span></span>
+<span><span class="co">#&gt;  $ t                 : num  5.86 -4.22 3.29 -3.26 -3.2 ...</span></span>
+<span><span class="co">#&gt;  $ AveExpr           : num  0.406 -0.783 -0.359 0.471 0.752 ...</span></span>
+<span><span class="co">#&gt;  $ z.std             : num  5.66 -4.15 3.25 -3.2 -3.16 ...</span></span>
+<span><span class="co">#&gt;  $ p_value           : num  1.53e-08 3.38e-05 1.15e-03 1.36e-03 1.58e-03 ...</span></span>
+<span><span class="co">#&gt;  $ adj_p_value       : num  9.48e-05 1.05e-01 9.98e-01 9.98e-01 9.98e-01 ...</span></span>
 <span><span class="co">#&gt;  - attr(*, ".internal.selfref")=&lt;pointer: (nil)&gt; </span></span>
 <span><span class="co">#&gt;  - attr(*, "sorted")= chr [1:4] "full_model" "contrast" "p_value" "feature_id"</span></span></code></pre></div>
 </div>
@@ -544,12 +553,13 @@ including <code>tissue</code>, <code>assay</code>,
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">DA_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_differential_analysis.html">load_differential_analysis</a></span><span class="op">(</span>single_matrix <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span></span>
 <span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
 <span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
-<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CV object for the relevant</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
 <span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">DA_matrix</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2212065      21</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 2216931      21</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="include-gene-annotations">3.4 Include gene annotations<a class="anchor" aria-label="anchor" href="#include-gene-annotations"></a>
@@ -568,7 +578,7 @@ step:</p>
 <span><span class="co">#&gt;  [7] "contrast_category"  "randomGroupCode"    "Timepoint"         </span></span>
 <span><span class="co">#&gt; [10] "feature_id"         "entrez_gene"        "gene_symbol"       </span></span>
 <span><span class="co">#&gt; [13] "ensembl_gene"       "uniprot"            "logFC"             </span></span>
-<span><span class="co">#&gt; [16] "CI.L"               "CI.R"               "degrees_of_freedom"</span></span>
+<span><span class="co">#&gt; [16] "CI.L_calculated"    "CI.R_calculated"    "degrees_of_freedom"</span></span>
 <span><span class="co">#&gt; [19] "logLik"             "t"                  "AveExpr"           </span></span>
 <span><span class="co">#&gt; [22] "z.std"              "p_value"            "adj_p_value"</span></span></code></pre></div>
 </div>
@@ -612,8 +622,10 @@ standard deviations for normalized expression data.</p>
 <code class="sourceCode R"><span><span class="co">## Load all summary statistics</span></span>
 <span><span class="va">sum_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Load metabolomics only</span></span>
+<span><span class="co">## Load metabolomics only. One table per tissue, every platform in it,</span></span>
+<span><span class="co">## with the platform in the `platform` column.</span></span>
 <span><span class="va">metab_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span>selected_omes <span class="op">=</span> <span class="st">"metab"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">metab_stats</span><span class="op">[[</span><span class="st">"blood"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"metab"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"platform"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Load as a single combined table</span></span>
 <span><span class="va">adipose_rna</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/load_summary_stats.html">load_summary_stats</a></span><span class="op">(</span></span>
@@ -648,9 +660,22 @@ highlighted when the adjusted p-value falls below a threshold.</p>
 <span>  color_time_labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_legend <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
+<span><span class="co">#&gt; You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span></span>
+<span><span class="co">#&gt; Please remember that the lowest CV Metabolite is chosen and the</span></span>
+<span><span class="co">#&gt;             relevant refmet name is used. If you're not able to find your desired</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
+<span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="co">#&gt; DA is loaded automatically using requested settings.</span></span>
 <span><span class="co">#&gt;               If any metab platform was requested, the metab features will default to</span></span>
 <span><span class="co">#&gt;               any metabolomics platform measured.</span></span>
+<span><span class="co">#&gt; Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n &lt; 3 for any group are not included here.</span></span>
+<span><span class="co">#&gt; Epigenetics summary stats are trimmed to only show significant features due to file size limitations</span></span>
+<span><span class="co">#&gt; Metabolomics platforms are returned stacked in one table per tissue, with the</span></span>
+<span><span class="co">#&gt;             platform in the `platform` column and `assay` reading "metab", matching the</span></span>
+<span><span class="co">#&gt;             differential analysis. Please remember that the lowest CV metabolite is chosen and</span></span>
+<span><span class="co">#&gt;             the relevant refmet name is used. If you're not able to find your desired</span></span>
+<span><span class="co">#&gt;             metabolite, look through the METABOLOMICS_CVS object for the relevant</span></span>
+<span><span class="co">#&gt;             refmet/feature name.</span></span>
 <span><span class="co">#&gt; Scale for <span style="color: #00BB00;">fill</span> is already present.</span></span>
 <span><span class="co">#&gt; Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span></span>
 <span><span class="co">#&gt; Saved plot not requested or multi-faceted plot detected.</span></span>
@@ -731,8 +756,10 @@ a pathway</li>
 <h3 id="enrichment-heatmaps">5.3 Enrichment Heatmaps<a class="anchor" aria-label="anchor" href="#enrichment-heatmaps"></a>
 </h3>
 <p><code><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> creates bubble heatmaps from
-CAMERA-PR or PTM-SEA results, showing enrichment z-scores with
-significance bubbles.</p>
+CAMERA-PR results (<code>CAMERA_RESULTS</code> or the output of
+<code><a href="../reference/run_cameraPR.html">run_cameraPR()</a></code>), showing enrichment z-scores with
+significance bubbles. It also takes <code>PTMSEA_RESULTS</code>, which
+shares that layout, and plots the PTM-SEA NES instead.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Note: filename is required — the heatmap is saved directly to PDF.</span></span>
 <span><span class="co"># Using pre-computed CAMERA results</span></span>
@@ -752,20 +779,26 @@ significance bubbles.</p>
 <span>  selected_tissues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adipose"</span>, <span class="st">"blood"</span><span class="op">)</span>,</span>
 <span>  selected_ome <span class="op">=</span> <span class="st">"transcript-rna-seq"</span>,</span>
 <span>  filename <span class="op">=</span> <span class="st">"selected_pathways.pdf"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># PTM-SEA results (prot-ph, muscle and adipose)</span></span>
+<span><span class="fu"><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap</a></span><span class="op">(</span></span>
+<span>  x <span class="op">=</span> <span class="va">PTMSEA_RESULTS</span>,</span>
+<span>  selected_tissues <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"adipose"</span>, <span class="st">"muscle"</span><span class="op">)</span>,</span>
+<span>  selected_ome <span class="op">=</span> <span class="st">"prot-ph"</span>,</span>
+<span>  filename <span class="op">=</span> <span class="st">"ptmsea_heatmap.pdf"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="cluster-trajectory-plots">5.4 Cluster Trajectory Plots<a class="anchor" aria-label="anchor" href="#cluster-trajectory-plots"></a>
 </h3>
-<p>After running fuzzy c-means clustering, use
-<code><a href="../reference/plot_cmeans.html">plot_cmeans()</a></code> to visualize cluster trajectories as line
-plots colored by membership probability.</p>
+<p><code><a href="../reference/plot_cmeans.html">plot_cmeans()</a></code> draws the feature trajectories of each
+fuzzy c-means cluster, colored by membership probability, with the
+centroid in black.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Note: filename is required — the plot is saved directly to PDF.</span></span>
-<span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span>selected_tissues <span class="op">=</span> <span class="st">"adipose"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="fu"><a href="../reference/plot_cmeans.html">plot_cmeans</a></span><span class="op">(</span></span>
-<span>  FCM <span class="op">=</span> <span class="va">FCM</span><span class="op">[[</span><span class="st">"adipose"</span><span class="op">]</span><span class="op">]</span>,</span>
+<span>  FCM <span class="op">=</span> <span class="va">FCM_CLUSTERS</span><span class="op">[[</span><span class="st">"adipose"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>  filename <span class="op">=</span> <span class="st">"adipose_clusters.pdf"</span>,</span>
 <span>  min_membership <span class="op">=</span> <span class="fl">0.3</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">4</span></span>
@@ -851,21 +884,19 @@ dataset (default: 0.7)</li>
 <div class="section level2">
 <h2 id="fuzzy-c-means-clustering">7. Fuzzy C-Means Clustering<a class="anchor" aria-label="anchor" href="#fuzzy-c-means-clustering"></a>
 </h2>
-<p><code><a href="../reference/run_cmeans.html">run_cmeans()</a></code> performs fuzzy c-means (FCM) clustering on
-z-score matrices from differential analysis, grouping features with
-similar temporal response patterns.</p>
+<p><code>FCM_CLUSTERS</code> holds pre-computed fuzzy c-means (FCM)
+clustering of the differential analysis z-score matrices, grouping
+features with similar temporal response patterns. It is a named list
+with one <code>fclust</code> object per tissue.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Run with defaults (13 clusters for adipose/blood, 12 for muscle)</span></span>
-<span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">FCM</span><span class="op">)</span>  <span class="co"># one element per tissue</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">FCM_CLUSTERS</span><span class="op">)</span>  <span class="co"># one element per tissue</span></span></code></pre></div>
+<p><code><a href="../reference/run_cmeans.html">run_cmeans()</a></code> reruns the clustering. With the defaults
+(13 clusters for adipose, 12 for blood and muscle, both modalities) it
+uses the settings that built <code>FCM_CLUSTERS</code>.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Explore optimal cluster numbers</span></span>
-<span><span class="va">FCM_explore</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span></span>
-<span>  selected_tissues <span class="op">=</span> <span class="st">"adipose"</span>,</span>
-<span>  num_clusters_adipose <span class="op">=</span> <span class="fl">3</span><span class="op">:</span><span class="fl">14</span></span>
-<span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Run for a single modality</span></span>
+<span><span class="co"># A single modality</span></span>
 <span><span class="va">FCM_endur</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span></span>
 <span>  selected_tissues <span class="op">=</span> <span class="st">"muscle"</span>,</span>
 <span>  modality <span class="op">=</span> <span class="st">"Endur"</span></span>
@@ -874,8 +905,6 @@ similar temporal response patterns.</p>
 pre-exercise zeros) before clustering. Clusters are reordered by
 hierarchical clustering of centroids so that similar trajectories appear
 adjacent.</p>
-<p>Pre-computed clustering results are available as
-<code>FCM_CLUSTERS</code>.</p>
 <div class="section level3">
 <h3 id="cluster-level-enrichment-with-camera-pr">7.1 Cluster-Level Enrichment with CAMERA-PR<a class="anchor" aria-label="anchor" href="#cluster-level-enrichment-with-camera-pr"></a>
 </h3>
@@ -883,8 +912,7 @@ adjacent.</p>
 signatures localize to specific cluster centroids using modified signed
 rank tests.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">cluster_camera</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cluster_cameraPR.html">run_cluster_cameraPR</a></span><span class="op">(</span>FCM <span class="op">=</span> <span class="va">FCM</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">cluster_camera</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cluster_cameraPR.html">run_cluster_cameraPR</a></span><span class="op">(</span>FCM <span class="op">=</span> <span class="va">FCM_CLUSTERS</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cluster_camera</span><span class="op">)</span></span></code></pre></div>
 <p>Pre-computed results: <code>FCM_CAMERA</code>.</p>
 </div>
@@ -895,9 +923,8 @@ rank tests.</p>
 identifying over-represented molecular signatures among features with
 high membership probabilities.</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">cluster_ora</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cluster_ORA.html">run_cluster_ORA</a></span><span class="op">(</span></span>
-<span>  FCM <span class="op">=</span> <span class="va">FCM</span>,</span>
+<code class="sourceCode R"><span><span class="va">cluster_ora</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cluster_ORA.html">run_cluster_ORA</a></span><span class="op">(</span></span>
+<span>  FCM <span class="op">=</span> <span class="va">FCM_CLUSTERS</span>,</span>
 <span>  min_prob <span class="op">=</span> <span class="fl">0.3</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cluster_ora</span><span class="op">)</span></span></code></pre></div>
@@ -943,23 +970,13 @@ functions:</p>
 <span>  filename <span class="op">=</span> <span class="st">"muscle_prot_enrichment.pdf"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 5. Perform clustering</span></span>
-<span><span class="va">FCM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cmeans.html">run_cmeans</a></span><span class="op">(</span>selected_tissues <span class="op">=</span> <span class="st">"muscle"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 6. Visualize clusters</span></span>
-<span><span class="fu"><a href="../reference/plot_cmeans.html">plot_cmeans</a></span><span class="op">(</span></span>
-<span>  FCM <span class="op">=</span> <span class="va">FCM</span><span class="op">[[</span><span class="st">"muscle"</span><span class="op">]</span><span class="op">]</span>,</span>
-<span>  filename <span class="op">=</span> <span class="st">"muscle_clusters.pdf"</span>,</span>
-<span>  min_membership <span class="op">=</span> <span class="fl">0.3</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># 7. Cluster-level enrichment</span></span>
+<span><span class="co"># 5. Cluster-level enrichment on the pre-computed clusters</span></span>
 <span><span class="va">cluster_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_cluster_cameraPR.html">run_cluster_cameraPR</a></span><span class="op">(</span></span>
-<span>  FCM <span class="op">=</span> <span class="va">FCM</span>,</span>
+<span>  FCM <span class="op">=</span> <span class="va">FCM_CLUSTERS</span>,</span>
 <span>  selected_tissues <span class="op">=</span> <span class="st">"muscle"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># 8. Visualize cluster enrichment</span></span>
+<span><span class="co"># 6. Visualize cluster enrichment</span></span>
 <span><span class="fu"><a href="../reference/plot_cluster_enrichment.html">plot_cluster_enrichment</a></span><span class="op">(</span></span>
 <span>  x <span class="op">=</span> <span class="va">cluster_res</span>,</span>
 <span>  selected_ome <span class="op">=</span> <span class="st">"prot-pr"</span>,</span>
@@ -975,7 +992,7 @@ functions:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">#&gt; Running under: Ubuntu 24.04.4 LTS</span></span>
+<span><span class="co">#&gt; Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Matrix products: default</span></span>
 <span><span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -995,39 +1012,45 @@ functions:</p>
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt; [1] MotrpacHumanPreSuspensionAnalysis_0.2.4</span></span>
+<span><span class="co">#&gt; [1] MotrpacHumanPreSuspensionAnalysis_2.0.8</span></span>
 <span><span class="co">#&gt; [2] DynDoc_1.90.0                          </span></span>
 <span><span class="co">#&gt; [3] widgetTools_1.90.0                     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        </span></span>
-<span><span class="co">#&gt;  [4] rjson_0.2.23          xfun_0.60             bslib_0.11.0         </span></span>
-<span><span class="co">#&gt;  [7] ggplot2_4.0.3         GlobalOptions_0.1.4   rstatix_1.0.0        </span></span>
-<span><span class="co">#&gt; [10] Biobase_2.72.0        vctrs_0.7.3           tools_4.6.1          </span></span>
-<span><span class="co">#&gt; [13] generics_0.1.4        stats4_4.6.1          parallel_4.6.1       </span></span>
-<span><span class="co">#&gt; [16] tibble_3.3.1          cluster_2.1.8.2       pkgconfig_2.0.3      </span></span>
-<span><span class="co">#&gt; [19] data.table_1.18.4     RColorBrewer_1.1-3    S7_0.2.2             </span></span>
-<span><span class="co">#&gt; [22] desc_1.4.3            S4Vectors_0.50.1      lifecycle_1.0.5      </span></span>
-<span><span class="co">#&gt; [25] stringr_1.6.0         compiler_4.6.1        farver_2.1.2         </span></span>
-<span><span class="co">#&gt; [28] textshaping_1.0.5     codetools_0.2-20      ComplexHeatmap_2.28.0</span></span>
-<span><span class="co">#&gt; [31] carData_3.0-6         clue_0.3-68           htmltools_0.5.9      </span></span>
-<span><span class="co">#&gt; [34] sass_0.4.10           yaml_2.3.12           Formula_1.2-5        </span></span>
-<span><span class="co">#&gt; [37] car_3.1-5             pkgdown_2.2.1         pillar_1.11.1        </span></span>
-<span><span class="co">#&gt; [40] ggpubr_1.0.0          crayon_1.5.3          jquerylib_0.1.4      </span></span>
-<span><span class="co">#&gt; [43] tidyr_1.3.2           cachem_1.1.0          iterators_1.0.14     </span></span>
-<span><span class="co">#&gt; [46] abind_1.4-8           foreach_1.5.2         tidyselect_1.2.1     </span></span>
-<span><span class="co">#&gt; [49] digest_0.6.39         stringi_1.8.7         dplyr_1.2.1          </span></span>
-<span><span class="co">#&gt; [52] purrr_1.2.2           labeling_0.4.3        latex2exp_0.9.8      </span></span>
-<span><span class="co">#&gt; [55] fastmap_1.2.0         grid_4.6.1            colorspace_2.1-3     </span></span>
-<span><span class="co">#&gt; [58] cli_3.6.6             magrittr_2.0.5        utf8_1.2.6           </span></span>
-<span><span class="co">#&gt; [61] broom_1.0.13          withr_3.0.3           backports_1.5.1      </span></span>
-<span><span class="co">#&gt; [64] scales_1.4.0          rmarkdown_2.31        matrixStats_1.5.0    </span></span>
-<span><span class="co">#&gt; [67] otel_0.2.0            ggsignif_0.6.4        ragg_1.5.2           </span></span>
-<span><span class="co">#&gt; [70] png_0.1-9             GetoptLong_1.1.1      tkWidgets_1.90.0     </span></span>
-<span><span class="co">#&gt; [73] evaluate_1.0.5        knitr_1.51            IRanges_2.46.0       </span></span>
-<span><span class="co">#&gt; [76] doParallel_1.0.17     rlang_1.3.0           glue_1.8.1           </span></span>
-<span><span class="co">#&gt; [79] BiocGenerics_0.58.1   jsonlite_2.0.0        R6_2.6.1             </span></span>
-<span><span class="co">#&gt; [82] Mfuzz_2.72.0          systemfonts_1.3.2     fs_2.1.0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [1] tidyselect_1.2.1      viridisLite_0.4.3     dplyr_1.2.1          </span></span>
+<span><span class="co">#&gt;   [4] farver_2.1.2          viridis_0.6.5         S7_0.2.2             </span></span>
+<span><span class="co">#&gt;   [7] fastmap_1.2.0         latex2exp_0.9.8       MotrpacBicQC_2.0.0   </span></span>
+<span><span class="co">#&gt;  [10] digest_0.6.39         timechange_0.4.0      lifecycle_1.0.5      </span></span>
+<span><span class="co">#&gt;  [13] Mfuzz_2.72.0          cluster_2.1.8.2       magrittr_2.0.5       </span></span>
+<span><span class="co">#&gt;  [16] compiler_4.6.1        progress_1.2.3        rlang_1.3.0          </span></span>
+<span><span class="co">#&gt;  [19] tkWidgets_1.90.0      sass_0.4.10           tools_4.6.1          </span></span>
+<span><span class="co">#&gt;  [22] utf8_1.2.6            yaml_2.3.12           data.table_1.18.6.1  </span></span>
+<span><span class="co">#&gt;  [25] knitr_1.52            ggsignif_0.6.4        prettyunits_1.2.0    </span></span>
+<span><span class="co">#&gt;  [28] labeling_0.4.3        xml2_1.6.0            RColorBrewer_1.1-3   </span></span>
+<span><span class="co">#&gt;  [31] abind_1.4-8           withr_3.0.3           purrr_1.2.2          </span></span>
+<span><span class="co">#&gt;  [34] BiocGenerics_0.58.1   desc_1.4.3            grid_4.6.1           </span></span>
+<span><span class="co">#&gt;  [37] stats4_4.6.1          ggpubr_1.0.0          colorspace_2.1-3     </span></span>
+<span><span class="co">#&gt;  [40] ggplot2_4.0.3         scales_1.4.0          iterators_1.0.14     </span></span>
+<span><span class="co">#&gt;  [43] cli_3.6.6             rmarkdown_2.32        crayon_1.5.3         </span></span>
+<span><span class="co">#&gt;  [46] ragg_1.5.2            generics_0.1.4        otel_0.2.0           </span></span>
+<span><span class="co">#&gt;  [49] tzdb_0.5.0            httr_1.4.9            rjson_0.2.23         </span></span>
+<span><span class="co">#&gt;  [52] cachem_1.1.0          stringr_1.6.0         parallel_4.6.1       </span></span>
+<span><span class="co">#&gt;  [55] matrixStats_1.5.0     vctrs_0.7.3           jsonlite_2.0.0       </span></span>
+<span><span class="co">#&gt;  [58] carData_3.0-6         naniar_1.1.0          car_3.1-5            </span></span>
+<span><span class="co">#&gt;  [61] hms_1.1.4             IRanges_2.46.0        GetoptLong_1.1.1     </span></span>
+<span><span class="co">#&gt;  [64] S4Vectors_0.50.3      visdat_0.6.0          rstatix_1.1.0        </span></span>
+<span><span class="co">#&gt;  [67] Formula_1.2-6         clue_0.3-68           systemfonts_1.3.2    </span></span>
+<span><span class="co">#&gt;  [70] foreach_1.5.2         tidyr_1.3.2           jquerylib_0.1.4      </span></span>
+<span><span class="co">#&gt;  [73] glue_1.8.1            pkgdown_2.2.1         codetools_0.2-20     </span></span>
+<span><span class="co">#&gt;  [76] lubridate_1.9.5       stringi_1.8.9         shape_1.4.6.1        </span></span>
+<span><span class="co">#&gt;  [79] gtable_0.3.6          ComplexHeatmap_2.28.0 tibble_3.3.1         </span></span>
+<span><span class="co">#&gt;  [82] pillar_1.11.1         htmltools_0.5.9       circlize_0.4.18      </span></span>
+<span><span class="co">#&gt;  [85] R6_2.6.1              textshaping_1.0.5     doParallel_1.0.17    </span></span>
+<span><span class="co">#&gt;  [88] evaluate_1.0.5        Biobase_2.72.0        readr_2.2.0          </span></span>
+<span><span class="co">#&gt;  [91] png_0.1-9             backports_1.5.1       gridtext_0.1.6       </span></span>
+<span><span class="co">#&gt;  [94] broom_1.0.13          bslib_0.12.0          Rcpp_1.1.2           </span></span>
+<span><span class="co">#&gt;  [97] gridExtra_2.3.1       xfun_0.61             fs_2.1.0             </span></span>
+<span><span class="co">#&gt; [100] forcats_1.0.1         pkgconfig_2.0.3       GlobalOptions_0.1.4</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

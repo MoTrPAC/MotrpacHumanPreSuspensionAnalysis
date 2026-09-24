@@ -9,7 +9,7 @@ identifiers."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,11 +51,9 @@ identifiers.</p>
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A sorted <code>data.table</code> with 1,958,568 rows and 11 columns:</p>
+    <p>A sorted <code>data.table</code> with 1,920,618 rows and 12 columns:</p>
 <dl><dt>assay</dt>
-<dd><p>factor; the assay (ome). One of "epigen-atac-seq",
-"epigen-methylcap-seq", "metab", "prot-ol", "prot-ph", "prot-pr", or
-"transcript-rna-seq".</p></dd>
+<dd><p>character; the assay (ome). One of "epigen-atac-seq", "epigen-methylcap-seq", "metab", "prot-clinical", "prot-ol", "prot-ph", "prot-pr", or "transcript-rna-seq".</p></dd>
 
 <dt>feature_id</dt>
 <dd><p>factor; the feature identifier.</p></dd>
@@ -69,29 +67,53 @@ identifiers.</p>
 <dt>ensembl_gene</dt>
 <dd><p>factor; ensembl gene identifier.</p></dd>
 
-<dt>custom_annotation</dt>
-<dd><p>factor; custom feature annotation. Only applicable
-if assay is "epigen-atac-seq" or "epigen-methylcap-seq".</p></dd>
-
-<dt>relationship_to_gene</dt>
-<dd><p>numeric; only applicable if assay is
-"epigen-atac-seq" or "epigen-methylcap-seq".</p></dd>
-
 <dt>uniprot</dt>
 <dd><p>factor; UniProt identifier.</p></dd>
 
 <dt>refmet_name</dt>
-<dd><p>factor; RefMet metabolite identifier.</p></dd>
+<dd><p>factor; RefMet metabolite name, from the pinned RefMet snapshot.</p></dd>
+
+<dt>refmet_id</dt>
+<dd><p>factor; RefMet metabolite identifier, from the pinned RefMet snapshot.</p></dd>
 
 <dt>kegg_id</dt>
-<dd><p>factor; KEGG identifier.</p></dd>
+<dd><p>factor; KEGG identifier, from the pinned RefMet/KEGG snapshot.</p></dd>
+
+<dt>custom_annotation</dt>
+<dd><p>factor; the region of the assigned gene the peak falls in — one of "Promoter (&lt;=1kb)", "Promoter (1-2kb)", "5' UTR", "3' UTR", "Exon", "Intron", "Overlaps Gene", "Upstream (&lt;5kb)", "Downstream (&lt;5kb)" or "Distal Intergenic". <code>NA</code> unless assay is "epigen-atac-seq" or "epigen-methylcap-seq".</p></dd>
+
+<dt>relationship_to_gene</dt>
+<dd><p>numeric; the signed distance in base pairs from the peak to the assigned gene, <code>0</code> where the peak overlaps it. <code>NA</code> unless assay is "epigen-atac-seq" or "epigen-methylcap-seq".</p></dd>
 
 <dt>flanking_sequence</dt>
-<dd><p>factor; flanking sequence. Only applicable if
-assay is "prot-ph".</p></dd>
+<dd><p>factor; flanking sequence. Only applicable if assay is "prot-ph".</p></dd>
 
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
+    <p>Built by Stage 1 step 07 of the motrpac-human-presuspension-repro pipeline. The
+<code>refmet_name</code>, <code>refmet_id</code> and <code>kegg_id</code> columns come from a
+pinned offline RefMet/KEGG snapshot rather than a live Metabolomics Workbench
+query, so the mapping does not move with those databases. The peak annotations in
+<code>custom_annotation</code> and <code>relationship_to_gene</code> are produced by
+<code>ChIPseeker</code> against the pinned Ensembl v105 <code>TxDb</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p><code>custom_annotation</code> and <code>relationship_to_gene</code> describe where an
+ATAC-seq or MethylCap-seq peak sits relative to the gene it was assigned to. Without
+them a peak in a promoter and a peak 40 kb into an intron are indistinguishable once
+mapped, since both carry only the gene. Both are derived from the peak coordinates in
+the <code>feature_id</code> rather than measured per tissue, so they take the same value in
+every tissue a peak appears in.</p>
+<p>Per-tissue measurements are deliberately not carried here. This table is keyed on
+<code>(assay, feature_id)</code> with no tissue column, so it could only hold a collapse
+across tissues. The phosphosite localization flag (<code>confident_site</code>) is the
+case in point: it was added in 2.0.3 and removed in 2.0.7 because muscle and adipose
+disagree on 859 of their 7,865 shared prot-ph sites. Read it per tissue from
+<code>*_PROT_PH_QC$feature_metadata</code> in <span class="pkg">MotrpacHumanPreSuspensionData</span>.</p>
+    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

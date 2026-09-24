@@ -11,7 +11,7 @@ differential analysis results."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,9 @@ differential analysis results.</p>
 <dl><dt id="arg-da-list">DA_list<a class="anchor" aria-label="anchor" href="#arg-da-list"></a></dt>
 <dd><p>list; a named list of <code>data.frame</code> objects, each
 containing differential analysis results for a specific tissue/assay
-combination. The list must be nested, with tissues at the top level and
-omes within tissues. If <code>NULL</code> (default), the differential analysis
+combination. The list is nested, with tissues at the top level and omes
+within tissues, or already flattened with names of the form
+<code>"tissue.assay"</code>. If <code>NULL</code> (default), the differential analysis
 results will be generated with
 <code><a href="load_differential_analysis.html">load_differential_analysis</a></code>.
 Unless wishing to analyze DA results that are not in

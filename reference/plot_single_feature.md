@@ -19,6 +19,7 @@ plot_single_feature(
   color_time_labels = FALSE,
   include_legend = TRUE,
   legend_position = "right",
+  repo_local_dir = NULL,
   verbose = TRUE,
   epigen = FALSE
 )
@@ -37,7 +38,11 @@ plot_single_feature(
 
 - selected_omes:
 
-  character; one of ome_available_list.
+  character; one of ome_available_list. The clinical chemistry omes in
+  [`clinical_ome_list()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/clinical_ome_list.md)
+  are plotted only when they are requested, either by name or through
+  `"all"`; asking for another ome no longer returns clinical chemistry
+  alongside it. `"metab"` does not imply `"metab-t-clinical"`.
 
 - p_level:
 
@@ -68,6 +73,12 @@ plot_single_feature(
 - legend_position:
 
   if include_legend == TRUE, position can be selected
+
+- repo_local_dir:
+
+  Deprecated and ignored; passed through to
+  [`load_differential_analysis`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_differential_analysis.md),
+  which prints a message if it is supplied.
 
 - verbose:
 

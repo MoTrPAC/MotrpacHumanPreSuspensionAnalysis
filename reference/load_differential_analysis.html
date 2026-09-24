@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,10 @@
 <span>  selected_tissues <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  single_matrix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  epigen <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  repo_local_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  combine_with_featgene <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  load_clinical <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -73,7 +75,16 @@
 
 
 <dt id="arg-epigen">epigen<a class="anchor" aria-label="anchor" href="#arg-epigen"></a></dt>
-<dd><p>logical; a toggle of TRUE/FALSE if epigenetics data is desired. Loading epigenetic data files is through AWS and is very slow due to file sizes.</p></dd>
+<dd><p>logical; a toggle of TRUE/FALSE if epigenetics data is desired.
+The epigenomics tables are not shipped in the package; they are downloaded
+from the public c2.0 release on the MoTrPAC CloudFront distribution at run
+time. No credentials are needed, but downloads are not cached and are slow
+due to file sizes.</p></dd>
+
+
+<dt id="arg-repo-local-dir">repo_local_dir<a class="anchor" aria-label="anchor" href="#arg-repo-local-dir"></a></dt>
+<dd><p>Deprecated and ignored. Epigenomics files are no longer
+downloaded to a local cache; supplying it only prints a message.</p></dd>
 
 
 <dt id="arg-combine-with-featgene">combine_with_featgene<a class="anchor" aria-label="anchor" href="#arg-combine-with-featgene"></a></dt>
@@ -83,6 +94,15 @@
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>logical; whether or not to display messages for some warnings.</p></dd>
+
+
+<dt id="arg-load-clinical">load_clinical<a class="anchor" aria-label="anchor" href="#arg-load-clinical"></a></dt>
+<dd><p>logical; whether to include the clinical chemistry omes
+(<code><a href="clinical_ome_list.html">clinical_ome_list()</a></code>: <code>"prot-clinical"</code> and
+<code>"metab-t-clinical"</code>). <code>FALSE</code> by default, so <code>"all"</code>
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set <code>TRUE</code> to include them; they
+are dropped even when named unless it is set.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -94,10 +114,15 @@ possess the following columns:</p>
 <dd><p>factor; the tissue.</p></dd>
 
 <dt>assay</dt>
-<dd><p>factor; the ome.</p></dd>
+<dd><p>factor; the assay family, not the platform. Every
+metabolomics table reads <code>"metab"</code> — clinical chemistry included —
+so <code>assay</code> alone does not separate <code>metab-t-clinical</code> from the
+research platforms, and five analytes (Cortisol, Glucose, Glycerol, KET,
+NEFA) exist on both. Include <code>platform</code> in any key that has to tell
+them apart.</p></dd>
 
 <dt>platform</dt>
-<dd><p>factor; (metabolomics only) metabolomics platform.</p></dd>
+<dd><p>factor; (metabolomics only) the metabolomics platform.</p></dd>
 
 <dt>full_model</dt>
 <dd><p>factor; full model containing predictors and any
@@ -126,14 +151,25 @@ phosphosites, transcripts, metabolites/lipids, peaks, or GpGs).</p></dd>
 <dd><p>numeric; difference between the group means in the
 contrast.</p></dd>
 
-<dt>CI.L</dt>
-<dd><p>numeric; lower confidence limit.</p></dd>
+<dt>CI.L_calculated</dt>
+<dd><p>numeric; lower bound of the 95\<!-- % confidence -->
+interval on <code>logFC</code>, computed as
+<code>logFC - (logFC / t) * qt(0.975, df)</code> against that contrast's own
+residual degrees of freedom.</p></dd>
 
-<dt>CI.R</dt>
-<dd><p>numeric; upper confidence limit.</p></dd>
+<dt>CI.R_calculated</dt>
+<dd><p>numeric; upper bound of the same interval. The
+pair is named <code>_calculated</code> to keep it distinct from
+<code>topTable</code>'s <code>CI.L</code>/<code>CI.R</code>, which these tables do not
+carry: for a <code>dream</code> fit those bound every contrast by the first
+contrast's degrees of freedom.</p></dd>
 
 <dt>degrees_of_freedom</dt>
-<dd><p>numeric; degrees of freedom.</p></dd>
+<dd><p>numeric; the per-feature residual degrees of
+freedom used to shrink that feature's variance. Note this is NOT the
+degrees of freedom the p-value was computed from, which is the
+per-contrast Satterthwaite value plus the prior; p-values cannot be
+recomputed from this column.</p></dd>
 
 <dt>logLik</dt>
 <dd><p>numeric; log likelihood of differential expression.</p></dd>
@@ -171,9 +207,10 @@ to control the false discovery rate.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">DA_list</span> <span class="op">&lt;-</span> <span class="fu">load_differential_analysis</span><span class="op">(</span><span class="op">)</span> <span class="co"># default behavior</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Please remember that the lowest CV Metabolite is chosen and the</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>             relevant refmet name is used. If you're not able to find your desired</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>             metabolite, look through the METABOLOMICS_CV object for the relevant</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>             metabolite, look through the METABOLOMICS_CVS object for the relevant</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>             refmet/feature name.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Structure of a single object</span></span></span>
@@ -190,10 +227,10 @@ to control the false discovery rate.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 6 6 6 6 6 6 6 6 6 6 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ feature_id        : chr  "O00287" "Q8TE02" "Q8NHG8" "P10912" ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ logFC             : num  0.74 0.578 0.609 -0.857 -0.71 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CI.L              : num  0.533 0.414 0.463 -1.087 -0.933 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CI.R              : num  0.946 0.742 0.756 -0.627 -0.487 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ degrees_of_freedom: num  30.3 19.5 21.2 19.4 12.7 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ logLik            : num  -15.5 -20.1 -40.5 -32.2 -32.7 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CI.L_calculated   : num  0.533 0.414 0.463 -1.087 -0.933 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ CI.R_calculated   : num  0.946 0.742 0.756 -0.627 -0.487 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ degrees_of_freedom: num  27 24 16.1 22.7 24 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ logLik            : num  11.02 15.87 20.89 2.42 6.32 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ t                 : num  7.31 7.21 8.75 -7.73 -6.52 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ AveExpr           : num  0.0188 -1.1554 -0.2189 -0.205 -0.5905 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ z.std             : num  5.53 5.38 5.35 -5.3 -5.04 ...</span>
@@ -214,11 +251,7 @@ to control the false discovery rate.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Include epigen data</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">repo_local_dir</span> <span class="op">&lt;-</span> <span class="st">"path/to/some/directory"</span></span></span>
-<span class="r-in"><span><span class="va">DA_list</span> <span class="op">&lt;-</span> <span class="fu">load_differential_analysis</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  repo_local_dir <span class="op">=</span> <span class="va">repo_local_dir</span>,</span></span>
-<span class="r-in"><span>  epigen <span class="op">=</span> <span class="cn">TRUE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">DA_list</span> <span class="op">&lt;-</span> <span class="fu">load_differential_analysis</span><span class="op">(</span>epigen <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

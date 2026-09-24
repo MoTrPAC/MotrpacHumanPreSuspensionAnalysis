@@ -27,7 +27,7 @@ documentation for details."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,7 +77,8 @@ documentation for details.</p>
 <span>  selected_tissues <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  selected_omes <span class="op">=</span> <span class="st">"all"</span>,</span>
 <span>  single_matrix <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  load_clinical <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,7 +96,12 @@ documentation for details.</p>
 <code>"transcript-rna-seq"</code>, <code>"prot-pr"</code>, <code>"prot-ph"</code>,
 <code>"prot-ol"</code>, <code>"epigen-atac-seq"</code>,
 <code>"epigen-methylcap-seq"</code>, <code>"metab"</code>, or <code>"all"</code>.
-Selecting <code>"metab"</code> loads all metabolomics platforms.</p></dd>
+Naming any single metabolomics platform is the same as naming
+<code>"metab"</code>: the research platforms live in one stacked object per
+tissue, so all of them are loaded and the platform is read off the
+<code>platform</code> column. <code>"metab-t-clinical"</code> is the exception — it is
+clinical chemistry, is not in the stack, and is gated by
+<code>load_clinical</code>.</p></dd>
 
 
 <dt id="arg-single-matrix">single_matrix<a class="anchor" aria-label="anchor" href="#arg-single-matrix"></a></dt>
@@ -107,14 +113,32 @@ Selecting <code>"metab"</code> loads all metabolomics platforms.</p></dd>
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>logical; toggle verbosity.</p></dd>
 
+
+<dt id="arg-load-clinical">load_clinical<a class="anchor" aria-label="anchor" href="#arg-load-clinical"></a></dt>
+<dd><p>logical; whether to include the clinical chemistry omes
+(<code><a href="clinical_ome_list.html">clinical_ome_list()</a></code>: <code>"prot-clinical"</code> and
+<code>"metab-t-clinical"</code>). <code>FALSE</code> by default, so <code>"all"</code>
+returns the research omes and nothing changes for callers written before
+v2.0 split clinical chemistry out. Set <code>TRUE</code> to include them; they
+are dropped even when named unless it is set.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>If <code>single_matrix = FALSE</code>, a nested list of <code>data.frame</code> objects.
-The top-level names correspond to tissues, and the second-level names
-correspond to assays or platforms.</p>
+The top-level names correspond to tissues and the second-level names to
+assays — the same nesting <code><a href="load_differential_analysis.html">load_differential_analysis</a></code> returns,
+so the two tiers can be walked together. The research metabolomics platforms
+arrive as a single <code>"metab"</code> element per tissue rather than one element
+per platform.</p>
 <p>If <code>single_matrix = TRUE</code>, a single <code>data.frame</code> containing all
 selected summary statistics, with missing columns filled as <code>NA</code>.</p>
+<p>Each table carries <code>tissue</code>, <code>assay</code>, <code>randomGroupCode</code>,
+<code>Timepoint</code>, <code>feature_id</code>, <code>Count</code>, <code>Mean</code> and <code>SD</code>.
+The metabolomics tables carry <code>assay = "metab"</code> and one further column,
+<code>platform</code>, naming the platform the row was measured on. That is how the
+<code>*_DA</code> objects are labelled, so a join between the two tiers no longer
+has to translate between two names for the same ome.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -134,8 +158,9 @@ In epigenetic assays, features were filtered for significant features (FDR&lt;0.
 <span class="r-in"><span><span class="co">## Load all summary statistics</span></span></span>
 <span class="r-in"><span><span class="va">sum_stats</span> <span class="op">=</span> <span class="fu">load_summary_stats</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Load metabolomics only</span></span></span>
+<span class="r-in"><span><span class="co">## Load metabolomics only. One table per tissue, every platform in it.</span></span></span>
 <span class="r-in"><span><span class="va">metab_stats</span> <span class="op">=</span> <span class="fu">load_summary_stats</span><span class="op">(</span>selected_omes <span class="op">=</span> <span class="st">"metab"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">metab_stats</span><span class="op">[[</span><span class="st">"blood"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"metab"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"platform"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Load adipose transcriptomics as a single table</span></span></span>
 <span class="r-in"><span><span class="va">adipose_rna</span> <span class="op">=</span> <span class="fu">load_summary_stats</span><span class="op">(</span></span></span>

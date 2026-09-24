@@ -13,4 +13,4 @@ OUTLIERS
 
 ## Format
 
-An object of class `data.frame` with 154 rows and 4 columns.
+An object of class `data.frame` with 160 rows and 4 columns.

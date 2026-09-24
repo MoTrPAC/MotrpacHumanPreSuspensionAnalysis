@@ -9,7 +9,7 @@ and ome combination. This function replaces plot_pathway_features"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">MotrpacHumanPreSuspensionAnalysis</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,10 @@ and ome combination. This function replaces <code>plot_pathway_features</code></
 <span>  post_hr <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  full_modality_names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  multi_tissue_clust_rows <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  right_annotation <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  heatmap_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  draw_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  return_drawing <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -111,7 +115,8 @@ heatmap.</p></dd>
 
 <dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
 <dd><p>character; optional file name used to save the heatmap. If
-provided, the heatmap will not be drawn.</p></dd>
+provided, the heatmap will not be drawn. Ignored when
+<code>return_drawing = TRUE</code>.</p></dd>
 
 
 <dt id="arg-max-size">max_size<a class="anchor" aria-label="anchor" href="#arg-max-size"></a></dt>
@@ -140,7 +145,36 @@ and RE (by default the value is FALSE)</p></dd>
 
 
 <dt id="arg-multi-tissue-clust-rows">multi_tissue_clust_rows<a class="anchor" aria-label="anchor" href="#arg-multi-tissue-clust-rows"></a></dt>
-<dd><p>logical; if you'd like to cluster rows specifically in a multi-tissue case</p></dd>
+<dd><p>logical; whether to cluster rows when more
+than one tissue is selected. Rows are restricted to features with a value in
+every column, since missing values break row clustering. Single-tissue
+heatmaps are always clustered.</p></dd>
+
+
+<dt id="arg-right-annotation">right_annotation<a class="anchor" aria-label="anchor" href="#arg-right-annotation"></a></dt>
+<dd><p><code>NULL</code>, a
+<code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html" class="external-link">HeatmapAnnotation</a></code>, or a function. A function
+receives the row labels in heatmap row order and must return a row
+<code>HeatmapAnnotation</code>; use it when the annotation depends on which
+feature each row is. A <code>HeatmapAnnotation</code> is used as is and must
+already be in row order.</p></dd>
+
+
+<dt id="arg-heatmap-args">heatmap_args<a class="anchor" aria-label="anchor" href="#arg-heatmap-args"></a></dt>
+<dd><p>list; arguments passed to
+<code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html" class="external-link">Heatmap</a></code>. They override the defaults set
+here, e.g. <code>list(cluster_rows = FALSE)</code>.</p></dd>
+
+
+<dt id="arg-draw-args">draw_args<a class="anchor" aria-label="anchor" href="#arg-draw-args"></a></dt>
+<dd><p>list; arguments passed to
+<code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html" class="external-link">draw</a></code>. They override the defaults set here,
+e.g. <code>list(newpage = FALSE)</code>.</p></dd>
+
+
+<dt id="arg-return-drawing">return_drawing<a class="anchor" aria-label="anchor" href="#arg-return-drawing"></a></dt>
+<dd><p>logical; if <code>TRUE</code>, nothing is drawn or saved.
+Instead a list is returned so the caller controls the graphics device.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -153,8 +187,12 @@ and RE (by default the value is FALSE)</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Nothing. A heatmap is drawn or saved to a file if <code>filename</code> is
-provided.</p>
+    <p>If <code>return_drawing = FALSE</code> (default), nothing; the heatmap is
+drawn on the current device, or saved to <code>filename</code> if provided. If
+<code>return_drawing = TRUE</code>, a list with components <code>draw</code>, a
+function with no arguments that draws the heatmap on the current device
+without starting a new page, and <code>width</code> and <code>height</code>, the
+suggested page size in inches.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
@@ -170,6 +208,21 @@ provided.</p>
 <span class="r-in"><span>  selected_tissue <span class="op">=</span> <span class="st">"muscle"</span>,</span></span>
 <span class="r-in"><span>  selected_ome <span class="op">=</span> <span class="st">"prot-ph"</span>,</span></span>
 <span class="r-in"><span>  filename <span class="op">=</span> <span class="st">"sandbox/test_feature_heatmap.pdf"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Draw on a device the caller opens, with a row annotation</span></span></span>
+<span class="r-in"><span><span class="va">hm</span> <span class="op">&lt;-</span> <span class="fu">plot_feature_heatmap</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  feature_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ENSG00000109819.9"</span>, <span class="st">"ENSG00000112715.26"</span>,</span></span>
+<span class="r-in"><span>                  <span class="st">"ENSG00000119508.18"</span>, <span class="st">"ENSG00000162772.17"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  selected_tissue <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"muscle"</span>, <span class="st">"adipose"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  selected_ome <span class="op">=</span> <span class="st">"transcript-rna-seq"</span>,</span></span>
+<span class="r-in"><span>  multi_tissue_clust_rows <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>  right_annotation <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row_labels</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>    <span class="fu">ComplexHeatmap</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/rowAnnotation.html" class="external-link">rowAnnotation</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">row_labels</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">}</span>,</span></span>
+<span class="r-in"><span>  return_drawing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/pdf.html" class="external-link">pdf</a></span><span class="op">(</span><span class="st">"heatmap.pdf"</span>, width <span class="op">=</span> <span class="va">hm</span><span class="op">$</span><span class="va">width</span>, height <span class="op">=</span> <span class="va">hm</span><span class="op">$</span><span class="va">height</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">hm</span><span class="op">$</span><span class="fu">draw</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">grDevices</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/grDevices/dev.html" class="external-link">dev.off</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

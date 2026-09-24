@@ -1,7 +1,10 @@
 # Create a bubble heatmap of molecular signatures from CAMERA-PR or PTM-SEA results
 
 Create a heatmap of molecular signatures for a given tissue, ome, and
-contrast type combination. Only works with CAMERA-PR or PTM-SEA results.
+contrast type combination from CAMERA-PR results (`CAMERA_RESULTS` or
+the output of
+[`run_cameraPR()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cameraPR.md))
+or PTM-SEA results (`PTMSEA_RESULTS`).
 
 ## Usage
 
@@ -16,7 +19,8 @@ plot_enrich_heatmap(
   padj_cutoff = 0.05,
   n_top = 6L,
   zscore_colors = c("#3366ff", "darkred"),
-  filename
+  filename = NULL,
+  return_drawing = FALSE
 )
 ```
 
@@ -24,7 +28,10 @@ plot_enrich_heatmap(
 
 - x:
 
-  a `data.frame` of CAMERA-PR or PTM-SEA results.
+  a `data.frame` of CAMERA-PR results with a `z.std` column, such as
+  `CAMERA_RESULTS` or the output of
+  [`run_cameraPR()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cameraPR.md),
+  or PTM-SEA results with an `NES` column, such as `PTMSEA_RESULTS`.
 
 - set_ids:
 
@@ -65,11 +72,21 @@ plot_enrich_heatmap(
 
 - filename:
 
-  character; path to a PDF file to save the heatmap.
+  character; path to a PDF file to save the heatmap. Ignored if
+  `return_drawing = TRUE`.
+
+- return_drawing:
+
+  logical; if `TRUE`, nothing is drawn or saved. Instead a list is
+  returned so the caller controls the graphics device.
 
 ## Value
 
-Nothing. The heatmap is saved to a PDF file.
+If `return_drawing = FALSE` (default), nothing; the heatmap is saved to
+`filename`. If `return_drawing = TRUE`, a list with components `draw`, a
+function with no arguments that draws the heatmap on the current device
+without starting a new page; `width` and `height`, the suggested page
+size in inches; and `n_sets`, the number of sets drawn.
 
 ## Author
 

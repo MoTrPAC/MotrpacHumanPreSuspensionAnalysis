@@ -65,12 +65,13 @@ tissue_available_list()
 
 ome_available_list()
 #>  [1] "prot-ol"              "prot-ph"              "prot-pr"             
-#>  [4] "transcript-rna-seq"   "epigen-methylcap-seq" "epigen-atac-seq"     
-#>  [7] "metab-u-hilicpos"     "metab-u-ionpneg"      "metab-u-lrpneg"      
-#> [10] "metab-u-lrppos"       "metab-u-rpneg"        "metab-u-rppos"       
-#> [13] "metab-t-amines"       "metab-t-conv"         "metab-t-imm-crt"     
-#> [16] "metab-t-oxylipneg"    "metab-t-tca"          "metab-t-nuc"         
-#> [19] "metab-t-acoa"         "metab-t-ka"           "metab-meta-reg"
+#>  [4] "prot-clinical"        "transcript-rna-seq"   "epigen-methylcap-seq"
+#>  [7] "epigen-atac-seq"      "metab-u-hilicpos"     "metab-u-ionpneg"     
+#> [10] "metab-u-lrpneg"       "metab-u-lrppos"       "metab-u-rpneg"       
+#> [13] "metab-u-rppos"        "metab-t-amines"       "metab-t-conv"        
+#> [16] "metab-t-imm-crt"      "metab-t-oxylipneg"    "metab-t-tca"         
+#> [19] "metab-t-nuc"          "metab-t-acoa"         "metab-t-ka"          
+#> [22] "metab-t-clinical"
 ```
 
 To see only the metabolomics platforms:
@@ -107,6 +108,13 @@ are stored as `*_SUM_STATS` objects (e.g., `MUSCLE_PROT_PR_SUM_STATS`).
 Use
 [`load_summary_stats()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/load_summary_stats.md)
 to access these.
+
+There is one object per tissue and assay, named the way the `*_DA`
+objects are named. The research metabolomics platforms are stacked into
+a single `{TISSUE}_METAB_SUM_STATS` per tissue carrying
+`assay = "metab"` and a `platform` column, matching `{TISSUE}_METAB_DA`.
+`BLOOD_METAB_T_CLINICAL_SUM_STATS` is clinical chemistry and stays its
+own object.
 
 ### 2.3 Contrast Converter
 
@@ -413,9 +421,10 @@ The primary entry point for accessing DA results is
 
 DA_list <- load_differential_analysis()
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 ```
 
@@ -446,7 +455,7 @@ Each element is a `data.table` with standardized columns including
 ``` r
 
 str(DA_list[["muscle"]][["prot-pr"]])
-#> Classes 'data.table' and 'data.frame':   130137 obs. of  20 variables:
+#> Classes 'data.table' and 'data.frame':   130431 obs. of  20 variables:
 #>  $ tissue            : chr  "muscle" "muscle" "muscle" "muscle" ...
 #>  $ assay             : chr  "prot-pr" "prot-pr" "prot-pr" "prot-pr" ...
 #>  $ full_model        : Factor w/ 1 level "~ 0 + group_timepoint +  BMI + calculatedAge + Sex + (1 | pid)": 1 1 1 1 1 1 1 1 1 1 ...
@@ -456,17 +465,17 @@ str(DA_list[["muscle"]][["prot-pr"]])
 #>  $ contrast_category : Factor w/ 6 levels "EE-CON","RE-CON",..: 1 1 1 1 1 1 1 1 1 1 ...
 #>  $ randomGroupCode   : chr  "ADUEndur" "ADUEndur" "ADUEndur" "ADUEndur" ...
 #>  $ Timepoint         : Factor w/ 7 levels "pre_exercise",..: 5 5 5 5 5 5 5 5 5 5 ...
-#>  $ feature_id        : chr  "P46976-2" "Q9H3M7" "Q9NW81" "Q9Y3B4" ...
-#>  $ logFC             : num  0.419 -0.412 -0.327 0.138 0.346 ...
-#>  $ CI.L              : num  0.278 -0.6027 -0.5251 0.0533 0.1326 ...
-#>  $ CI.R              : num  0.56 -0.222 -0.13 0.223 0.56 ...
-#>  $ degrees_of_freedom: num  293 248 203 126 116 ...
-#>  $ logLik            : num  -310 -371 -414 -326 -295 ...
-#>  $ t                 : num  5.86 -4.27 -3.27 3.21 3.21 ...
-#>  $ AveExpr           : num  0.404 -0.785 0.471 -0.359 -0.404 ...
-#>  $ z.std             : num  5.66 -4.19 -3.21 3.17 3.14 ...
-#>  $ p_value           : num  1.55e-08 2.74e-05 1.32e-03 1.50e-03 1.72e-03 ...
-#>  $ adj_p_value       : num  9.62e-05 8.50e-02 1.00 1.00 1.00 ...
+#>  $ feature_id        : chr  "P46976-2" "Q9H3M7" "Q9Y3B4" "Q9NW81" ...
+#>  $ logFC             : num  0.42 -0.406 0.14 -0.33 -0.216 ...
+#>  $ CI.L_calculated   : num  0.2786 -0.5962 0.0563 -0.5295 -0.3485 ...
+#>  $ CI.R_calculated   : num  0.5605 -0.2168 0.2246 -0.1299 -0.0828 ...
+#>  $ degrees_of_freedom: num  217 270 333 199 221 ...
+#>  $ logLik            : num  -15.96 -72.42 237.89 -9.56 15.37 ...
+#>  $ t                 : num  5.86 -4.22 3.29 -3.26 -3.2 ...
+#>  $ AveExpr           : num  0.406 -0.783 -0.359 0.471 0.752 ...
+#>  $ z.std             : num  5.66 -4.15 3.25 -3.2 -3.16 ...
+#>  $ p_value           : num  1.53e-08 3.38e-05 1.15e-03 1.36e-03 1.58e-03 ...
+#>  $ adj_p_value       : num  9.48e-05 1.05e-01 9.98e-01 9.98e-01 9.98e-01 ...
 #>  - attr(*, ".internal.selfref")=<pointer: (nil)> 
 #>  - attr(*, "sorted")= chr [1:4] "full_model" "contrast" "p_value" "feature_id"
 ```
@@ -489,12 +498,13 @@ For analyses that prefer a flat data frame:
 
 DA_matrix <- load_differential_analysis(single_matrix = TRUE)
 #> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 dim(DA_matrix)
-#> [1] 2212065      21
+#> [1] 2216931      21
 ```
 
 ### 3.4 Include gene annotations
@@ -514,7 +524,7 @@ colnames(DA_annotated[["muscle"]][["prot-pr"]])
 #>  [7] "contrast_category"  "randomGroupCode"    "Timepoint"         
 #> [10] "feature_id"         "entrez_gene"        "gene_symbol"       
 #> [13] "ensembl_gene"       "uniprot"            "logFC"             
-#> [16] "CI.L"               "CI.R"               "degrees_of_freedom"
+#> [16] "CI.L_calculated"    "CI.R_calculated"    "degrees_of_freedom"
 #> [19] "logLik"             "t"                  "AveExpr"           
 #> [22] "z.std"              "p_value"            "adj_p_value"
 ```
@@ -564,8 +574,10 @@ expression data.
 ## Load all summary statistics
 sum_stats <- load_summary_stats()
 
-## Load metabolomics only
+## Load metabolomics only. One table per tissue, every platform in it,
+## with the platform in the `platform` column.
 metab_stats <- load_summary_stats(selected_omes = "metab")
+unique(metab_stats[["blood"]][["metab"]][["platform"]])
 
 ## Load as a single combined table
 adipose_rna <- load_summary_stats(
@@ -606,9 +618,22 @@ plot_single_feature(
   color_time_labels = TRUE,
   include_legend = FALSE
 )
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Please remember that the lowest CV Metabolite is chosen and the
+#>             relevant refmet name is used. If you're not able to find your desired
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
+#>             refmet/feature name.
 #> DA is loaded automatically using requested settings.
 #>               If any metab platform was requested, the metab features will default to
 #>               any metabolomics platform measured.
+#> Only features qualifying for diffential analysis are included. For proteomics and phosphoproteomics, this means some samples with missingness patterns that lead to paired n < 3 for any group are not included here.
+#> Epigenetics summary stats are trimmed to only show significant features due to file size limitations
+#> Metabolomics platforms are returned stacked in one table per tissue, with the
+#>             platform in the `platform` column and `assay` reading "metab", matching the
+#>             differential analysis. Please remember that the lowest CV metabolite is chosen and
+#>             the relevant refmet name is used. If you're not able to find your desired
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
+#>             refmet/feature name.
 #> Scale for fill is already present.
 #> Adding another scale for fill, which will replace the existing scale.
 #> Saved plot not requested or multi-faceted plot detected.
@@ -675,8 +700,12 @@ Key parameters:
 ### 5.3 Enrichment Heatmaps
 
 [`plot_enrich_heatmap()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/plot_enrich_heatmap.md)
-creates bubble heatmaps from CAMERA-PR or PTM-SEA results, showing
-enrichment z-scores with significance bubbles.
+creates bubble heatmaps from CAMERA-PR results (`CAMERA_RESULTS` or the
+output of
+[`run_cameraPR()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cameraPR.md)),
+showing enrichment z-scores with significance bubbles. It also takes
+`PTMSEA_RESULTS`, which shares that layout, and plots the PTM-SEA NES
+instead.
 
 ``` r
 
@@ -699,22 +728,27 @@ plot_enrich_heatmap(
   selected_ome = "transcript-rna-seq",
   filename = "selected_pathways.pdf"
 )
+
+# PTM-SEA results (prot-ph, muscle and adipose)
+plot_enrich_heatmap(
+  x = PTMSEA_RESULTS,
+  selected_tissues = c("adipose", "muscle"),
+  selected_ome = "prot-ph",
+  filename = "ptmsea_heatmap.pdf"
+)
 ```
 
 ### 5.4 Cluster Trajectory Plots
 
-After running fuzzy c-means clustering, use
 [`plot_cmeans()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/plot_cmeans.md)
-to visualize cluster trajectories as line plots colored by membership
-probability.
+draws the feature trajectories of each fuzzy c-means cluster, colored by
+membership probability, with the centroid in black.
 
 ``` r
 
 # Note: filename is required — the plot is saved directly to PDF.
-FCM <- run_cmeans(selected_tissues = "adipose")
-
 plot_cmeans(
-  FCM = FCM[["adipose"]],
+  FCM = FCM_CLUSTERS[["adipose"]],
   filename = "adipose_clusters.pdf",
   min_membership = 0.3,
   ncol = 4
@@ -796,27 +830,26 @@ Pre-computed results are available as `CAMERA_RESULTS`.
 
 ## 7. Fuzzy C-Means Clustering
 
-[`run_cmeans()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md)
-performs fuzzy c-means (FCM) clustering on z-score matrices from
-differential analysis, grouping features with similar temporal response
-patterns.
+`FCM_CLUSTERS` holds pre-computed fuzzy c-means (FCM) clustering of the
+differential analysis z-score matrices, grouping features with similar
+temporal response patterns. It is a named list with one `fclust` object
+per tissue.
 
 ``` r
 
-# Run with defaults (13 clusters for adipose/blood, 12 for muscle)
-FCM <- run_cmeans()
-names(FCM)  # one element per tissue
+names(FCM_CLUSTERS)  # one element per tissue
 ```
 
+[`run_cmeans()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md)
+reruns the clustering. With the defaults (13 clusters for adipose, 12
+for blood and muscle, both modalities) it uses the settings that built
+`FCM_CLUSTERS`.
+
 ``` r
 
-# Explore optimal cluster numbers
-FCM_explore <- run_cmeans(
-  selected_tissues = "adipose",
-  num_clusters_adipose = 3:14
-)
+FCM <- run_cmeans()
 
-# Run for a single modality
+# A single modality
 FCM_endur <- run_cmeans(
   selected_tissues = "muscle",
   modality = "Endur"
@@ -827,8 +860,6 @@ Features are scaled by their standard deviation (including pre-exercise
 zeros) before clustering. Clusters are reordered by hierarchical
 clustering of centroids so that similar trajectories appear adjacent.
 
-Pre-computed clustering results are available as `FCM_CLUSTERS`.
-
 ### 7.1 Cluster-Level Enrichment with CAMERA-PR
 
 [`run_cluster_cameraPR()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cluster_cameraPR.md)
@@ -837,8 +868,7 @@ centroids using modified signed rank tests.
 
 ``` r
 
-FCM <- run_cmeans()
-cluster_camera <- run_cluster_cameraPR(FCM = FCM)
+cluster_camera <- run_cluster_cameraPR(FCM = FCM_CLUSTERS)
 head(cluster_camera)
 ```
 
@@ -852,9 +882,8 @@ signatures among features with high membership probabilities.
 
 ``` r
 
-FCM <- run_cmeans()
 cluster_ora <- run_cluster_ORA(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   min_prob = 0.3
 )
 head(cluster_ora)
@@ -903,23 +932,13 @@ plot_enrich_heatmap(
   filename = "muscle_prot_enrichment.pdf"
 )
 
-# 5. Perform clustering
-FCM <- run_cmeans(selected_tissues = "muscle")
-
-# 6. Visualize clusters
-plot_cmeans(
-  FCM = FCM[["muscle"]],
-  filename = "muscle_clusters.pdf",
-  min_membership = 0.3
-)
-
-# 7. Cluster-level enrichment
+# 5. Cluster-level enrichment on the pre-computed clusters
 cluster_res <- run_cluster_cameraPR(
-  FCM = FCM,
+  FCM = FCM_CLUSTERS,
   selected_tissues = "muscle"
 )
 
-# 8. Visualize cluster enrichment
+# 6. Visualize cluster enrichment
 plot_cluster_enrichment(
   x = cluster_res,
   selected_ome = "prot-pr",
@@ -937,7 +956,7 @@ plot_cluster_enrichment(
 sessionInfo()
 #> R version 4.6.1 (2026-06-24)
 #> Platform: x86_64-pc-linux-gnu
-#> Running under: Ubuntu 24.04.4 LTS
+#> Running under: Ubuntu 24.04.5 LTS
 #> 
 #> Matrix products: default
 #> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -957,37 +976,43 @@ sessionInfo()
 #> [8] base     
 #> 
 #> other attached packages:
-#> [1] MotrpacHumanPreSuspensionAnalysis_0.2.4
+#> [1] MotrpacHumanPreSuspensionAnalysis_2.0.8
 #> [2] DynDoc_1.90.0                          
 #> [3] widgetTools_1.90.0                     
 #> 
 #> loaded via a namespace (and not attached):
-#>  [1] gtable_0.3.6          circlize_0.4.18       shape_1.4.6.1        
-#>  [4] rjson_0.2.23          xfun_0.60             bslib_0.11.0         
-#>  [7] ggplot2_4.0.3         GlobalOptions_0.1.4   rstatix_1.0.0        
-#> [10] Biobase_2.72.0        vctrs_0.7.3           tools_4.6.1          
-#> [13] generics_0.1.4        stats4_4.6.1          parallel_4.6.1       
-#> [16] tibble_3.3.1          cluster_2.1.8.2       pkgconfig_2.0.3      
-#> [19] data.table_1.18.4     RColorBrewer_1.1-3    S7_0.2.2             
-#> [22] desc_1.4.3            S4Vectors_0.50.1      lifecycle_1.0.5      
-#> [25] stringr_1.6.0         compiler_4.6.1        farver_2.1.2         
-#> [28] textshaping_1.0.5     codetools_0.2-20      ComplexHeatmap_2.28.0
-#> [31] carData_3.0-6         clue_0.3-68           htmltools_0.5.9      
-#> [34] sass_0.4.10           yaml_2.3.12           Formula_1.2-5        
-#> [37] car_3.1-5             pkgdown_2.2.1         pillar_1.11.1        
-#> [40] ggpubr_1.0.0          crayon_1.5.3          jquerylib_0.1.4      
-#> [43] tidyr_1.3.2           cachem_1.1.0          iterators_1.0.14     
-#> [46] abind_1.4-8           foreach_1.5.2         tidyselect_1.2.1     
-#> [49] digest_0.6.39         stringi_1.8.7         dplyr_1.2.1          
-#> [52] purrr_1.2.2           labeling_0.4.3        latex2exp_0.9.8      
-#> [55] fastmap_1.2.0         grid_4.6.1            colorspace_2.1-3     
-#> [58] cli_3.6.6             magrittr_2.0.5        utf8_1.2.6           
-#> [61] broom_1.0.13          withr_3.0.3           backports_1.5.1      
-#> [64] scales_1.4.0          rmarkdown_2.31        matrixStats_1.5.0    
-#> [67] otel_0.2.0            ggsignif_0.6.4        ragg_1.5.2           
-#> [70] png_0.1-9             GetoptLong_1.1.1      tkWidgets_1.90.0     
-#> [73] evaluate_1.0.5        knitr_1.51            IRanges_2.46.0       
-#> [76] doParallel_1.0.17     rlang_1.3.0           glue_1.8.1           
-#> [79] BiocGenerics_0.58.1   jsonlite_2.0.0        R6_2.6.1             
-#> [82] Mfuzz_2.72.0          systemfonts_1.3.2     fs_2.1.0
+#>   [1] tidyselect_1.2.1      viridisLite_0.4.3     dplyr_1.2.1          
+#>   [4] farver_2.1.2          viridis_0.6.5         S7_0.2.2             
+#>   [7] fastmap_1.2.0         latex2exp_0.9.8       MotrpacBicQC_2.0.0   
+#>  [10] digest_0.6.39         timechange_0.4.0      lifecycle_1.0.5      
+#>  [13] Mfuzz_2.72.0          cluster_2.1.8.2       magrittr_2.0.5       
+#>  [16] compiler_4.6.1        progress_1.2.3        rlang_1.3.0          
+#>  [19] tkWidgets_1.90.0      sass_0.4.10           tools_4.6.1          
+#>  [22] utf8_1.2.6            yaml_2.3.12           data.table_1.18.6.1  
+#>  [25] knitr_1.52            ggsignif_0.6.4        prettyunits_1.2.0    
+#>  [28] labeling_0.4.3        xml2_1.6.0            RColorBrewer_1.1-3   
+#>  [31] abind_1.4-8           withr_3.0.3           purrr_1.2.2          
+#>  [34] BiocGenerics_0.58.1   desc_1.4.3            grid_4.6.1           
+#>  [37] stats4_4.6.1          ggpubr_1.0.0          colorspace_2.1-3     
+#>  [40] ggplot2_4.0.3         scales_1.4.0          iterators_1.0.14     
+#>  [43] cli_3.6.6             rmarkdown_2.32        crayon_1.5.3         
+#>  [46] ragg_1.5.2            generics_0.1.4        otel_0.2.0           
+#>  [49] tzdb_0.5.0            httr_1.4.9            rjson_0.2.23         
+#>  [52] cachem_1.1.0          stringr_1.6.0         parallel_4.6.1       
+#>  [55] matrixStats_1.5.0     vctrs_0.7.3           jsonlite_2.0.0       
+#>  [58] carData_3.0-6         naniar_1.1.0          car_3.1-5            
+#>  [61] hms_1.1.4             IRanges_2.46.0        GetoptLong_1.1.1     
+#>  [64] S4Vectors_0.50.3      visdat_0.6.0          rstatix_1.1.0        
+#>  [67] Formula_1.2-6         clue_0.3-68           systemfonts_1.3.2    
+#>  [70] foreach_1.5.2         tidyr_1.3.2           jquerylib_0.1.4      
+#>  [73] glue_1.8.1            pkgdown_2.2.1         codetools_0.2-20     
+#>  [76] lubridate_1.9.5       stringi_1.8.9         shape_1.4.6.1        
+#>  [79] gtable_0.3.6          ComplexHeatmap_2.28.0 tibble_3.3.1         
+#>  [82] pillar_1.11.1         htmltools_0.5.9       circlize_0.4.18      
+#>  [85] R6_2.6.1              textshaping_1.0.5     doParallel_1.0.17    
+#>  [88] evaluate_1.0.5        Biobase_2.72.0        readr_2.2.0          
+#>  [91] png_0.1-9             backports_1.5.1       gridtext_0.1.6       
+#>  [94] broom_1.0.13          bslib_0.12.0          Rcpp_1.1.2           
+#>  [97] gridExtra_2.3.1       xfun_0.61             fs_2.1.0             
+#> [100] forcats_1.0.1         pkgconfig_2.0.3       GlobalOptions_0.1.4
 ```

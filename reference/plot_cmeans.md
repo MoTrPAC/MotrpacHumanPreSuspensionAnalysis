@@ -22,7 +22,9 @@ plot_cmeans(
 
 - FCM:
 
-  one of the elements of the list produced by
+  an object of class `fclust`: one tissue's element of
+  [`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md)
+  or of the list returned by
   [`run_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md).
   See examples.
 
@@ -53,7 +55,8 @@ plot_cmeans(
 - dpi:
 
   Plot resolution. Also accepts a string input: "retina" (320), "print"
-  (300), or "screen" (72). Applies only to raster output types.
+  (300), or "screen" (72). Only applies when converting pixel units, as
+  is typical for raster output types.
 
 - modality:
 
@@ -62,7 +65,8 @@ plot_cmeans(
 
 ## See also
 
-[`run_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md)
+[`run_cmeans`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/run_cmeans.md),
+[`FCM_CLUSTERS`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/FCM_RESULTS.md)
 
 ## Author
 
@@ -72,11 +76,16 @@ Tyler Sagendorf
 
 ``` r
 if (FALSE) { # \dontrun{
-# FCM results
-FCM <- run_cmeans(selected_tissues = "adipose")
-
-plot_cmeans(FCM = FCM[["adipose"]],
+# Pre-computed FCM results
+plot_cmeans(FCM = FCM_CLUSTERS[["adipose"]],
             filename = "adipose_clusters.pdf",
             min_membership = 0.3)
+
+# New FCM results
+FCM <- run_cmeans(selected_tissues = "adipose", modality = "Endur")
+
+plot_cmeans(FCM = FCM[["adipose"]],
+            filename = "adipose_endur_clusters.pdf",
+            modality = "Endur")
 } # }
 ```

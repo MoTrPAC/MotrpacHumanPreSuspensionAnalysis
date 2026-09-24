@@ -20,6 +20,10 @@ plot_feature_heatmap(
   post_hr = NULL,
   full_modality_names = FALSE,
   multi_tissue_clust_rows = FALSE,
+  right_annotation = NULL,
+  heatmap_args = list(),
+  draw_args = list(),
+  return_drawing = FALSE,
   verbose = TRUE,
   ...
 )
@@ -68,7 +72,7 @@ plot_feature_heatmap(
 - filename:
 
   character; optional file name used to save the heatmap. If provided,
-  the heatmap will not be drawn.
+  the heatmap will not be drawn. Ignored when `return_drawing = TRUE`.
 
 - max_size:
 
@@ -97,8 +101,36 @@ plot_feature_heatmap(
 
 - multi_tissue_clust_rows:
 
-  logical; if you'd like to cluster rows specifically in a multi-tissue
-  case
+  logical; whether to cluster rows when more than one tissue is
+  selected. Rows are restricted to features with a value in every
+  column, since missing values break row clustering. Single-tissue
+  heatmaps are always clustered.
+
+- right_annotation:
+
+  `NULL`, a
+  [`HeatmapAnnotation`](https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapAnnotation.html),
+  or a function. A function receives the row labels in heatmap row order
+  and must return a row `HeatmapAnnotation`; use it when the annotation
+  depends on which feature each row is. A `HeatmapAnnotation` is used as
+  is and must already be in row order.
+
+- heatmap_args:
+
+  list; arguments passed to
+  [`Heatmap`](https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html). They
+  override the defaults set here, e.g. `list(cluster_rows = FALSE)`.
+
+- draw_args:
+
+  list; arguments passed to
+  [`draw`](https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html).
+  They override the defaults set here, e.g. `list(newpage = FALSE)`.
+
+- return_drawing:
+
+  logical; if `TRUE`, nothing is drawn or saved. Instead a list is
+  returned so the caller controls the graphics device.
 
 - verbose:
 
@@ -110,8 +142,12 @@ plot_feature_heatmap(
 
 ## Value
 
-Nothing. A heatmap is drawn or saved to a file if `filename` is
-provided.
+If `return_drawing = FALSE` (default), nothing; the heatmap is drawn on
+the current device, or saved to `filename` if provided. If
+`return_drawing = TRUE`, a list with components `draw`, a function with
+no arguments that draws the heatmap on the current device without
+starting a new page, and `width` and `height`, the suggested page size
+in inches.
 
 ## Author
 
@@ -127,5 +163,20 @@ plot_feature_heatmap(set_id = "11725",
   selected_tissue = "muscle",
   selected_ome = "prot-ph",
   filename = "sandbox/test_feature_heatmap.pdf")
+
+# Draw on a device the caller opens, with a row annotation
+hm <- plot_feature_heatmap(
+  feature_ids = c("ENSG00000109819.9", "ENSG00000112715.26",
+                  "ENSG00000119508.18", "ENSG00000162772.17"),
+  selected_tissue = c("muscle", "adipose"),
+  selected_ome = "transcript-rna-seq",
+  multi_tissue_clust_rows = TRUE,
+  right_annotation = function(row_labels) {
+    ComplexHeatmap::rowAnnotation(group = rep("A", length(row_labels)))
+  },
+  return_drawing = TRUE)
+grDevices::pdf("heatmap.pdf", width = hm$width, height = hm$height)
+hm$draw()
+grDevices::dev.off()
 } # }
 ```
