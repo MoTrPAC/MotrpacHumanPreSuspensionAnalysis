@@ -29,13 +29,6 @@
 #'   the \code{feature_id} rather than measured per tissue, so they take the same value in
 #'   every tissue a peak appears in.
 #'
-#'   Per-tissue measurements are deliberately not carried here. This table is keyed on
-#'   \code{(assay, feature_id)} with no tissue column, so it could only hold a collapse
-#'   across tissues. The phosphosite localization flag (\code{confident_site}) is the
-#'   case in point: it was added in 2.0.3 and removed in 2.0.7 because muscle and adipose
-#'   disagree on 859 of their 7,865 shared prot-ph sites. Read it per tissue from
-#'   \code{*_PROT_PH_QC$feature_metadata} in \pkg{MotrpacHumanPreSuspensionData}.
-#'
 #' @source Built by Stage 1 step 07 of the motrpac-human-presuspension-repro pipeline. The
 #'   \code{refmet_name}, \code{refmet_id} and \code{kegg_id} columns come from a
 #'   pinned offline RefMet/KEGG snapshot rather than a live Metabolomics Workbench

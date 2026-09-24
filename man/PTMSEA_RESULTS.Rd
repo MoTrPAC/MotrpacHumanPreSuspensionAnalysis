@@ -5,18 +5,33 @@
 \alias{PTMSEA_RESULTS}
 \title{PTM-SEA Results}
 \format{
-A named list of two \code{cmapR} \code{GCT} objects, \code{"muscle"} (506
-signatures x 6 contrasts) and \code{"adipose"} (437 signatures x 2 contrasts).
-Row IDs are PTMsigDB signature IDs. The \code{mat} slot holds the normalized
-enrichment scores (NES). The \code{rdesc} slot holds, per signature:
+A \code{data.frame} with 3,910 rows (muscle: 506 signatures x 6
+contrasts; adipose: 437 signatures x 2 contrasts) and 17 columns:
 \describe{
-\item{Signature.set.description}{Signature sites and supporting PubMed IDs}
-\item{Signature.set.size}{Number of sites in the signature}
-\item{Signature.set.overlap.percent.\if{html}{\out{<contrast>}}}{Percent of signature sites measured}
-\item{Signature.set.overlap.\if{html}{\out{<contrast>}}}{Measured signature sites, \code{|}-separated}
-\item{No.columns.scored}{Number of contrasts scored}
-\item{pvalue.\if{html}{\out{<contrast>}}}{Nominal p-value}
-\item{fdr.pvalue.\if{html}{\out{<contrast>}}}{FDR-adjusted p-value}
+\item{\code{tissue}}{factor; \code{"muscle"} or \code{"adipose"}.}
+\item{\code{assay}}{factor; \code{"prot-ph"}.}
+\item{\code{contrast_type}}{factor; \code{"exercise_with_controls"}.}
+\item{\code{contrast}}{factor; the contrast, as in
+\code{CONTRAST_CONVERTER$contrast}.}
+\item{\code{contrast_short}}{factor; abbreviated contrast label.}
+\item{\code{collection}}{factor; \code{"PTMSIGDB"}.}
+\item{\code{database}}{factor; the PTMsigDB signature category, the
+prefix of \code{set} (e.g. \code{"KINASE-PSP"}, \code{"PERT-P100-DIA2"}).}
+\item{\code{set_id}}{factor; the PTMsigDB signature ID. Not an ID from
+\code{\link{SET_TO_ID}}.}
+\item{\code{set}}{factor; the PTMsigDB signature ID.}
+\item{\code{set_short}}{factor; signature name followed by
+\code{database} in parentheses.}
+\item{\code{set_size}}{integer; number of signature sites measured.}
+\item{\code{set_size_DB}}{integer; number of sites in the signature, as
+reported by PTM-SEA.}
+\item{\code{size_ratio}}{numeric; \code{set_size / set_size_DB}.}
+\item{\code{direction}}{factor; \code{"Up"} if \code{NES > 0}, else
+\code{"Down"}.}
+\item{\code{NES}}{numeric; normalized enrichment score.}
+\item{\code{p_value}}{numeric; nominal p-value.}
+\item{\code{adj_p_value}}{numeric; PTM-SEA FDR, adjusted within tissue
+and contrast.}
 }
 }
 \source{
@@ -29,17 +44,16 @@ PTMSEA_RESULTS
 \description{
 PTM-SEA enrichment of PTMsigDB signatures in the prot-ph
 differential-analysis z-statistics (see \code{PTMSEA_INPUT}), run with the Broad
-Institute PTM-SEA / ssGSEA2.0 container. One row per signature, one column
-per acute-exercise contrast (EE-CON and RE-CON). Muscle carries three
-post-exercise timepoints crossed with the two exercise modalities; adipose
-was sampled at \code{post_3.5_4_hr} only.
-
-Each element is the combined PTM-SEA output parsed into a \code{GCT} object, the
-S4 class defined by the \code{cmapR} package. \code{cmapR} is in Suggests, not
-Imports: the object loads without it and its slots are reachable as
-\verb{@mat}, \verb{@rdesc}, \verb{@cdesc}, \verb{@rid} and \verb{@cid}, but anything that
-dispatches on the class — printing the object, the \code{cmapR} accessors —
-needs \code{cmapR} installed, as does \verb{R CMD check} to inspect the data.
+Institute PTM-SEA / ssGSEA2.0 container, for the acute-exercise EE-CON and
+RE-CON contrasts. Muscle carries three post-exercise timepoints crossed
+with the two exercise modalities; adipose was sampled at \code{post_3.5_4_hr}
+only. Same layout as \code{\link{CAMERA_RESULTS}}, with \code{NES} in place of
+\code{t}, \code{df} and \code{z.std}, so it can be passed to
+\code{\link{plot_enrich_heatmap}}.
+}
+\seealso{
+\code{\link{CAMERA_RESULTS}}, \code{\link{plot_enrich_heatmap}},
+\code{\link{PTMSEA_INPUT}}
 }
 \keyword{datasets}
 \keyword{proteomics}

@@ -15,11 +15,15 @@ plot_enrich_heatmap(
   padj_cutoff = 0.05,
   n_top = 6L,
   zscore_colors = c("#3366ff", "darkred"),
-  filename
+  filename = NULL,
+  return_drawing = FALSE
 )
 }
 \arguments{
-\item{x}{a \code{data.frame} of CAMERA-PR or PTM-SEA results.}
+\item{x}{a \code{data.frame} of CAMERA-PR results with a \code{z.std}
+column, such as \code{CAMERA_RESULTS} or the output of
+\code{run_cameraPR()}, or PTM-SEA results with an \code{NES} column, such
+as \code{PTMSEA_RESULTS}.}
 
 \item{set_ids}{character or \code{NULL}; one or more of \code{x$set_id}. The
 dataset \code{x} will be filtered to these sets. If \code{NULL}, the top 6
@@ -45,15 +49,25 @@ selected.}
 \item{zscore_colors}{character; length 2 vector of colors for the smallest
 and largest z-scores. Default is "#3366ff" (blue) and "darkred".}
 
-\item{filename}{character; path to a PDF file to save the heatmap.}
+\item{filename}{character; path to a PDF file to save the heatmap. Ignored
+if \code{return_drawing = TRUE}.}
+
+\item{return_drawing}{logical; if \code{TRUE}, nothing is drawn or saved.
+Instead a list is returned so the caller controls the graphics device.}
 }
 \value{
-Nothing. The heatmap is saved to a PDF file.
+If \code{return_drawing = FALSE} (default), nothing; the heatmap is
+saved to \code{filename}. If \code{return_drawing = TRUE}, a list with
+components \code{draw}, a function with no arguments that draws the
+heatmap on the current device without starting a new page; \code{width}
+and \code{height}, the suggested page size in inches; and \code{n_sets},
+the number of sets drawn.
 }
 \description{
 Create a heatmap of molecular signatures for a given tissue,
-ome, and contrast type combination. Only works with CAMERA-PR or PTM-SEA
-results.
+ome, and contrast type combination from CAMERA-PR results
+(\code{CAMERA_RESULTS} or the output of \code{run_cameraPR()}) or PTM-SEA
+results (\code{PTMSEA_RESULTS}).
 }
 \author{
 Tyler Sagendorf

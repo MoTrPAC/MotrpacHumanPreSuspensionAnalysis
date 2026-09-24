@@ -1,7 +1,7 @@
 Package: MotrpacHumanPreSuspensionAnalysis
 Title: Summary Statistics and Modeling Results from the MoTrPAC Pre-COVID Suspension Phase
-Version: 2.0.7
-Date: 2026-09-22
+Version: 2.0.8
+Date: 2026-09-23
 Authors@R: c(
     person(given = "Christopher", family = "Jin", 
            email = "cajin@stanford.edu", 
@@ -57,12 +57,15 @@ Imports:
     utils,
     tidyr,
     ggplot2,
+    ggpubr,
     grDevices,
     grid,
     ComplexHeatmap,
     latex2exp,
+    Biobase,
     scales,
     stringr,
+    Mfuzz,
     TMSig (>= 1.0.0)
 Suggests:
     here,

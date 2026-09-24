@@ -2,8 +2,8 @@
 
 Combined PTM-SEA output (`ptm-sea-results-combined.gct`, GCT 1.3) for the prot-ph
 EE-CON and RE-CON contrasts, one file per tissue. Files are unmodified copies of
-the sources below; only the names changed. `PTMSEA_RESULTS.R` builds the
-`PTMSEA_RESULTS` data object from them.
+the sources below; only the names changed. `PTMSEA_RESULTS.R` reshapes them into the
+long `PTMSEA_RESULTS` table (the `CAMERA_RESULTS` layout).
 
 | File | Signatures x contrasts | Source |
 |---|---|---|

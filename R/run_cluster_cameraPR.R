@@ -9,7 +9,8 @@
 #'
 #' @param FCM fuzzy c-means (FCM) clustering results: a named list of objects
 #'   of class \code{fclust}, one per tissue, such as
-#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}}.
+#'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}} or the
+#'   output of \code{\link{run_cmeans}}.
 #' @inheritParams run_cameraPR
 #'
 #' @returns An object of class \code{data.frame} with the following columns:
@@ -51,7 +52,7 @@
 #'   }
 #'
 #' @seealso \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
-#'   \code{\link{run_cluster_ORA}},
+#'   \code{\link{run_cmeans}}, \code{\link{run_cluster_ORA}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 #'    \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 #'

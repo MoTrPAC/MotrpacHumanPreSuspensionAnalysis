@@ -53,7 +53,7 @@
 #'   }
 #'
 #' @seealso \code{\link[MotrpacHumanPreSuspensionAnalysis]{FCM_CLUSTERS}},
-#'   \code{\link{run_cluster_cameraPR}},
+#'   \code{\link{run_cmeans}}, \code{\link{run_cluster_cameraPR}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{MOLECULAR_SIGNATURES}},
 #'   \code{\link[MotrpacHumanPreSuspensionAnalysis]{SET_TO_ID}}
 #'

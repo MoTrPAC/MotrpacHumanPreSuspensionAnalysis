@@ -484,8 +484,10 @@ Key parameters:
 
 ## 5.3 Enrichment Heatmaps
 
-`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR or
-PTM-SEA results, showing enrichment z-scores with significance bubbles.
+`plot_enrich_heatmap()` creates bubble heatmaps from CAMERA-PR results
+(`CAMERA_RESULTS` or the output of `run_cameraPR()`), showing enrichment
+z-scores with significance bubbles. It also takes `PTMSEA_RESULTS`, which
+shares that layout, and plots the PTM-SEA NES instead.
 
 ```{r plot-enrich-heatmap, eval = FALSE}
 # Note: filename is required — the heatmap is saved directly to PDF.
@@ -507,9 +509,39 @@ plot_enrich_heatmap(
   selected_ome = "transcript-rna-seq",
   filename = "selected_pathways.pdf"
 )
+
+# PTM-SEA results (prot-ph, muscle and adipose)
+plot_enrich_heatmap(
+  x = PTMSEA_RESULTS,
+  selected_tissues = c("adipose", "muscle"),
+  selected_ome = "prot-ph",
+  filename = "ptmsea_heatmap.pdf"
+)
 ```
 
-## 5.4 Cluster Enrichment Heatmaps
+## 5.4 Cluster Trajectory Plots
+
+`plot_cmeans()` draws the feature trajectories of each fuzzy c-means
+cluster, colored by membership probability, with the centroid in black.
+
+```{r plot-cmeans, eval = FALSE}
+# Note: filename is required — the plot is saved directly to PDF.
+plot_cmeans(
+  FCM = FCM_CLUSTERS[["adipose"]],
+  filename = "adipose_clusters.pdf",
+  min_membership = 0.3,
+  ncol = 4
+)
+```
+
+Key parameters:
+
+- `keep_clusters` — subset to specific cluster numbers
+- `min_membership` — minimum membership probability for display
+- `common_ylim` — use the same y-axis across all cluster panels
+- `modality` — show "both", "Endur" only, or "Resist" only
+
+## 5.5 Cluster Enrichment Heatmaps
 
 `plot_cluster_enrichment()` generates bubble heatmaps for cluster-level
 enrichment results (from `run_cluster_cameraPR()` or
@@ -579,6 +611,24 @@ per tissue.
 ```{r fcm-clusters, eval = FALSE}
 names(FCM_CLUSTERS)  # one element per tissue
 ```
+
+`run_cmeans()` reruns the clustering. With the defaults (13 clusters for
+adipose, 12 for blood and muscle, both modalities) it uses the settings
+that built `FCM_CLUSTERS`.
+
+```{r run-cmeans, eval = FALSE}
+FCM <- run_cmeans()
+
+# A single modality
+FCM_endur <- run_cmeans(
+  selected_tissues = "muscle",
+  modality = "Endur"
+)
+```
+
+Features are scaled by their standard deviation (including pre-exercise
+zeros) before clustering. Clusters are reordered by hierarchical
+clustering of centroids so that similar trajectories appear adjacent.
 
 ## 7.1 Cluster-Level Enrichment with CAMERA-PR
 

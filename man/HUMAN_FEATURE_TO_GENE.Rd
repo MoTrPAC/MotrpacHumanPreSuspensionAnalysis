@@ -44,12 +44,5 @@ them a peak in a promoter and a peak 40 kb into an intron are indistinguishable 
 mapped, since both carry only the gene. Both are derived from the peak coordinates in
 the \code{feature_id} rather than measured per tissue, so they take the same value in
 every tissue a peak appears in.
-
-Per-tissue measurements are deliberately not carried here. This table is keyed on
-\code{(assay, feature_id)} with no tissue column, so it could only hold a collapse
-across tissues. The phosphosite localization flag (\code{confident_site}) is the
-case in point: it was added in 2.0.3 and removed in 2.0.7 because muscle and adipose
-disagree on 859 of their 7,865 shared prot-ph sites. Read it per tissue from
-\code{*_PROT_PH_QC$feature_metadata} in \pkg{MotrpacHumanPreSuspensionData}.
 }
 \keyword{datasets}

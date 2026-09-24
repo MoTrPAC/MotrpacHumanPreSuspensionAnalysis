@@ -1,3 +1,30 @@
+# MotrpacHumanPreSuspensionAnalysis 2.0.8
+
+## Changes
+
+- `plot_enrich_heatmap()` gains `return_drawing`: with `TRUE` it returns `draw`, `width`,
+  `height` and `n_sets` instead of writing a PDF, and `filename` is optional. It also names
+  any `set_ids` it drops.
+
+## Dependencies
+
+- `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` is a list of `cmapR::GCT`
+  S4 objects, and on a machine without `cmapR` `R CMD check` failed its data inspection
+  with a WARNING ("unable to load required package 'cmapR'") because no field declared
+  the package. The object still loads and its slots are reachable without `cmapR`;
+  printing it or using the `cmapR` accessors needs it installed.
+
+## Internals
+
+- A GitHub Actions workflow, `R-CMD-check.yaml`, now runs `R CMD check` — tests and
+  vignettes included — on every pull request and on pushes to `main`. Until now only the
+  pkgdown site build ran, and only after a merge, so a failing test could reach `main`
+  unseen.
+
+- The roxygen2 hook in `R/zzz.R` calls `utils::getFromNamespace()` with its namespace,
+  clearing the "no visible global function definition for 'getFromNamespace'" NOTE that
+  `R CMD check` has reported since before 2.0.
+
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 
 ## New data
@@ -5,13 +32,13 @@
 - `ORA_COLORS` — the white-to-`#543483` ramp for ORA heatmaps, as `c(low, high)`; pass it to
   `TMSig::enrichmap(colors = )`. `plot_cluster_enrichment()` now reads it.
 
-- `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts, one `cmapR`
-  `GCT` per tissue (muscle 506 x 6, adipose 437 x 2): NES in `mat`, p-values, FDR and
-  signature overlap in `rdesc`. Provenance in `data-raw/PTMSEA/README.md`.
+- `PTMSEA_RESULTS` — PTM-SEA results for the prot-ph EE-CON and RE-CON contrasts (muscle
+  506 signatures x 6 contrasts, adipose 437 x 2), in the long layout of `CAMERA_RESULTS` with
+  `NES` in place of `t`, `df` and `z.std`. Provenance in `data-raw/PTMSEA/README.md`.
 
 ## Removed data
 
-- **Breaking**: the vendored `assay_codes` object is removed, along with its man page and
+- The vendored `assay_codes` object is removed, along with its man page and
   `data-raw/assay_codes.R`. It was a 44-row snapshot of `MotrpacBicQC::assay_codes`, taken
   when `inspectdf` was archived on CRAN and MotrpacBicQC could not be installed from a
   current snapshot. MotrpacBicQC 2.0.0 no longer imports `inspectdf`, so the snapshot has
@@ -42,12 +69,6 @@
   separate install step. The `v1.8.0` tag still carries the old 44-row table and is not
   sufficient.
 
-- `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` and `PTMSEA_RESULTS` are
-  lists of `cmapR::GCT` S4 objects, and on a machine without `cmapR` `R CMD check` failed
-  its data inspection with a WARNING ("unable to load required package 'cmapR'") because
-  no field declared the package. The objects still load and their slots are reachable
-  without `cmapR`; printing them or using the `cmapR` accessors needs it installed.
-
 ## Changes
 
 - `plot_single_feature()` reads `MotrpacBicQC::assay_codes` directly. Upstream 1.9.0 adds
@@ -64,21 +85,17 @@
   `prot-pr` and `prot-ph` from `pnnl` to `broad_prot`). Every `assay_short_text` is
   unchanged, so no existing figure label moves.
 
-- **Breaking**: `load_differential_analysis(epigen = TRUE)` reads the c2.0 epigenomics DA
+- `load_differential_analysis(epigen = TRUE)` reads the c2.0 epigenomics DA
   from the public CloudFront release again, with no bucket access or local cache.
   `load_differential_analysis()` and `plot_single_feature()` drop the `gsutil` and `bucket`
   arguments; `repo_local_dir` is kept but ignored, with a message.
 
-## Internals
+- `plot_enrich_heatmap()` accepts `PTMSEA_RESULTS` again, plotting NES; `set_ids` takes
+  PTMsigDB signature IDs for PTM-SEA input. `n_top` breaks p-value ties by the absolute
+  statistic, so PTM-SEA's permutation-floor p-values no longer pull in every tied set.
 
-- A GitHub Actions workflow, `R-CMD-check.yaml`, now runs `R CMD check` — tests and
-  vignettes included — on every pull request and on pushes to `main`. Until now only the
-  pkgdown site build ran, and only after a merge, so a failing test could reach `main`
-  unseen.
-
-- The roxygen2 hook in `R/zzz.R` calls `utils::getFromNamespace()` with its namespace,
-  clearing the "no visible global function definition for 'getFromNamespace'" NOTE that
-  `R CMD check` has reported since before 2.0.
+- `data-raw/google_cloud_bucket_checks/` is removed; the bucket validation pipeline lives in
+  motrpac-human-presuspension-repro.
 
 ## Documentation
 
@@ -92,11 +109,6 @@
 
 - `plot_feature_heatmap()`: `multi_tissue_clust_rows = TRUE` works (it referenced an undefined
   object); new `right_annotation`, `heatmap_args`, `draw_args` and `return_drawing` arguments.
-
-## Removed
-
-- **Breaking**: `run_cmeans()` and `plot_cmeans()` are removed; use the pre-computed
-  `FCM_CLUSTERS`. Mfuzz, Biobase and ggpubr are no longer imported.
 
 ## Data objects
 
@@ -120,7 +132,7 @@
 
 - `UTORONTO_TFs` is now the prot-ph TF regulator pool — 1,381 rows, `feature_id` and
   `gene_symbol` — where it was the raw UToronto extract, 2,765 rows and 28 columns keyed by
-  Ensembl gene ID. **Breaking**: the annotation columns are gone and a row is a phosphosite,
+  Ensembl gene ID. The annotation columns are gone and a row is a phosphosite,
   not a gene.
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.4
@@ -178,7 +190,7 @@
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.2
 
-## Breaking changes
+## Changes
 
 - `load_differential_analysis(epigen = TRUE)` reads the epigenomics tables from Google
   Cloud Storage via gsutil instead of the public CloudFront release, and defaults to the
@@ -190,7 +202,7 @@
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.1
 
-## Breaking changes to data objects
+## Data objects
 
 - The `*_SUM_STATS` objects are named, ordered and keyed the way the `*_DA` objects are.
   Every metabolomics platform is now labelled `assay = "metab"` with the platform
@@ -222,7 +234,7 @@
   `clinical_ome_list()` by name and `"all"` includes them, matching how
   `load_differential_analysis()` treats clinical chemistry.
 
-  Breaking: a request that names another ome no longer returns clinical chemistry
+  A request that names another ome no longer returns clinical chemistry
   alongside it, and `"metab"` no longer implies `"metab-t-clinical"`. Analytes
   measured both clinically and on a research platform, such as Cortisol and
   Lactate, return only what was asked for.
