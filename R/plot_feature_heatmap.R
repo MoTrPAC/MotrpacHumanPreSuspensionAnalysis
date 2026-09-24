@@ -78,6 +78,7 @@
 #' @importFrom tibble column_to_rownames
 #' @importFrom tidyr pivot_wider
 #' @importFrom grid grid.text grid.rect convertUnit convertWidth convertHeight grobWidth grobHeight textGrob unit gpar
+#' @importFrom gridtext richtext_grob
 #' @examples
 #' \dontrun{
 #' plot_feature_heatmap(set_id = "11725",

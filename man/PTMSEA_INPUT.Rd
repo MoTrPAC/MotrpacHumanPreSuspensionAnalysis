@@ -32,10 +32,11 @@ crossed with the two exercise modalities; adipose was sampled at
 \code{post_3.5_4_hr} only.
 
 Each element is a \code{GCT} object, the S4 class defined by the \code{cmapR}
-package. This package does not depend on \code{cmapR}: the object loads without
-it, but the \code{cmapR} accessors and its \code{write_gct()} need \code{cmapR} attached.
-The slots are reachable as \verb{@mat}, \verb{@rdesc}, \verb{@cdesc}, \verb{@rid} and \verb{@cid}
-either way.
+package. \code{cmapR} is in Suggests, not Imports: the object loads without it
+and its slots are reachable as \verb{@mat}, \verb{@rdesc}, \verb{@cdesc}, \verb{@rid} and
+\verb{@cid}, but anything that dispatches on the class — printing the object,
+the \code{cmapR} accessors, \code{write_gct()} — needs \code{cmapR} installed, as does
+\verb{R CMD check} to inspect the data.
 }
 \keyword{datasets}
 \keyword{proteomics}

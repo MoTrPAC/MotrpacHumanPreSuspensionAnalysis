@@ -15,10 +15,11 @@
 #'   `post_3.5_4_hr` only.
 #'
 #'   Each element is a `GCT` object, the S4 class defined by the `cmapR`
-#'   package. This package does not depend on `cmapR`: the object loads without
-#'   it, but the `cmapR` accessors and its `write_gct()` need `cmapR` attached.
-#'   The slots are reachable as `@mat`, `@rdesc`, `@cdesc`, `@rid` and `@cid`
-#'   either way.
+#'   package. `cmapR` is in Suggests, not Imports: the object loads without it
+#'   and its slots are reachable as `@mat`, `@rdesc`, `@cdesc`, `@rid` and
+#'   `@cid`, but anything that dispatches on the class — printing the object,
+#'   the `cmapR` accessors, `write_gct()` — needs `cmapR` installed, as does
+#'   `R CMD check` to inspect the data.
 #'
 #' @usage
 #' PTMSEA_INPUT

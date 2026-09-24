@@ -4,6 +4,8 @@
 # MotrpacHumanPreSuspensionAnalysis
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Overview
@@ -64,38 +66,37 @@ milestones.
 
 ## How this repo fits with the others
 
-The Pre-Suspension human work is split across four repositories. Individual-level molecular
-and phenotypic data cannot be distributed publicly, so they live in a separate, access-gated
-package, and everything that *can* be released publicly (aggregate results, all analysis
-code) is kept clear of them.
+The Pre-Suspension human work is split across four repositories.
+Individual-level molecular and phenotypic data cannot be distributed
+publicly, so they live in a separate, access-gated package, and
+everything that *can* be released publicly (aggregate results, all
+analysis code) is kept clear of them.
 
-```
-                  MoTrPAC BIC — consortium GCS buckets
-                        (raw assay data, gated)
-                                   │
-                   motrpac-human-presuspension-repro
-           normalizes omics data, applies statistical models,
-           builds every data object, versions it, uploads it,
-                   and carries it into both packages
-                                   │
-                ┌──────────────────┴──────────────────┐
-                ▼                                     ▼
-  MotrpacHumanPreSuspensionData       MotrpacHumanPreSuspensionAnalysis
-subject-level data — access-gated         aggregate results — public
-                └──────────────────┬──────────────────┘
-                                   ▼
-                   motrpac-human-presuspension-acute
-                 manuscript figure code + QC vignettes
-                                   ▼
-                              manuscripts
-```
+                      MoTrPAC BIC — consortium GCS buckets
+                            (raw assay data, gated)
+                                       │
+                       motrpac-human-presuspension-repro
+               normalizes omics data, applies statistical models,
+               builds every data object, versions it, uploads it,
+                       and carries it into both packages
+                                       │
+                    ┌──────────────────┴──────────────────┐
+                    ▼                                     ▼
+      MotrpacHumanPreSuspensionData       MotrpacHumanPreSuspensionAnalysis
+    subject-level data — access-gated         aggregate results — public
+                    └──────────────────┬──────────────────┘
+                                       ▼
+                       motrpac-human-presuspension-acute
+                     manuscript figure code + QC vignettes
+                                       ▼
+                                  manuscripts
 
-| Repository | What it holds | Access |
-|---|---|---|
-| [`motrpac-human-presuspension-repro`](https://github.com/MoTrPAC/motrpac-human-presuspension-repro) | the end-to-end rebuild pipeline and its pinned software environment | code; a full run needs consortium bucket access |
-| [`MotrpacHumanPreSuspensionData`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData) | subject-level molecular and phenotypic data objects | formal data-access request to the consortium |
-| [`MotrpacHumanPreSuspensionAnalysis`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis) | differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions | public |
-| [`motrpac-human-presuspension-acute`](https://github.com/MoTrPAC/motrpac-human-presuspension-acute) | per-manuscript figure code and QC vignettes | code public; some panels need Data access |
+| Repository                                                                                          | What it holds                                                                                                    | Access                                          |
+|-----------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| [`motrpac-human-presuspension-repro`](https://github.com/MoTrPAC/motrpac-human-presuspension-repro) | the end-to-end rebuild pipeline and its pinned software environment                                              | code; a full run needs consortium bucket access |
+| [`MotrpacHumanPreSuspensionData`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionData)         | subject-level molecular and phenotypic data objects                                                              | formal data-access request to the consortium    |
+| [`MotrpacHumanPreSuspensionAnalysis`](https://github.com/MoTrPAC/MotrpacHumanPreSuspensionAnalysis) | differential analysis, group summary statistics, enrichment, clustering, feature-to-gene map, plotting functions | public                                          |
+| [`motrpac-human-presuspension-acute`](https://github.com/MoTrPAC/motrpac-human-presuspension-acute) | per-manuscript figure code and QC vignettes                                                                      | code public; some panels need Data access       |
 
 ------------------------------------------------------------------------
 
@@ -109,9 +110,9 @@ subject-level data — access-gated         aggregate results — public
 ## Important: Bioconductor Dependencies
 
 This package relies on several Bioconductor packages
-(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct Bioconductor
-version for your R installation before installing. Using the wrong
-Bioconductor version will cause dependency failures.
+(e.g. ComplexHeatmap, Mfuzz, Biobase, TMSig). You must set the correct
+Bioconductor version for your R installation before installing. Using
+the wrong Bioconductor version will cause dependency failures.
 
 | R version | Bioconductor version |
 |-----------|----------------------|
@@ -148,6 +149,35 @@ pak::pak("MoTrPAC/MotrpacHumanPreSuspensionAnalysis")
 
 You can check your R version with `R.version.string` and your
 Bioconductor version with `BiocManager::version()`.
+
+## macOS: install XQuartz first
+
+**On macOS, install [XQuartz](https://www.xquartz.org) before installing
+this package**, then log out and back in. Windows and Linux do not need
+it.
+
+The macOS builds of R link Tcl/Tk and the cairo graphics device against
+the X11 libraries XQuartz provides. This package imports Mfuzz, which
+imports `tcltk`, so without XQuartz the installation fails when R
+test-loads the package, with an error like:
+
+    unable to load shared object '.../library/tcltk/libs/tcltk.so':
+      Library not loaded: /opt/X11/lib/libX11.6.dylib
+
+`plot_enrich_heatmap()` and `plot_cluster_enrichment()` also write PDFs
+with `cairo_pdf()`, which needs XQuartz on macOS.
+
+## GitHub-only dependency: MotrpacBicQC
+
+This package imports
+[MotrpacBicQC](https://github.com/MoTrPAC/MotrpacBicQC) (\>= 2.0.0),
+which is not on CRAN or Bioconductor. `DESCRIPTION` declares it in
+`Remotes`, so the `pak::pak()` command above installs it from GitHub
+automatically. If you install with `remotes` instead, install it first:
+
+``` r
+remotes::install_github("MoTrPAC/MotrpacBicQC@v2.0.0")
+```
 
 We recommend building the vignettes when installing (use
 `vignette(package = "MotrpacHumanPreSuspensionAnalysis")` to browse
@@ -220,9 +250,11 @@ differential_analysis = load_differential_analysis(
   combine_with_featgene = FALSE,
   verbose = TRUE
 )
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 names(differential_analysis)
 #> [1] "adipose" "blood"   "muscle"
@@ -243,16 +275,18 @@ everything into a data.frame object.
 
 ``` r
 single_matrix = load_differential_analysis(single_matrix = TRUE)
+#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
+#> Clinical omes (prot-clinical, metab-t-clinical) are skipped; set `load_clinical = TRUE` to include them.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
-#>             metabolite, look through the METABOLOMICS_CV object for the relevant
+#>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 colnames(single_matrix)
 #>  [1] "tissue"             "assay"              "platform"          
 #>  [4] "full_model"         "contrast"           "contrast_short"    
 #>  [7] "contrast_type"      "contrast_category"  "randomGroupCode"   
 #> [10] "Timepoint"          "feature_id"         "logFC"             
-#> [13] "CI.L"               "CI.R"               "degrees_of_freedom"
+#> [13] "CI.L_calculated"    "CI.R_calculated"    "degrees_of_freedom"
 #> [16] "logLik"             "t"                  "AveExpr"           
 #> [19] "z.std"              "p_value"            "adj_p_value"
 ```
@@ -387,8 +421,8 @@ single_matrix = load_summary_stats(single_matrix = TRUE)
 #>             metabolite, look through the METABOLOMICS_CVS object for the relevant
 #>             refmet/feature name.
 colnames(single_matrix)
-#> [1] "randomGroupCode" "feature_id"      "Timepoint"       "Count"          
-#> [5] "Mean"            "SD"              "tissue"          "assay"          
+#> [1] "tissue"          "assay"           "randomGroupCode" "Timepoint"      
+#> [5] "feature_id"      "Count"           "Mean"            "SD"             
 #> [9] "platform"
 ```
 
@@ -430,29 +464,29 @@ results, where all tissues and assays are included in all the analysis.
 head(HUMAN_FEATURE_TO_GENE)
 #> Key: <assay, feature_id>
 #>              assay               feature_id entrez_gene gene_symbol
-#>             <fctr>                   <fctr>      <fctr>      <fctr>
+#>             <char>                   <fctr>      <fctr>      <fctr>
 #> 1: epigen-atac-seq chr1:100006105-100007013       23443     SLC35A3
-#> 2: epigen-atac-seq chr1:100009408-100009608       23443     SLC35A3
-#> 3: epigen-atac-seq   chr1:10001014-10001214      116362        RBP7
-#> 4: epigen-atac-seq chr1:100010489-100010728       23443     SLC35A3
-#> 5: epigen-atac-seq chr1:100021498-100021698       23443     SLC35A3
-#> 6: epigen-atac-seq chr1:100024572-100024772       23443     SLC35A3
-#>       ensembl_gene custom_annotation relationship_to_gene uniprot refmet_name
-#>             <fctr>            <fctr>                <num>  <fctr>      <fctr>
-#> 1: ENSG00000117620            Intron                    0    <NA>        <NA>
-#> 2: ENSG00000117620              Exon                    0    <NA>        <NA>
-#> 3: ENSG00000162444            Intron                    0    <NA>        <NA>
-#> 4: ENSG00000117620            Intron                    0    <NA>        <NA>
-#> 5: ENSG00000117620            Intron                    0    <NA>        <NA>
-#> 6: ENSG00000117620            3' UTR                    0    <NA>        <NA>
-#>    kegg_id flanking_sequence
-#>     <fctr>            <fctr>
-#> 1:    <NA>              <NA>
-#> 2:    <NA>              <NA>
-#> 3:    <NA>              <NA>
-#> 4:    <NA>              <NA>
-#> 5:    <NA>              <NA>
-#> 6:    <NA>              <NA>
+#> 2: epigen-atac-seq chr1:100028803-100029458       23443     SLC35A3
+#> 3: epigen-atac-seq chr1:100037508-100038196        <NA>        <NA>
+#> 4: epigen-atac-seq chr1:100038219-100039293        <NA>        <NA>
+#> 5: epigen-atac-seq chr1:100046659-100047168        <NA>        <NA>
+#> 6: epigen-atac-seq chr1:100071690-100072465        <NA>        <NA>
+#>       ensembl_gene uniprot refmet_name refmet_id kegg_id custom_annotation
+#>             <fctr>  <fctr>      <fctr>    <fctr>  <fctr>            <fctr>
+#> 1: ENSG00000117620    <NA>        <NA>      <NA>    <NA>            Intron
+#> 2: ENSG00000117620    <NA>        <NA>      <NA>    <NA>            3' UTR
+#> 3: ENSG00000288826    <NA>        <NA>      <NA>    <NA>  Promoter (<=1kb)
+#> 4: ENSG00000283761    <NA>        <NA>      <NA>    <NA>            5' UTR
+#> 5: ENSG00000283761    <NA>        <NA>      <NA>    <NA>            Intron
+#> 6: ENSG00000283761    <NA>        <NA>      <NA>    <NA>            Intron
+#>    relationship_to_gene flanking_sequence
+#>                   <num>            <fctr>
+#> 1:                    0              <NA>
+#> 2:                    0              <NA>
+#> 3:                    0              <NA>
+#> 4:                    0              <NA>
+#> 5:                    0              <NA>
+#> 6:                    0              <NA>
 ```
 
 The feature-to-gene map links each feature tested in differential
