@@ -46,7 +46,7 @@ RUN R -e " \
 # Install CRAN Imports
 RUN R -e "install.packages(c( \
     'data.table', 'dplyr', 'magrittr', 'tibble', 'tidyr', \
-    'ggplot2', 'ggpubr', 'latex2exp', 'forcats', 'scales', 'stringr' \
+    'ggplot2', 'ggpubr', 'gridtext', 'latex2exp', 'forcats', 'scales', 'stringr' \
   ), repos='https://cloud.r-project.org')"
 
 # Install CRAN Suggests

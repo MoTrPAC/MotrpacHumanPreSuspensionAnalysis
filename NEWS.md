@@ -13,6 +13,9 @@
   GitHub. 2.0.0 drops the `inspectdf` import, which is archived on CRAN and made
   MotrpacBicQC unresolvable from a clean library; `assay_codes` is unchanged from 1.9.0.
 
+- `gridtext` is added to `Imports`: `plot_feature_heatmap()` renders its column title with
+  `ComplexHeatmap::gt_render()`, which needs it, and ComplexHeatmap only suggests it.
+
 - `cmapR` (Bioconductor) is added to `Suggests`. `PTMSEA_INPUT` is a list of `cmapR::GCT`
   S4 objects, and on a machine without `cmapR` `R CMD check` failed its data inspection
   with a WARNING ("unable to load required package 'cmapR'") because no field declared
@@ -29,6 +32,9 @@
 - The roxygen2 hook in `R/zzz.R` calls `utils::getFromNamespace()` with its namespace,
   clearing the "no visible global function definition for 'getFromNamespace'" NOTE that
   `R CMD check` has reported since before 2.0.
+
+- `R-CMD-check.yaml` runs the check under a virtual display (Xvfb): Mfuzz loads Tk, which
+  otherwise warns at install time on a headless runner.
 
 # MotrpacHumanPreSuspensionAnalysis 2.0.7
 

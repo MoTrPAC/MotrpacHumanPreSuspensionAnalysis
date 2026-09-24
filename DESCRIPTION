@@ -60,6 +60,7 @@ Imports:
     ggpubr,
     grDevices,
     grid,
+    gridtext,
     ComplexHeatmap,
     latex2exp,
     Biobase,
