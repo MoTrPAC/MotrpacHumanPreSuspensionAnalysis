@@ -45,7 +45,7 @@
 #'   (\code{clinical_ome_list()}: \code{"prot-clinical"} and
 #'   \code{"metab-t-clinical"}). \code{FALSE} by default, so \code{"all"}
 #'   returns the research omes and nothing changes for callers written before
-#'   v2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
+#'   c2.0 split clinical chemistry out. Set \code{TRUE} to include them; they
 #'   are dropped even when named unless it is set.
 #'
 #' @returns

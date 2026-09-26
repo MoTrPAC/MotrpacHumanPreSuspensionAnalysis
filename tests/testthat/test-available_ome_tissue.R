@@ -12,11 +12,11 @@ test_that("ome_available_list returns correct character vector", {
   expect_false(any(duplicated(res)))
 })
 
-test_that("ome_available_list carries the v2.0 clinical split", {
+test_that("ome_available_list carries the c2.0 clinical split", {
   res <- ome_available_list()
   expect_true("metab-t-clinical" %in% res)
   expect_true("prot-clinical" %in% res)
-  # v1.3 named clinical chemistry as one assay; v2.0 splits it in two.
+  # c1.3 named clinical chemistry as one assay; c2.0 splits it in two.
   expect_false("clinical-chemistry" %in% res)
 })
 
@@ -64,7 +64,7 @@ test_that("metab_only_list returns correct character vector", {
   expect_false(any(duplicated(res)))
 })
 
-test_that("clinical_ome_list names the two v2.0 clinical omes", {
+test_that("clinical_ome_list names the two c2.0 clinical omes", {
   res <- clinical_ome_list()
   expect_setequal(res, c("prot-clinical", "metab-t-clinical"))
   expect_true(all(res %in% ome_available_list()))
@@ -81,7 +81,7 @@ test_that("every loader takes load_clinical and defaults it to FALSE", {
 
 test_that("load_clinical = FALSE keeps clinical chemistry out of 'all'", {
   # The regression this pins: adding the clinical omes to "all" silently changed
-  # what every pre-v2.0 caller got. Four acute-repro panels failed on it — the
+  # what every pre-c2.0 caller got. Four acute-repro panels failed on it — the
   # clinical DA rows overlap the combined metabolomics table on five analytes,
   # so a pivot keyed on (tissue, assay, feature_id) got duplicates.
   da <- suppressMessages(load_differential_analysis(

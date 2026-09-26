@@ -11,7 +11,7 @@
 #'   builds, which is recorded in \code{OME_TISSUE_CODE}.
 #'
 #'   Two clinical omes are included as of v2.0. Clinical chemistry was a single
-#'   \code{"clinical-chemistry"} assay in v1.3 and is now split into
+#'   \code{"clinical-chemistry"} assay in c1.3 and is now split into
 #'   \code{"metab-t-clinical"} and \code{"prot-clinical"}, each with its own QC,
 #'   differential-analysis and summary-statistic objects.
 #'
@@ -85,13 +85,13 @@ metab_only_list <- function() {
 #'   assay. Every loader takes a \code{load_clinical} argument that gates these,
 #'   and it is \code{FALSE} by default.
 #'
-#' @details v1.3 carried clinical chemistry as a single \code{"clinical-chemistry"}
-#'   assay; v2.0 splits it into a metabolomics and a proteomics assay, each with
+#' @details c1.3 carried clinical chemistry as a single \code{"clinical-chemistry"}
+#'   assay; c2.0 splits it into a metabolomics and a proteomics assay, each with
 #'   its own QC, differential-analysis and summary-statistic objects.
 #'
 #'   They are gated rather than simply included because they are a different
 #'   kind of measurement from the research omes, and every caller written before
-#'   v2.0 that asks for \code{"all"} is summarising the molecular landscape.
+#'   c2.0 that asks for \code{"all"} is summarising the molecular landscape.
 #'   Adding them by default changes those results silently: the clinical
 #'   metabolomics differential-analysis rows overlap the combined
 #'   \code{*_METAB_DA} table on five analytes (Cortisol, Glycerol, KET, NEFA and
