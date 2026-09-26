@@ -16,13 +16,13 @@ A character vector of the clinical omes.
 
 ## Details
 
-v1.3 carried clinical chemistry as a single `"clinical-chemistry"`
-assay; v2.0 splits it into a metabolomics and a proteomics assay, each
+c1.3 carried clinical chemistry as a single `"clinical-chemistry"`
+assay; c2.0 splits it into a metabolomics and a proteomics assay, each
 with its own QC, differential-analysis and summary-statistic objects.
 
 They are gated rather than simply included because they are a different
 kind of measurement from the research omes, and every caller written
-before v2.0 that asks for `"all"` is summarising the molecular
+before c2.0 that asks for `"all"` is summarising the molecular
 landscape. Adding them by default changes those results silently: the
 clinical metabolomics differential-analysis rows overlap the combined
 `*_METAB_DA` table on five analytes (Cortisol, Glycerol, KET, NEFA and

@@ -58,12 +58,12 @@ and it is <code>FALSE</code> by default.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>v1.3 carried clinical chemistry as a single <code>"clinical-chemistry"</code>
-assay; v2.0 splits it into a metabolomics and a proteomics assay, each with
+    <p>c1.3 carried clinical chemistry as a single <code>"clinical-chemistry"</code>
+assay; c2.0 splits it into a metabolomics and a proteomics assay, each with
 its own QC, differential-analysis and summary-statistic objects.</p>
 <p>They are gated rather than simply included because they are a different
 kind of measurement from the research omes, and every caller written before
-v2.0 that asks for <code>"all"</code> is summarising the molecular landscape.
+c2.0 that asks for <code>"all"</code> is summarising the molecular landscape.
 Adding them by default changes those results silently: the clinical
 metabolomics differential-analysis rows overlap the combined
 <code>*_METAB_DA</code> table on five analytes (Cortisol, Glycerol, KET, NEFA and

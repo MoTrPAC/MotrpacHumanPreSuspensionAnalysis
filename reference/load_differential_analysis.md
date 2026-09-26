@@ -62,7 +62,7 @@ load_differential_analysis(
   ([`clinical_ome_list()`](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/reference/clinical_ome_list.md):
   `"prot-clinical"` and `"metab-t-clinical"`). `FALSE` by default, so
   `"all"` returns the research omes and nothing changes for callers
-  written before v2.0 split clinical chemistry out. Set `TRUE` to
+  written before c2.0 split clinical chemistry out. Set `TRUE` to
   include them; they are dropped even when named unless it is set.
 
 ## Value

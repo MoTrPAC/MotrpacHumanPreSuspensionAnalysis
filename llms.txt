@@ -49,12 +49,20 @@ access requests to the MoTrPAC consortium.
 
 ### Versioning note
 
-The functions in version 0.2.0 were those used to generate the initial
-bioRxiv pre-print. Over the course of reviews and additional analysis,
-modifications may occur—refer to previous release history if you need to
-exactly recreate pre-print Figures. We will aim to provide version
-information via the GitHub “Releases” section for major version
-milestones.
+The package version names the data collection it is built on. In a
+version such as 2.0.8, the first two digits are the MoTrPAC data
+collection (2.0 is c2.0) and the last digit counts package updates made
+on top of that collection. A new data collection starts a new version
+series.
+
+- **Version 0.2.0** generated the figures in the initial bioRxiv
+  pre-print. It predates the c2.0 collection, so install it to reproduce
+  those figures exactly.
+- **The 2.0.x series** is built on c2.0 and, together with the other
+  packages listed below, is the basis of the forthcoming pre-print.
+
+Over the course of peer review and additional analysis, modifications
+may occur. Each release is listed in the GitHub “Releases” section.
 
 ## How this repo fits with the others
 
@@ -582,7 +590,7 @@ e.g.:
   [motrpac-data.org](https://motrpac.github.io/MotrpacHumanPreSuspensionAnalysis/motrpac-data.org).
 - Data used in the preparation of this article were obtained from the
   Molecular Transducers of Physical Activity Consortium (MoTrPAC)
-  Pre-CovidSuspension Data release version 1.3.0.
+  Pre-CovidSuspension Data release version c2.0.
 
 # Package index
 

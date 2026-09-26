@@ -25,7 +25,7 @@ track what the pipeline actually builds, which is recorded in
 `OME_TISSUE_CODE`.
 
 Two clinical omes are included as of v2.0. Clinical chemistry was a
-single `"clinical-chemistry"` assay in v1.3 and is now split into
+single `"clinical-chemistry"` assay in c1.3 and is now split into
 `"metab-t-clinical"` and `"prot-clinical"`, each with its own QC,
 differential-analysis and summary-statistic objects.
 
