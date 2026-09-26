@@ -96,7 +96,7 @@ plot_single_feature = function(feature,
   # unconditionally and then filtered like every other ome, so `selected_omes` decides
   # whether it is plotted. `metab` does not imply `metab-t-clinical`, matching how
   # load_differential_analysis() exempts the clinical platform when it folds the metab
-  # platforms together. This is the v2.0 split of clinical chemistry: the one
+  # platforms together. This is the c2.0 split of clinical chemistry: the one
   # CLIN_CHEMISTRY_DA object became one per assay, and both arrive through the loaders.
   #
   # `metab` names a family rather than an assay: the loaders stack every research platform

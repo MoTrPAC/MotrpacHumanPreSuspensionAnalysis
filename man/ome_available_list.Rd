@@ -22,7 +22,7 @@ accessor can return. It must therefore track what the pipeline actually
 builds, which is recorded in \code{OME_TISSUE_CODE}.
 
 Two clinical omes are included as of v2.0. Clinical chemistry was a single
-\code{"clinical-chemistry"} assay in v1.3 and is now split into
+\code{"clinical-chemistry"} assay in c1.3 and is now split into
 \code{"metab-t-clinical"} and \code{"prot-clinical"}, each with its own QC,
 differential-analysis and summary-statistic objects.
 

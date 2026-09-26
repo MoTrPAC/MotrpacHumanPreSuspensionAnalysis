@@ -15,13 +15,13 @@ assay. Every loader takes a \code{load_clinical} argument that gates these,
 and it is \code{FALSE} by default.
 }
 \details{
-v1.3 carried clinical chemistry as a single \code{"clinical-chemistry"}
-assay; v2.0 splits it into a metabolomics and a proteomics assay, each with
+c1.3 carried clinical chemistry as a single \code{"clinical-chemistry"}
+assay; c2.0 splits it into a metabolomics and a proteomics assay, each with
 its own QC, differential-analysis and summary-statistic objects.
 
 They are gated rather than simply included because they are a different
 kind of measurement from the research omes, and every caller written before
-v2.0 that asks for \code{"all"} is summarising the molecular landscape.
+c2.0 that asks for \code{"all"} is summarising the molecular landscape.
 Adding them by default changes those results silently: the clinical
 metabolomics differential-analysis rows overlap the combined
 \code{*_METAB_DA} table on five analytes (Cortisol, Glycerol, KET, NEFA and
