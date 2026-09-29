@@ -21,7 +21,25 @@
 #'   \code{\link{load_differential_analysis}}, which prints a message if it is
 #'   supplied.
 #' @param verbose logical; toggle to include verbose information
-#' @param epigen logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object.
+#' @param epigen logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object. Only the epigenomic files for the requested tissues and omes are downloaded.
+#' @param qc_data optional; the nested list returned by
+#'   \code{MotrpacHumanPreSuspensionData::load_qc()}, for users with access to the
+#'   individual-level data. The shipped \code{*_SUM_STATS} objects cover only the
+#'   features in the differential analysis, and for the epigenomic omes only the
+#'   features with \code{adj_p_value < 0.05} in at least one contrast. When a
+#'   requested feature has differential analysis but no summary statistics, they are
+#'   computed from \code{qc_data} the way the shipped objects are: \code{qc_norm}
+#'   restricted to \code{visitcode == "ADU_BAS"} samples, summarised per
+#'   \code{randomGroupCode} and \code{Timepoint}. Load it with the tissues and omes
+#'   being plotted, and \code{epigen = TRUE} for the epigenomic omes.
+#'
+#' @section Features without summary statistics:
+#' The lines, points and error bars are drawn from the summary statistics, not from
+#' the differential analysis. A feature that is in the differential analysis but not in
+#' the summary statistics, most often an epigenomic feature that is not significant in
+#' any contrast, has nothing to draw. The function then says so with a
+#' \code{message()} naming the features and returns a plot with empty panels for them,
+#' unless \code{qc_data} is supplied to compute the missing statistics.
 #'
 #' @returns a ggplot
 #' @export plot_single_feature
@@ -66,7 +84,8 @@ plot_single_feature = function(feature,
                                legend_position = "right",
                                repo_local_dir = NULL,
                                verbose = TRUE,
-                               epigen = FALSE){
+                               epigen = FALSE,
+                               qc_data = NULL){
 
   selected_tissues = match.arg(selected_tissues,
                                choices = c("all", "blood", "adipose", "muscle"),
@@ -143,18 +162,42 @@ plot_single_feature = function(feature,
   # The objects are lazily loaded and the load is cheap, and one unconditional load in
   # one vocabulary is far simpler than assembling the request ome by ome: clinical
   # chemistry stops being a special case appended after the fact, and honouring
-  # `selected_omes` becomes an ordinary filter. Epigenomics stays behind `epigen`,
-  # because it is downloaded from the CDN rather than lazily loaded.
+  # `selected_omes` becomes an ordinary filter. Epigenomics is downloaded from the CDN,
+  # one file per tissue and ome, so it is loaded separately and only for what was
+  # requested.
+  # named rather than "all": "all" with epigen = FALSE reports epigenomics as skipped
   da_object = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
-      selected_omes = "all",
+      selected_omes = c("transcript-rna-seq", "prot-pr", "prot-ph", "prot-ol", "metab",
+                        MotrpacHumanPreSuspensionAnalysis::clinical_ome_list()),
       selected_tissues = "all",
       single_matrix = TRUE,
-      epigen = epigen,
+      epigen = FALSE,
       repo_local_dir = repo_local_dir,
       load_clinical = TRUE,
       verbose = verbose
-    ) %>%
-    .fold_metab_platform_into_assay()
+    )
+
+  epigen_omes = base::intersect(selected_omes, c("epigen-atac-seq", "epigen-methylcap-seq"))
+  # only the tissue and ome pairs that were measured have a file to download
+  epigen_measured = MotrpacHumanPreSuspensionAnalysis::OME_TISSUE_CODE %>%
+    dplyr::filter(ome %in% epigen_omes, tissue %in% selected_tissues)
+  if (epigen && nrow(epigen_measured) > 0) {
+    epigen_da = MotrpacHumanPreSuspensionAnalysis::load_differential_analysis(
+      selected_omes = unique(as.character(epigen_measured$ome)),
+      selected_tissues = unique(as.character(epigen_measured$tissue)),
+      single_matrix = TRUE,
+      epigen = TRUE,
+      verbose = verbose
+    )
+    da_object = data.table::rbindlist(list(da_object, epigen_da), use.names = TRUE, fill = TRUE)
+    data.table::setorderv(da_object, cols = "contrast", order = 1L)
+  } else if (!epigen && length(epigen_omes) > 0 && verbose) {
+    message("You've requested one or more epigenetic omes (via explicit selection ",
+            "or \"all\") but `epigen = FALSE`, so epigenetic data will be skipped. ",
+            "Set `epigen = TRUE` to load epigenetic data.")
+  }
+
+  da_object = .fold_metab_platform_into_assay(da_object)
 
   if(verbose){
     message("DA is loaded automatically using requested settings.
@@ -219,6 +262,52 @@ plot_single_feature = function(feature,
     dplyr::filter(assay %in% selected_omes) %>%
     dplyr::filter(tissue %in% selected_tissues) %>%
     dplyr::filter(feature_id %in% feature_specific_da$feature_id) %>%
+    as.data.frame()
+
+  # Epigenomic summary statistics ship only for features significant in some contrast,
+  # so a feature can have differential analysis and nothing to draw.
+  plot_keys = c("tissue", "assay", "feature_id")
+  missing_sum_stats = feature_specific_da %>%
+    dplyr::distinct(dplyr::across(dplyr::all_of(plot_keys))) %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
+    dplyr::anti_join(summary_stats %>%
+                       dplyr::distinct(dplyr::across(dplyr::all_of(plot_keys))) %>%
+                       dplyr::mutate(dplyr::across(dplyr::everything(), as.character)),
+                     by = plot_keys)
+
+  if (nrow(missing_sum_stats) > 0 && !is.null(qc_data)) {
+    # Timepoint is a factor on both tiers and its levels set the x-axis order; a
+    # character column here would turn the joined column character and sort it
+    # alphabetically.
+    timepoint_levels = levels(summary_stats$Timepoint)
+    summary_stats = dplyr::bind_rows(
+      summary_stats %>%
+        dplyr::mutate(dplyr::across(dplyr::all_of(c(plot_keys, "Timepoint", "randomGroupCode")),
+                                    as.character)),
+      .summary_stats_from_qc(qc_data, missing_sum_stats,
+                             timepoints = timepoint_levels, verbose = verbose)
+    ) %>%
+      dplyr::mutate(Timepoint = factor(Timepoint, levels = timepoint_levels))
+    missing_sum_stats = dplyr::anti_join(missing_sum_stats,
+                                         dplyr::distinct(summary_stats[, plot_keys]),
+                                         by = plot_keys)
+  }
+
+  if (nrow(missing_sum_stats) > 0) {
+    message("No summary statistics for ",
+            paste0(missing_sum_stats$tissue, " ", missing_sum_stats$assay, " ",
+                   missing_sum_stats$feature_id, collapse = ", "),
+            ", so their panels are empty.
+         Epigenomic summary statistics ship only for features with adj_p_value < 0.05
+         in at least one contrast.",
+            if (is.null(qc_data))
+              " With individual-level data access, pass `qc_data` from
+         MotrpacHumanPreSuspensionData::load_qc() to compute them."
+            else
+              " The `qc_data` you supplied does not carry these features or their acute samples.")
+  }
+
+  summary_stats = summary_stats %>%
     dplyr::mutate(SE = SD/sqrt(Count),
                   CI_95 = qt((1 + 0.95)/2, Count - 1))
   #this code is now matching the previous `mean_cl_normal` implementation, see: `Hmisc::smean.cl.normal`
@@ -456,6 +545,104 @@ plot_single_feature = function(feature,
                                  as.character(assay))) %>%
     dplyr::select(-platform)
   return(out)
+}
+
+
+#' Summary statistics for chosen features from load_qc() output
+#'
+#' Computes what the shipped \code{*_SUM_STATS} objects hold, for features they do not
+#' carry: \code{qc_norm} restricted to \code{visitcode == "ADU_BAS"} samples, then
+#' \code{Count}, \code{Mean} and \code{SD} per \code{randomGroupCode},
+#' \code{Timepoint} and feature.
+#'
+#' @param qc_data the nested list returned by
+#'   \code{MotrpacHumanPreSuspensionData::load_qc()}, tissue then ome
+#' @param features a data frame with \code{tissue}, \code{assay} and
+#'   \code{feature_id} columns; metabolomics rows name the platform in \code{assay}
+#' @param timepoints character; the \code{Timepoint} values the summary statistics
+#'   use. Samples at any other value, or at none, are left out.
+#' @param verbose logical; report samples left out for their group or timepoint
+#' @returns A data frame with \code{tissue}, \code{assay}, \code{randomGroupCode},
+#'   \code{Timepoint}, \code{feature_id}, \code{Count}, \code{Mean} and \code{SD},
+#'   with zero rows when \code{qc_data} carries none of the features
+#' @keywords internal
+#' @noRd
+
+.summary_stats_from_qc = function(qc_data, features, timepoints = NULL, verbose = TRUE) {
+  empty = data.frame(tissue = character(0), assay = character(0),
+                     randomGroupCode = character(0), Timepoint = character(0),
+                     feature_id = character(0), Count = integer(0),
+                     Mean = numeric(0), SD = numeric(0))
+
+  # load_qc() nests tissue, then ome, then qc_norm / sample_metadata. One level of it
+  # passed on its own, e.g. qc$muscle, would otherwise match nothing without saying so.
+  is_qc_entry = function(x) {
+    return(is.list(x) && all(c("qc_norm", "sample_metadata") %in% names(x)))
+  }
+  is_tissue_list = function(tissue_list) {
+    return(is.list(tissue_list) && length(tissue_list) > 0 &&
+             all(vapply(tissue_list, is_qc_entry, logical(1))))
+  }
+  if (!is.list(qc_data) || is.null(names(qc_data)) || is_qc_entry(qc_data) ||
+      !all(tolower(names(qc_data)) %in% c("adipose", "blood", "muscle")) ||
+      !all(vapply(qc_data, is_tissue_list, logical(1)))) {
+    stop("`qc_data` must be the whole nested list returned by
+         MotrpacHumanPreSuspensionData::load_qc(): tissue, then ome, then qc_norm and
+         sample_metadata. Pass the load_qc() result itself, not one tissue or ome of it.")
+  }
+  names(qc_data) = tolower(names(qc_data))
+
+  out = list()
+  for (combo in split(features, list(features$tissue, features$assay), drop = TRUE)) {
+    tissue = combo$tissue[1]
+    assay = combo$assay[1]
+    qc_entry = qc_data[[tolower(tissue)]][[assay]]
+    if (is.null(qc_entry)) next
+
+    required = c("vialLabel", "visitcode", "randomGroupCode", "Timepoint")
+    absent = setdiff(required, colnames(qc_entry$sample_metadata))
+    if (length(absent) > 0) {
+      stop("`qc_data` ", tissue, " ", assay, " sample_metadata has no ",
+           paste(absent, collapse = ", "), " column.")
+    }
+
+    qc_norm = qc_entry$qc_norm
+    qc_norm = qc_norm[rownames(qc_norm) %in% combo$feature_id, , drop = FALSE]
+    # vialLabel is read in as numeric, and a numeric index selects columns by position.
+    # distinct(): a vial listed twice would otherwise be counted twice.
+    sample_metadata = qc_entry$sample_metadata %>%
+      dplyr::mutate(vialLabel = as.character(vialLabel)) %>%
+      dplyr::filter(visitcode == "ADU_BAS", vialLabel %in% colnames(qc_norm)) %>%
+      dplyr::distinct(vialLabel, .keep_all = TRUE)
+    unplaceable = is.na(sample_metadata$randomGroupCode) | is.na(sample_metadata$Timepoint) |
+      (!is.null(timepoints) & !as.character(sample_metadata$Timepoint) %in% timepoints)
+    if (any(unplaceable) && verbose) {
+      message(sum(unplaceable), " acute ", tissue, " ", assay, " sample(s) in `qc_data` ",
+              "have no group or a timepoint outside the summary statistics and are left out.")
+    }
+    sample_metadata = sample_metadata[!unplaceable, , drop = FALSE]
+    qc_norm = qc_norm[, sample_metadata$vialLabel, drop = FALSE]
+    if (nrow(qc_norm) == 0 || ncol(qc_norm) == 0) next
+    if (!all(vapply(qc_norm, is.numeric, logical(1)))) {
+      stop("`qc_data` ", tissue, " ", assay, " qc_norm is not numeric.")
+    }
+
+    out[[paste(tissue, assay)]] = data.frame(
+      feature_id = rep(rownames(qc_norm), times = ncol(qc_norm)),
+      randomGroupCode = rep(as.character(sample_metadata$randomGroupCode),
+                            each = nrow(qc_norm)),
+      Timepoint = rep(as.character(sample_metadata$Timepoint), each = nrow(qc_norm)),
+      Value = unlist(qc_norm, use.names = FALSE)
+    ) %>%
+      dplyr::filter(!is.na(Value)) %>%
+      dplyr::group_by(randomGroupCode, Timepoint, feature_id) %>%
+      dplyr::summarize(Count = dplyr::n(), Mean = mean(Value), SD = stats::sd(Value),
+                       .groups = "drop") %>%
+      dplyr::mutate(tissue = tissue, assay = assay, .before = 1)
+  }
+
+  if (length(out) == 0) return(empty)
+  return(as.data.frame(dplyr::bind_rows(out)))
 }
 
 

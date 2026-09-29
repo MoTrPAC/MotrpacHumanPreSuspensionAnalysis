@@ -16,7 +16,8 @@ plot_single_feature(
   legend_position = "right",
   repo_local_dir = NULL,
   verbose = TRUE,
-  epigen = FALSE
+  epigen = FALSE,
+  qc_data = NULL
 )
 }
 \arguments{
@@ -48,7 +49,18 @@ supplied.}
 
 \item{verbose}{logical; toggle to include verbose information}
 
-\item{epigen}{logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object.}
+\item{epigen}{logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object. Only the epigenomic files for the requested tissues and omes are downloaded.}
+
+\item{qc_data}{optional; the nested list returned by
+\code{MotrpacHumanPreSuspensionData::load_qc()}, for users with access to the
+individual-level data. The shipped \code{*_SUM_STATS} objects cover only the
+features in the differential analysis, and for the epigenomic omes only the
+features with \code{adj_p_value < 0.05} in at least one contrast. When a
+requested feature has differential analysis but no summary statistics, they are
+computed from \code{qc_data} the way the shipped objects are: \code{qc_norm}
+restricted to \code{visitcode == "ADU_BAS"} samples, summarised per
+\code{randomGroupCode} and \code{Timepoint}. Load it with the tissues and omes
+being plotted, and \code{epigen = TRUE} for the epigenomic omes.}
 }
 \value{
 a ggplot
@@ -59,6 +71,16 @@ across the selected tissues. Single plots are optimized for H = 1.54 in and W = 
 If a right hand legend is added, the width should be 1.715. This can be toggled
 as needed by saving output and editing as a ggplot object
 }
+\section{Features without summary statistics}{
+
+The lines, points and error bars are drawn from the summary statistics, not from
+the differential analysis. A feature that is in the differential analysis but not in
+the summary statistics, most often an epigenomic feature that is not significant in
+any contrast, has nothing to draw. The function then says so with a
+\code{message()} naming the features and returns a plot with empty panels for them,
+unless \code{qc_data} is supplied to compute the missing statistics.
+}
+
 \examples{
 \dontrun{
 plot_single_feature_test(feature="CAR 10:0",

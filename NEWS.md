@@ -6,6 +6,14 @@
   `height` and `n_sets` instead of writing a PDF, and `filename` is optional. It also names
   any `set_ids` it drops.
 
+- `plot_single_feature()` gains `qc_data`: pass `MotrpacHumanPreSuspensionData::load_qc()`
+  output to compute summary statistics for features the shipped `*_SUM_STATS` omit, such as
+  non-significant epigenomic features. Without it, those features now produce a message
+  instead of a silently empty panel.
+
+- `plot_single_feature(epigen = TRUE)` downloads only the epigenomic DA files for the
+  requested tissues and omes, instead of all five.
+
 ## Dependencies
 
 - MotrpacBicQC is required at `>= 2.0.0`, the `v2.0.0` release tag (2026-09-23), and
