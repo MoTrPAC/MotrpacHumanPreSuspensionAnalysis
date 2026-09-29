@@ -64,7 +64,8 @@ as needed by saving output and editing as a ggplot object</p>
 <span>  legend_position <span class="op">=</span> <span class="st">"right"</span>,</span>
 <span>  repo_local_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  epigen <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  epigen <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  qc_data <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -123,12 +124,36 @@ supplied.</p></dd>
 
 
 <dt id="arg-epigen">epigen<a class="anchor" aria-label="anchor" href="#arg-epigen"></a></dt>
-<dd><p>logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object.</p></dd>
+<dd><p>logical; toggle to include epigenetic features (only atac offered for this function). If you include a gene name, this could result in many many epigenetic features mapping to the one object. Only the epigenomic files for the requested tissues and omes are downloaded.</p></dd>
+
+
+<dt id="arg-qc-data">qc_data<a class="anchor" aria-label="anchor" href="#arg-qc-data"></a></dt>
+<dd><p>optional; the nested list returned by
+<code>MotrpacHumanPreSuspensionData::load_qc()</code>, for users with access to the
+individual-level data. The shipped <code>*_SUM_STATS</code> objects cover only the
+features in the differential analysis, and for the epigenomic omes only the
+features with <code>adj_p_value &lt; 0.05</code> in at least one contrast. When a
+requested feature has differential analysis but no summary statistics, they are
+computed from <code>qc_data</code> the way the shipped objects are: <code>qc_norm</code>
+restricted to <code>visitcode == "ADU_BAS"</code> samples, summarised per
+<code>randomGroupCode</code> and <code>Timepoint</code>. Load it with the tissues and omes
+being plotted, and <code>epigen = TRUE</code> for the epigenomic omes.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>a ggplot</p>
+    </div>
+    <div class="section level2">
+    <h2 id="features-without-summary-statistics">Features without summary statistics<a class="anchor" aria-label="anchor" href="#features-without-summary-statistics"></a></h2>
+
+
+<p>The lines, points and error bars are drawn from the summary statistics, not from
+the differential analysis. A feature that is in the differential analysis but not in
+the summary statistics, most often an epigenomic feature that is not significant in
+any contrast, has nothing to draw. The function then says so with a
+<code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> naming the features and returns a plot with empty panels for them,
+unless <code>qc_data</code> is supplied to compute the missing statistics.</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

@@ -40,8 +40,9 @@
 <h2 class="pkg-version" data-toc-text="2.0.8" id="motrpachumanpresuspensionanalysis-208">MotrpacHumanPreSuspensionAnalysis 2.0.8<a class="anchor" aria-label="anchor" href="#motrpachumanpresuspensionanalysis-208"></a></h2>
 <div class="section level3">
 <h3 id="changes-2-0-8">Changes<a class="anchor" aria-label="anchor" href="#changes-2-0-8"></a></h3>
-<ul><li>
-<code><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> gains <code>return_drawing</code>: with <code>TRUE</code> it returns <code>draw</code>, <code>width</code>, <code>height</code> and <code>n_sets</code> instead of writing a PDF, and <code>filename</code> is optional. It also names any <code>set_ids</code> it drops.</li>
+<ul><li><p><code><a href="../reference/plot_enrich_heatmap.html">plot_enrich_heatmap()</a></code> gains <code>return_drawing</code>: with <code>TRUE</code> it returns <code>draw</code>, <code>width</code>, <code>height</code> and <code>n_sets</code> instead of writing a PDF, and <code>filename</code> is optional. It also names any <code>set_ids</code> it drops.</p></li>
+<li><p><code><a href="../reference/plot_single_feature.html">plot_single_feature()</a></code> gains <code>qc_data</code>: pass <code>MotrpacHumanPreSuspensionData::load_qc()</code> output to compute summary statistics for features the shipped <code>*_SUM_STATS</code> omit, such as non-significant epigenomic features. Without it, those features now produce a message instead of a silently empty panel.</p></li>
+<li><p><code>plot_single_feature(epigen = TRUE)</code> downloads only the epigenomic DA files for the requested tissues and omes, instead of all five.</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="dependencies-2-0-8">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-2-0-8"></a></h3>

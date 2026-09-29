@@ -618,7 +618,6 @@ plot_single_feature(
   color_time_labels = TRUE,
   include_legend = FALSE
 )
-#> You've requested one or more epigenetic omes (via explicit selection or "all") but `epigen = FALSE`, so epigenetic data will be skipped. Set `epigen = TRUE` to load epigenetic data.
 #> Please remember that the lowest CV Metabolite is chosen and the
 #>             relevant refmet name is used. If you're not able to find your desired
 #>             metabolite, look through the METABOLOMICS_CVS object for the relevant

@@ -21,7 +21,8 @@ plot_single_feature(
   legend_position = "right",
   repo_local_dir = NULL,
   verbose = TRUE,
-  epigen = FALSE
+  epigen = FALSE,
+  qc_data = NULL
 )
 ```
 
@@ -88,11 +89,37 @@ plot_single_feature(
 
   logical; toggle to include epigenetic features (only atac offered for
   this function). If you include a gene name, this could result in many
-  many epigenetic features mapping to the one object.
+  many epigenetic features mapping to the one object. Only the
+  epigenomic files for the requested tissues and omes are downloaded.
+
+- qc_data:
+
+  optional; the nested list returned by
+  `MotrpacHumanPreSuspensionData::load_qc()`, for users with access to
+  the individual-level data. The shipped `*_SUM_STATS` objects cover
+  only the features in the differential analysis, and for the epigenomic
+  omes only the features with `adj_p_value < 0.05` in at least one
+  contrast. When a requested feature has differential analysis but no
+  summary statistics, they are computed from `qc_data` the way the
+  shipped objects are: `qc_norm` restricted to `visitcode == "ADU_BAS"`
+  samples, summarised per `randomGroupCode` and `Timepoint`. Load it
+  with the tissues and omes being plotted, and `epigen = TRUE` for the
+  epigenomic omes.
 
 ## Value
 
 a ggplot
+
+## Features without summary statistics
+
+The lines, points and error bars are drawn from the summary statistics,
+not from the differential analysis. A feature that is in the
+differential analysis but not in the summary statistics, most often an
+epigenomic feature that is not significant in any contrast, has nothing
+to draw. The function then says so with a
+[`message()`](https://rdrr.io/r/base/message.html) naming the features
+and returns a plot with empty panels for them, unless `qc_data` is
+supplied to compute the missing statistics.
 
 ## Author
 
